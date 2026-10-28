@@ -1,0 +1,81 @@
+column_name,group,data_type,allowed_values_or_format,description,example
+series_key,Identification,string (PK),{ISO3}.{indicator_id}.{freq}.{variant_tag},Unique key = country x indicator x native frequency x variant (§8).,USA.ACT_GDP_REAL.Q.NA
+country_iso3,Identification,string,ISO3 or GLOBAL,Economy code.,IND
+country_name,Identification,string,free text,Economy name.,India
+country_group,Identification,enum,TIER1|TIER2|BROAD_OECD|CHINA|GLOBAL,Panel tier (§5).,TIER1
+indicator_id,Identification,string,see Indicator_Dictionary,Stable indicator code.,ACT_IP
+indicator_name,Identification,string,free text,Indicator name.,Industrial production index
+category,Identification,enum,7 categories (Controlled_Vocab),Category from the brief.,Coincident activity
+subcategory,Identification,string,free text,"Sub-group; 'Core coincident (BEAI candidate, §11)' marks the eight label candidates.",NOT_APPLICABLE
+variant_tag,Identification,string,STD|NA|LFS|ESTAB|US|US_CS|OECD_BIS|DERIVED,Distinguishes alternative series for the same indicator/frequency.,NA
+variant_description,Identification,string,free text,What the variant is.,NOT_APPLICABLE
+intended_role,Role and firewall,enum,LABEL_AND_PREDICTOR_SEPARATE|PREDICTOR_ONLY|SUPPORT_INPUT|COMPARATOR_ONLY,Role in Pipelines A/B.,PREDICTOR_ONLY
+label_contribution,Role and firewall,string,free text,Contribution to label construction (§8).,BEAI input (Pipeline A)...
+predictor_contribution,Role and firewall,string,Y... | N...,Contribution to the predictor set (§8).,Y (Pipeline B)
+beai_eligible,Role and firewall,enum,Y|N,Y only for the eight §11 indicators (decision Q-01: unemployment is N). HARD FIREWALL.,N
+beai_exclusion_reason,Role and firewall,string,free text or NOT_APPLICABLE,Why the series cannot enter BEAI.,NOT_APPLICABLE
+label_pipeline_transform,Role and firewall,string,free text,Pipeline A transformation (separate from B).,NOT_APPLICABLE
+predictor_pipeline_transform,Role and firewall,string,free text,Pipeline B transformation set (§26-29).,NOT_APPLICABLE
+source_chain,Sources,string,free text,Ordered source priority from §7.,FRED > OECD > BIS
+preferred_source,Sources,string,free text,First source in the chain (availability PENDING).,FRED (St. Louis Fed)
+preferred_source_series_id,Sources,string,ID | PENDING_VERIFICATION | DERIVED,Official series ID. Only recalled US FRED IDs are filled; all unverified.,GDPC1
+id_status,Sources,enum,ID_RECALLED_NOT_VERIFIED|DATAFLOW_OBSERVED_SERIES_KEY_PENDING|DERIVED|PENDING_VERIFICATION,Verification state of the ID.,PENDING_VERIFICATION
+preferred_source_url,Sources,url,https URL,Series URL (constructed) or portal root.,https://fred.stlouisfed.org/series/GDPC1
+url_status,Sources,enum,portal_root|constructed_from_unverified_id|NOT_APPLICABLE,How the URL was built.,portal_root
+alt_source_1,Sources,string,free text,First fallback in chain.,OECD
+alt_source_1_series_id,Sources,string,PENDING_VERIFICATION|NOT_APPLICABLE,Series ID at fallback 1.,NOT_APPLICABLE
+alt_source_1_url,Sources,url,https URL,Portal root of fallback 1.,NOT_APPLICABLE
+alt_source_2,Sources,string,free text,Second fallback.,BIS
+alt_source_2_series_id,Sources,string,PENDING_VERIFICATION|NOT_APPLICABLE,Series ID at fallback 2.,NOT_APPLICABLE
+alt_source_3,Sources,string,free text,Third fallback (India only).,NOT_APPLICABLE
+alt_source_3_series_id,Sources,string,PENDING_VERIFICATION|NOT_APPLICABLE,Series ID at fallback 3.,NOT_APPLICABLE
+supplement_source_hint,Sources,string,free text,IMF/World Bank supplement (§7).,NOT_APPLICABLE
+original_compiler_expected,Sources,string,free text,Expected compiling agency (provenance; tags show verification level).,BEA
+oecd_dataset_family_hint,Sources,string,free text,OECD dataset family NAME (not an ID).,NOT_APPLICABLE
+bis_dataset_hint,Sources,string,free text,BIS dataset name where the BIS is native.,NOT_APPLICABLE
+dataset_id_observed,Sources,string,free text,Dataset/dataflow ID seen in documentation this session.,NONE_OBSERVED
+native_frequency_expected,Series properties,enum,D|W|M|Q|A,Expected native frequency of this variant.,Q
+native_frequency_verified,Series properties,enum,D|W|M|Q|A|PENDING_VERIFICATION,Verified frequency.,NOT_APPLICABLE
+units_expected,Series properties,string,free text,Expected unit concept.,NOT_APPLICABLE
+units_verified,Series properties,string,free text,Verified unit.,NOT_APPLICABLE
+sa_status_expected,Series properties,string,free text,Expected seasonal-adjustment status.,SA preferred
+sa_status_verified,Series properties,enum,SA|NSA|NOT_APPLICABLE|PENDING_VERIFICATION,Verified status.,NOT_APPLICABLE
+target_window_start,Series properties,period,YYYYQn,Target window start (§6).,1990Q1
+target_window_end,Series properties,period,YYYYQn,Target window end (§6).,2025Q4
+collect_from,Series properties,string,free text,Collect earliest available history (§6).,NOT_APPLICABLE
+available_start_date,Series properties,date,YYYY-MM or PENDING_VERIFICATION,First observation.,NOT_APPLICABLE
+available_end_date,Series properties,date,YYYY-MM or PENDING_VERIFICATION,Last observation.,NOT_APPLICABLE
+coverage_target_window_pct,Series properties,float,0-100 or PENDING_VERIFICATION,Share of the 144 quarters in 1990Q1-2025Q4 with data; the §19 threshold is 70% (>=101 quarters).,NOT_APPLICABLE
+missingness_pct,Series properties,float,0-100 or PENDING_VERIFICATION,Missing share within the available span.,NOT_APPLICABLE
+missingness_pattern,Series properties,string,free text,Where gaps occur.,NOT_APPLICABLE
+availability_risk,Series properties,string,UNKNOWN|ELEVATED (verified fact)|ELEVATED (hypothesis)|...,Risk the series is unavailable; hypotheses are labelled.,UNKNOWN
+revision_class_prior,Series properties,string,HIGH|MEDIUM|LOW (class-level prior),Generic revision tendency of this indicator class (NOT verified for the series).,HIGH
+revision_status_verified,Series properties,string,free text,Series-specific revision facts.,NOT_APPLICABLE
+base_year_current,Series properties,string,free text,Current base year.,NOT_APPLICABLE
+base_year_changes,Series properties,string,free text,Base-year/splice events.,NOT_APPLICABLE
+known_issues_to_check,Series properties,string,free text,Breaks and issues to verify.,NOT_APPLICABLE
+quarterly_transformation,Transformation,string,free text,Monthly->quarterly rule (§27).,NOT_APPLICABLE
+availability_lag_assumption,Transformation,string,free text,Lag assumption from §30 (class) used for Pipeline B only.,NOT_APPLICABLE
+collection_method,Transformation,enum,DOWNLOAD|DERIVE_AFTER_INPUTS,How the series is obtained.,DOWNLOAD
+expected_sign_1Q_2Q,Predictor semantics,enum,POSITIVE|NEGATIVE|AMBIGUOUS|NOT_APPLICABLE,"Pre-registered sign vs recession risk at 1Q-2Q (§8, §62).",NEGATIVE
+expected_sign_4Q,Predictor semantics,enum,POSITIVE|NEGATIVE|AMBIGUOUS|NOT_APPLICABLE,Pre-registered sign at 4Q (RQ6).,AMBIGUOUS
+sign_rationale,Predictor semantics,string,free text,Why; and which transform the sign refers to.,NOT_APPLICABLE
+sign_evidence_basis,Predictor semantics,string,free text,"LITERATURE importance vs HYPOTHESIS. The matrix gives importance, rarely sign.",NOT_APPLICABLE
+sign_commitment,Predictor semantics,enum,COMMITTED_ALL_HORIZONS|COMMITTED_4Q_ONLY|COMMITTED_1Q_2Q_ONLY|COMPONENT_OF_FIN_SLOPE...|NOT_COMMITTED...|NOT_A_FEATURE,"Whether a sign is pre-registered for the §62 sign-agreement check, by horizon.",COMMITTED_ALL_HORIZONS
+major_predictor_for_sign_check,Predictor semantics,enum,Y|N,Y = P0/P1 predictor: must carry a committed sign (or be a component series).,Y
+literature_support,Predictor semantics,string,P-ids from literature matrix,Matrix papers that use or rank the variable.,P1;P5
+redundancy_group,Predictor semantics,string,RG_*,Overlap group for pruning (Q-22).,RG_OUTPUT
+ablation_entry_level_tier1,Predictor semantics,enum,A|B|C|D|E|F|NOT_APPLICABLE,First §55 Track-1 level containing the series (provisional; Q-21).,A
+ablation_entry_level_tier2,Predictor semantics,enum,I|II|III|NOT_APPLICABLE,First §55 Track-2 level (provisional).,I
+proposal_section_ref,Inclusion,string,§ refs,Traceability to the proposal.,§11
+priority_class,Inclusion,enum,P0|P1|P2|P3,"Collection priority (analyst judgement, see README).",P0
+collection_batch,Inclusion,enum,B01..B10|NOT_COLLECTED,Collection order batch.,B01
+collection_rank,Inclusion,int,1..N; 9999 for NOT_COLLECTED,Global collection order.,1
+inclusion_status,Inclusion,enum,CANDIDATE_CORE|CANDIDATE_SUPPLEMENTARY|CANDIDATE_OPTIONAL|CANDIDATE_CONDITIONAL|EXCLUDED_BY_DECISION|NOT_APPLICABLE|COMPARATOR_ONLY|SUPPORT_INPUT|EXCLUDED_AFTER_AUDIT|INCLUDED_AFTER_AUDIT,Decision state; final include/exclude only after the Phase 3 audit (§83).,CANDIDATE_CORE
+exclusion_reason,Inclusion,string,free text,Reason for hold/exclusion.,NOT_APPLICABLE
+row_verification_status,Inclusion,string,free text,How much of the row is verified.,UNVERIFIED
+open_questions,Inclusion,string,Q-ids ; separated or NONE,Logged items still awaiting verification or action that affect this row (Decisions_Log).,Q-32
+decisions_applied,Inclusion,string,Q-ids ; separated or NONE,Decisions already taken (Decisions_Log) that govern this row.,Q-01; Q-19
+retrieval_date,Inclusion,date,YYYY-MM-DD or NOT_YET_RETRIEVED,Retrieval date (§73).,NOT_YET_RETRIEVED
+data_version_id,Inclusion,string,free text,Data version tag (§73).,NOT_YET_RETRIEVED
+notes,Inclusion,string,free text,Other notes.,NOT_APPLICABLE

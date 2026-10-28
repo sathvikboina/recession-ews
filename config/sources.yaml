@@ -1,0 +1,94 @@
+# GENERATED FILE - do not edit by hand.
+# Source: spec.py via scripts/export_spec.py.
+# Change spec.py, re-run the exporter, then commit the diff.
+version: 1
+n_sources: 9
+sources:
+- id: FRED
+  name: FRED (St. Louis Fed)
+  role: USA primary (§7)
+  portal_url: https://fred.stlouisfed.org/
+  access_method: FRED web / API (key required for API)
+  url_status: recalled; not re-checked 2026-10-24
+  verified_2026_10_24: None verified this session. US series IDs in the catalogue are RECALLED from memory (see id_status).
+  caveats: Hosts mirrors of OECD/BIS data; using FRED mirrors for non-US countries is outside the §7 chain (Q-15).
+- id: OECD
+  name: OECD (Data Explorer / SDMX API)
+  role: Primary for UK/FRA/ITA/CAN/DEU and broader OECD; 3rd source for USA/JPN/CHN, 3rd for IND (§7)
+  portal_url: https://data-explorer.oecd.org/
+  access_method: SDMX REST API host https://sdmx.oecd.org/public/rest/ ; CSV/JSON
+  url_status: API host verified 2026-10-24 (OECD API explainer); Data Explorer URL recalled
+  verified_2026_10_24: 'OECD.Stat servers went offline 2024-07-01 and queries to stats.oecd.org no longer work; downloads
+    via browser and API are limited to 60 per hour; dataflow versions may change non-backward-compatibly; example dataflow
+    observed in docs: OECD.SDD.STES,DSD_STES@DF_CLI (Composite Leading Indicators).'
+  caveats: Dataflow IDs for all other indicators are PENDING_VERIFICATION. Batch queries to stay under the hourly limit (Q-15).
+- id: BIS
+  name: BIS (Data Portal)
+  role: Last fallback for all countries; native producer of credit/DSR/property/EER series (§7, §25)
+  portal_url: https://data.bis.org/
+  access_method: Data Portal; bulk CSV; statistics page https://www.bis.org/statistics/
+  url_status: verified 2026-10-24 (statistics page; data.bis.org/bulkdownload page listing topics incl. credit, property prices,
+    policy rates)
+  verified_2026_10_24: 'Third-party package notes say the old www.bis.org CSV bulk files were discontinued in favour of the
+    data portal (2024). Dataset names verified (BIS listings via third-party tools): Credit to the non-financial sector (TOTAL_CREDIT);
+    Credit-to-GDP gaps (CREDIT_GAP); Debt service ratios for the private non-financial sector (DSR); Property prices: selected
+    series (SELECTED_PP) and long series (LONG_PP); Effective exchange rate indices, monthly (EER); US dollar exchange rates
+    (XRU); Policy rates (CBPOL); Consumer prices. BIS release notes show benchmark revisions (e.g., Germany NFC credit revised;
+    China NFC credit re-estimated Mar 2024).'
+  caveats: Series keys, country coverage and start dates are PENDING_VERIFICATION (Q-16).
+- id: RBI
+  name: RBI Database on Indian Economy (DBIE)
+  role: India primary (§7)
+  portal_url: https://data.rbi.org.in
+  access_method: DBIE portal downloads; Handbook of Statistics on the Indian Economy
+  url_status: verified 2026-10-24 (RBI press release names data.rbi.org.in as the DBIE portal)
+  verified_2026_10_24: RBI released the 28th edition of the Handbook (2025-26; 245 tables) on 2026-07-31; the series cover
+    national income, prices, money, banking, markets, public finances, foreign trade and balance of payments, and time series
+    are on DBIE.
+  caveats: Whether DBIE republishes each MoSPI-compiled series with full history is PENDING_VERIFICATION (Q-10).
+- id: MoSPI
+  name: MoSPI (NSO India)
+  role: 'India second source (§7): national accounts, IIP, CPI, PLFS'
+  portal_url: https://www.mospi.gov.in/
+  access_method: Website releases / data portal
+  url_status: verified 2026-10-24
+  verified_2026_10_24: New national accounts series with base 2022-23 released 2026-02-27 (replacing 2011-12); PLFS revamped
+    from Jan 2025 with monthly bulletins from April 2025 and quarterly rural+urban from Apr-Jun 2025.
+  caveats: Base-year changes require splicing (Q-07, Q-08, Q-09).
+- id: BOJ_OFFICIAL
+  name: BOJ / Japanese official statistics (BOJ, Cabinet Office-ESRI, METI, MIC, MHLW via e-Stat)
+  role: Japan primary (§7)
+  portal_url: https://www.stat-search.boj.or.jp/
+  access_method: BOJ Time-Series Data Search (API launched 2026-02-18); e-Stat https://www.e-stat.go.jp/en ; ESRI https://www.esri.cao.go.jp/en/sna/menu.html
+  url_status: BOJ page, BOJ API notice, e-Stat and ESRI pages verified 2026-10-24
+  verified_2026_10_24: 'e-Stat SDDS Plus table (fetched 2026-10-24): GDP expenditure approach - Cabinet Office; production
+    index - METI; employment, unemployment and CPI - MIC; wage indices - MHLW; corporate goods price index and money stock
+    - BOJ; government bond yield - JSDA; stock index - Nikkei 225 (private provider); balance of payments and reserves - MOF.'
+  caveats: '''BOJ / official'' spans several agencies, and the government bond yield (JSDA) and stock index (Nikkei) come
+    from non-governmental bodies (Q-12).'
+- id: NBS
+  name: NBS China
+  role: China primary (§7)
+  portal_url: https://data.stats.gov.cn/
+  access_method: NBS database (monthly/quarterly/annual); English pages https://www.stats.gov.cn/english/
+  url_status: verified 2026-10-24
+  verified_2026_10_24: NBS GDP press releases state the q/q growth rate is a seasonally adjusted growth rate over the previous
+    quarter.
+  caveats: 'Level index must be constructed from growth rates (Q-11). A third-party vendor listing (CEIC) shows quarterly
+    GDP from Mar 1992: UNVERIFIED at source.'
+- id: IMF
+  name: IMF (supplement)
+  role: International supplement only (§7)
+  portal_url: https://data.imf.org/
+  access_method: IMF data portal (IFS, WEO, commodity prices)
+  url_status: recalled; not re-checked
+  verified_2026_10_24: None verified this session.
+  caveats: Supplement only; never replaces a chain source without approval.
+- id: WB
+  name: World Bank (supplement)
+  role: International supplement only (§7)
+  portal_url: https://data.worldbank.org/
+  access_method: WDI / Pink Sheet
+  url_status: recalled; not re-checked
+  verified_2026_10_24: None verified this session.
+  caveats: Mostly annual; not suitable for quarterly pipeline without approved disaggregation.

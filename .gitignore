@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Secrets
+.env
+
+# Data: raw downloads and intermediates are never committed.
+# Regenerate with the fetch scripts; the manifest records provenance.
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/clean/*
+!data/clean/.gitkeep
+
+# Generated artefacts
+outputs/*
+!outputs/*/
+!outputs/*/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db

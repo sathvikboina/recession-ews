@@ -1,0 +1,1938 @@
+# GENERATED FILE - do not edit by hand.
+# Source: spec.py via scripts/export_spec.py.
+# Change spec.py, re-run the exporter, then commit the diff.
+version: 1
+n_indicators: 68
+indicators:
+- id: ACT_GDP_REAL
+  name: Real GDP (chain-volume, SA)
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_OUTPUT
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: NA
+    description: National accounts
+    applies_to: ALL
+    us_fred_id: GDPC1
+    lag_class: NA
+    kind: flow
+  notes: Chain-volume levels are not comparable across countries; use within-country growth only. Also feeds Label B (§20).
+- id: ACT_IP
+  name: Industrial production index
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_OUTPUT
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly index
+    applies_to: ALL
+    us_fred_id: INDPRO
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'Matrix P2 excluded IP/GDP for revision reasons; proposal keeps them with lags (§30). Definitions differ (China:
+    industrial value added; India: IIP base change).'
+- id: ACT_EMP
+  name: Total employment (persons)
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_LABOUR_QTY
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: NA
+    description: National accounts employment
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  - freq: M
+    tag: LFS
+    description: Labour force survey employment
+    applies_to: ALL
+    us_fred_id: CE16OV
+    lag_class: MONTHLY
+    kind: flow
+  - freq: M
+    tag: ESTAB
+    description: US establishment-survey payrolls (US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: PAYEMS
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'LFS vs national-accounts vs establishment concept must be chosen once per country (Q-04). India: PLFS history is
+    discontinuous (Q-09).'
+- id: ACT_HOURS
+  name: Total hours worked
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_LABOUR_QTY
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: STD
+    description: Quarterly total hours worked
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  notes: '§11: ''where available''. Annual-only risk (Q-05). US benchmark candidate HOANBS covers nonfarm business only (narrower
+    concept; unverified).'
+- id: ACT_RINC
+  name: Real household income
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_INCOME
+  ablation_tier1: C
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: STD
+    description: Quarterly household accounts
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  - freq: M
+    tag: US
+    description: US monthly real disposable personal income (US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: DPIC96
+    lag_class: NA
+    kind: flow
+  notes: Concept choice (disposable vs personal less transfers) and deflator are open (Q-04, Q-24).
+- id: ACT_CONS
+  name: Real private consumption
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_DEMAND
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: NA
+    description: National accounts
+    applies_to: ALL
+    us_fred_id: PCECC96
+    lag_class: NA
+    kind: flow
+  - freq: M
+    tag: US
+    description: US monthly real PCE (US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: PCEC96
+    lag_class: NA
+    kind: flow
+  notes: null
+- id: ACT_RETAIL
+  name: Real retail sales (volume)
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_DEMAND
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly retail trade volume / deflated sales
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'US: advance retail sales IDs recalled but low confidence (nominal RSAFS; real RRSFS) -> left PENDING. Official monthly
+    retail series may not exist for every country (Q-03).'
+- id: ACT_INV
+  name: Real business fixed investment
+  category: Coincident activity
+  subcategory: Core coincident (BEAI candidate, §11)
+  intended_role: LABEL_AND_PREDICTOR_SEPARATE
+  beai_eligible: Y
+  beai_exclusion_reason: null
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P0
+  redundancy_group: RG_DEMAND
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §11, §18-19
+  variants:
+  - freq: Q
+    tag: STD
+    description: National accounts GFCF by asset/sector
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  notes: US candidates recalled with low confidence (GPDIC1 includes inventories; FPIC1) -> left PENDING.
+- id: ACT_MANUF
+  name: Manufacturing output
+  category: Coincident activity
+  subcategory: Other activity (predictor-only)
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_OUTPUT
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: Overlaps ACT_IP; keep only if feature selection justifies.
+- id: ACT_CONSTR
+  name: Construction output
+  category: Coincident activity
+  subcategory: Other activity (predictor-only)
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: §25 lists construction; monthly vs quarterly availability PENDING.
+- id: ACT_INVENT
+  name: Inventories (change in inventories)
+  category: Coincident activity
+  subcategory: Other activity (predictor-only)
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  notes: §25 lists inventories.
+- id: ACT_GDPPC
+  name: Real GDP per capita (derived)
+  category: Coincident activity
+  subcategory: Other activity (predictor-only)
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: DERIVED
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_OUTPUT
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived from ACT_GDP_REAL / ACT_POP
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  notes: Derived feature; Pipeline B copy of GDP only. Needs ACT_POP.
+- id: ACT_POP
+  name: Population (support input)
+  category: Coincident activity
+  subcategory: Support input
+  intended_role: SUPPORT_INPUT
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: support
+  lag_class: ANNUAL
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: null
+  ablation_tier2: null
+  proposal_ref: §25
+  variants:
+  - freq: A
+    tag: STD
+    description: Annual; interpolation rule PENDING
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: ANNUAL
+    kind: flow
+  notes: Annual; carried forward with a 1-year lag (decision Q-31).
+- id: LAB_UNEMP
+  name: Unemployment rate
+  category: Labor market and wages
+  subcategory: Labour market
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: 'Decision Q-01: not in the §11 core eight (§11, §12, §19 count eight series); §14''s unemployment
+    rule is an illustration, so unemployment is predictor-only.'
+  form: rate
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: POSITIVE
+  sign_4q: AMBIGUOUS
+  priority: P1
+  redundancy_group: RG_LABOUR_RATE
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25, §14
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly (quarterly where only quarterly)
+    applies_to: ALL
+    us_fred_id: UNRATE
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'If §11 is later amended to include it, the Pipeline-A copy would use a first difference with sign flipped (§14)
+    and Pipeline B would stay separate. India: PLFS discontinuities (Q-09).'
+- id: LAB_CLAIMS
+  name: Initial unemployment claims / inflow
+  category: Labor market and wages
+  subcategory: Labour market
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: POSITIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: W
+    tag: STD
+    description: Weekly (US-only)
+    applies_to:
+    - USA
+    us_fred_id: ICSA
+    lag_class: MONTHLY
+    kind: flow
+  notes: Weekly data placed in the 6-week monthly class (decision Q-20). No harmonised non-US equivalent assumed.
+- id: LAB_PART
+  name: Labour force participation rate
+  category: Labor market and wages
+  subcategory: Labour market
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: US candidate CIVPART recalled; left to verification pass.
+- id: LAB_VAC
+  name: Job vacancies / openings
+  category: Labor market and wages
+  subcategory: Labour market
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25 'vacancies where available'
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly where available
+    applies_to: &id001
+    - USA
+    - JPN
+    - IND
+    - GBR
+    - FRA
+    - ITA
+    - CAN
+    - DEU
+    us_fred_id: JTSJOL
+    lag_class: MONTHLY
+    kind: flow
+  notes: Coverage expected uneven; no harmonised OECD->BIS series assumed.
+- id: LAB_WAGE
+  name: Wages / compensation per employee
+  category: Labor market and wages
+  subcategory: Wages
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_WAGE
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: NA
+    description: National accounts compensation per employee
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  - freq: M
+    tag: US
+    description: US average hourly earnings, total private (US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: CES0500000003
+    lag_class: NA
+    kind: flow
+  notes: 'Late-cycle wage acceleration vs recession weakness: sign not pre-specified.'
+- id: LAB_ULC
+  name: Unit labour costs
+  category: Labor market and wages
+  subcategory: Wages
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_WAGE
+  ablation_tier1: B
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  notes: US candidate ULCNFB (nonfarm business) is a narrower concept; left PENDING.
+- id: INC_SAVRATE
+  name: Household saving rate
+  category: Income and prices
+  subcategory: Household income and saving
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: C
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: NA
+    description: National accounts
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA
+    kind: flow
+  - freq: M
+    tag: US
+    description: US monthly personal saving rate (US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: PSAVERT
+    lag_class: NA
+    kind: flow
+  notes: null
+- id: PRC_CPI
+  name: Consumer price index (all items)
+  category: Income and prices
+  subcategory: Prices
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_CPI
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly
+    applies_to: ALL
+    us_fred_id: CPIAUCSL
+    lag_class: MONTHLY
+    kind: flow
+  notes: Also the deflator candidate for retail/house-price/equity real conversions (Q-24). Ablation entry for prices needs
+    confirmation (Q-21).
+- id: PRC_CPI_CORE
+  name: Core CPI (ex food and energy)
+  category: Income and prices
+  subcategory: Prices
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_CPI
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: CPILFESL
+    lag_class: MONTHLY
+    kind: flow
+  notes: null
+- id: PRC_PPI
+  name: Producer prices
+  category: Income and prices
+  subcategory: Prices
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_PPI
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: PPIACO
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'India: WPI (legacy) vs new Output PPI (reported base 2022-23): continuity PENDING (Q-08).'
+- id: PRC_DEFL
+  name: GDP deflator
+  category: Income and prices
+  subcategory: Prices
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: NA
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: GDPDEF
+    lag_class: NA
+    kind: flow
+  notes: null
+- id: FIN_POLICY
+  name: Central-bank policy rate
+  category: Credit and financial conditions
+  subcategory: Interest rates and yield curve
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_SHORT_RATE
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly average
+    applies_to: ALL
+    us_fred_id: FEDFUNDS
+    lag_class: MARKET
+    kind: market
+  notes: US series recalled is the effective federal funds rate, not the target.
+- id: FIN_SHORT
+  name: Short-term interest rate (3-month)
+  category: Credit and financial conditions
+  subcategory: Interest rates and yield curve
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_SHORT_RATE
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25, §32
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: TB3MS
+    lag_class: MARKET
+    kind: market
+  notes: 'Input to Baseline 2 term spread (§32): required for every modelled country.'
+- id: FIN_LONG
+  name: Long-term government bond yield (10-year)
+  category: Credit and financial conditions
+  subcategory: Interest rates and yield curve
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P1
+  redundancy_group: RG_LONG_RATE
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25, §32
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: GS10
+    lag_class: MARKET
+    kind: market
+  notes: Input to Baseline 2 (§32). India/China bond-market depth is a caveat (matrix P15).
+- id: FIN_SLOPE
+  name: Term spread (10Y minus 3M), derived
+  category: Credit and financial conditions
+  subcategory: Interest rates and yield curve
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: spread
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P1
+  redundancy_group: RG_SLOPE
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25, §26, §32
+  variants:
+  - freq: M
+    tag: DERIVED
+    description: Derived monthly spread
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: Derived from FIN_LONG and FIN_SHORT after each is collected; required for Baseline 2 reported country by country
+    (§32). FRED also hosts a published 10Y-3M spread (unverified).
+- id: FIN_CREDIT_GDP
+  name: Private non-financial credit / GDP
+  category: Credit and financial conditions
+  subcategory: Credit
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_CREDIT
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: BIS total credit dataset
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: Native producer BIS; chain order per §7 is OECD->BIS for Tier 2/broad.
+- id: FIN_CREDIT_GAP
+  name: Credit-to-GDP gap
+  category: Credit and financial conditions
+  subcategory: Credit
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_CREDIT
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: Confirm the gap is computed one-sided (no look-ahead) before use (Q-16).
+- id: FIN_BANKCREDIT
+  name: Bank credit to private non-financial sector
+  category: Credit and financial conditions
+  subcategory: Credit
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: RG_CREDIT
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: 'India: RBI bank-credit series is the proposal''s first source for India (§7).'
+- id: FIN_HHCREDIT
+  name: Household credit (incl. mortgage)
+  category: Credit and financial conditions
+  subcategory: Credit
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: RG_CREDIT
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25 'mortgage credit where available'
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: null
+- id: FIN_DSR
+  name: Debt service ratio (private non-financial)
+  category: Credit and financial conditions
+  subcategory: Credit
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: RG_CREDIT
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: Country coverage PENDING; expected narrower than credit/GDP (not verified).
+- id: FIN_HOUSEPRICE
+  name: Real residential property prices
+  category: Credit and financial conditions
+  subcategory: Housing
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_HOUSING
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25, matrix D-08
+  variants:
+  - freq: Q
+    tag: OECD_BIS
+    description: OECD/BIS harmonised real house price index
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  - freq: M
+    tag: US_CS
+    description: US Case-Shiller national (nominal; US-only variant)
+    applies_to:
+    - USA
+    us_fred_id: CSUSHPISA
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: Harmonised OECD/BIS vs national series (US) decided in Q-26. Real conversion needs a deflator (Q-24).
+- id: FIN_HOUSING_START
+  name: Housing starts / building permits
+  category: Credit and financial conditions
+  subcategory: Housing
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: *id001
+    us_fred_id: HOUST
+    lag_class: MONTHLY
+    kind: flow
+  notes: Series name differs by country; construction sits in activity group A in §25.
+- id: FIN_EQUITY
+  name: Share price index (broad)
+  category: Credit and financial conditions
+  subcategory: Equity markets
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P1
+  redundancy_group: RG_EQUITY
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: 'US via FRED: long-history S&P index availability unverified; use OECD mirror per chain (Q-27). Equity volatility
+    is built as a rolling statistic (§26).'
+- id: FIN_MCAP_GDP
+  name: Equity market capitalisation / GDP
+  category: Credit and financial conditions
+  subcategory: Equity markets
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: ANNUAL
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25, §65
+  variants:
+  - freq: A
+    tag: STD
+    description: Mostly annual; quarterly construction PENDING
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: ANNUAL
+    kind: flow
+  notes: '§65 adds this as a candidate series (Ishii 2025, Japan). Kept at P2: a P1 predictor must carry a committed sign
+    for the §62 check and none can be justified here.'
+- id: FIN_CREDITSPREAD
+  name: Corporate credit spread
+  category: Credit and financial conditions
+  subcategory: Financial conditions
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: spread
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to:
+    - USA
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: 'Only US considered. Decision Q-17: FRED-hosted spread series are in scope (IDs pending); the Excess Bond Premium
+    (P3) is hosted by the Fed Board, outside the chain, and is excluded.'
+- id: FIN_FCI
+  name: Financial conditions / stress index
+  category: Credit and financial conditions
+  subcategory: Financial conditions
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25 'financial-stress indicators'
+  variants:
+  - freq: W
+    tag: STD
+    description: Weekly (US-only)
+    applies_to:
+    - USA
+    us_fred_id: NFCI
+    lag_class: MARKET
+    kind: market
+  notes: Non-US equivalents not assumed; US index also serves as a global factor (GLB_US_FCI).
+- id: FIN_M2
+  name: Broad money
+  category: Credit and financial conditions
+  subcategory: Money
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: D
+  ablation_tier2: II
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: M2SL
+    lag_class: MONTHLY
+    kind: flow
+  notes: null
+- id: EXT_EXPORTS
+  name: Real exports
+  category: External trade, exchange rates and commodities
+  subcategory: Trade
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: NA
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: EXPGSC1
+    lag_class: NA
+    kind: flow
+  notes: null
+- id: EXT_IMPORTS
+  name: Real imports
+  category: External trade, exchange rates and commodities
+  subcategory: Trade
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: NA
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: NA
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: IMPGSC1
+    lag_class: NA
+    kind: flow
+  notes: null
+- id: EXT_CA
+  name: Current account / trade balance (% GDP)
+  category: External trade, exchange rates and commodities
+  subcategory: Trade
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: ratio
+  lag_class: NA_ASSUMED
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'trade balance'
+  variants:
+  - freq: Q
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: NA_ASSUMED
+    kind: flow
+  notes: null
+- id: EXT_REER
+  name: Real effective exchange rate
+  category: External trade, exchange rates and commodities
+  subcategory: Exchange rates
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MONTHLY
+  kind: market
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_FX
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: BIS monthly REER
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: market
+  notes: 'Lag: CPI-based index placed in the 6-week monthly class (decision Q-20). Demoted to P2: its sign differs between
+    advanced and emerging economies, so no sign can be pre-committed for the §62 check.'
+- id: EXT_FX_USD
+  name: Exchange rate vs US dollar
+  category: External trade, exchange rates and commodities
+  subcategory: Exchange rates
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: RG_FX
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: Not applicable to USA (numeraire).
+- id: EXT_RESERVES
+  name: Foreign-exchange reserves
+  category: External trade, exchange rates and commodities
+  subcategory: External balance
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: Relevant mainly for India/China-type economies; low priority for the rest.
+- id: SEN_CCI
+  name: Consumer confidence
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P1
+  redundancy_group: RG_CONF
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly
+    applies_to: ALL
+    us_fred_id: UMCSENT
+    lag_class: SURVEY
+    kind: flow
+  notes: US recalled series is University of Michigan sentiment (licensing check, Q-23); OECD CCI is the harmonised alternative.
+- id: SEN_BCI
+  name: Business confidence
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P1
+  redundancy_group: RG_CONF
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: null
+- id: SEN_CAPUTIL
+  name: Capacity utilisation
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25 (listed under economic activity)
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: *id001
+    us_fred_id: TCU
+    lag_class: SURVEY
+    kind: flow
+  notes: Category here is 'Expectations and business sentiment' by survey nature; the proposal groups it with activity (ablation
+    level A).
+- id: SEN_ORDERS
+  name: New / unfilled orders, order books
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: A
+  ablation_tier2: I
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: *id001
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: Source pending; may be survey- or shipments-based.
+- id: SEN_PMI
+  name: Manufacturing PMI
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to:
+    - USA
+    - JPN
+    - IND
+    - GBR
+    - FRA
+    - ITA
+    - CAN
+    - DEU
+    - CHN
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: 'Decision Q-17: PMI is conditional: kept only where a §7 source hosts it (China: NBS-compiled PMI is the in-chain
+    candidate); otherwise excluded after the verification pass.'
+- id: SEN_INFLEXP
+  name: Inflation expectations
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25 'survey expectations'
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: *id001
+    us_fred_id: MICH
+    lag_class: SURVEY
+    kind: flow
+  notes: US recalled series is University of Michigan (licensing).
+- id: SEN_EPU
+  name: Economic policy uncertainty
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: MARKET
+  kind: flow
+  sign_1q_2q: POSITIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to:
+    - USA
+    - JPN
+    - IND
+    - GBR
+    - FRA
+    - ITA
+    - CAN
+    - DEU
+    - CHN
+    us_fred_id: null
+    lag_class: MARKET
+    kind: flow
+  notes: 'Decision Q-17: USA only (FRED-hosted index, availability to verify); non-US excluded because no §7 source hosts
+    it.'
+- id: SEN_NAT_BUS
+  name: National business-conditions survey headline
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: Quarterly national survey
+    applies_to:
+    - JPN
+    - IND
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: Survey names are recalled, not verified; Tankan is BOJ-hosted (in the Japan chain).
+- id: SEN_NAT_CONS
+  name: National consumer-confidence survey headline
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: E
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: STD
+    description: National survey; frequency PENDING
+    applies_to:
+    - JPN
+    - IND
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: null
+- id: SEN_CLI
+  name: OECD composite leading indicator
+  category: Expectations and business sentiment
+  subcategory: Surveys
+  intended_role: COMPARATOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: survey
+  lag_class: SURVEY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: null
+  ablation_tier2: null
+  proposal_ref: §63, §66
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly
+    applies_to: ALL
+    us_fred_id: null
+    lag_class: SURVEY
+    kind: flow
+  notes: Never a label input and not a model feature; compared against model output only (§63).
+- id: COM_OIL
+  name: Brent crude oil price
+  category: External trade, exchange rates and commodities
+  subcategory: Commodities
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P1
+  redundancy_group: RG_OIL
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly average
+    applies_to: GLOBAL
+    us_fred_id: MCOILBRENTEU
+    lag_class: MARKET
+    kind: market
+  notes: 'Global series; hierarchy for non-country series is not defined in §7 (Q-18). Exporter countries (CAN, NOR, MEX...)
+    may have the opposite sign: test by country.'
+- id: COM_ENERGY
+  name: Energy price index
+  category: External trade, exchange rates and commodities
+  subcategory: Commodities
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: RG_OIL
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: null
+- id: COM_NONFUEL
+  name: Non-fuel commodity price index
+  category: External trade, exchange rates and commodities
+  subcategory: Commodities
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'global commodity shocks'
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: null
+- id: COM_FOOD
+  name: Food price index
+  category: External trade, exchange rates and commodities
+  subcategory: Commodities
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: price
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: AMBIGUOUS
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Default variant
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: Mainly relevant to India-type inflation dynamics.
+- id: GLB_VIX
+  name: Equity implied volatility (VIX)
+  category: Global economic indicators
+  subcategory: Global risk
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: RG_VOL
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'equity volatility'
+  variants:
+  - freq: D
+    tag: STD
+    description: Daily
+    applies_to: GLOBAL
+    us_fred_id: VIXCLS
+    lag_class: MARKET
+    kind: market
+  notes: 'Global justification: global risk appetite affects all open economies. Licensing: CBOE (Q-23).'
+- id: GLB_WORLD_IP
+  name: Global industrial production
+  category: Global economic indicators
+  subcategory: Global activity
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly; IMF supplement only
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'Decision Q-18: conditional IMF supplement; the primary global-IP feature is the panel-derived GLB_PANEL_IP.'
+- id: GLB_WORLD_TRADE
+  name: Global trade volume
+  category: Global economic indicators
+  subcategory: Global activity
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: MONTHLY
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: M
+    tag: STD
+    description: Monthly; IMF supplement only
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MONTHLY
+    kind: flow
+  notes: 'Decision Q-18: conditional IMF supplement; excluded if IFS does not carry it.'
+- id: GLB_PANEL_IP
+  name: Global industrial production (panel-derived)
+  category: Global economic indicators
+  subcategory: Global activity
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: DERIVED
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'global industrial production', §29, §53
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived from panel ACT_IP rows
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: DERIVED
+    kind: flow
+  notes: 'Decision Q-18: satisfies the §25 global-IP requirement without an outside producer. Weights PENDING (equal or GDP-based;
+    fixed before modelling).'
+- id: GLB_US_FCI
+  name: US financial conditions (global factor)
+  category: Global economic indicators
+  subcategory: Global financial
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: rate
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: POSITIVE
+  sign_4q: POSITIVE
+  priority: P2
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'US financial conditions'
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived link to FIN_FCI (USA)
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: null
+- id: GLB_US_SLOPE
+  name: US term spread (global factor)
+  category: Global economic indicators
+  subcategory: Global financial
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: spread
+  lag_class: MARKET
+  kind: market
+  sign_1q_2q: NEGATIVE
+  sign_4q: NEGATIVE
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived link to FIN_SLOPE (USA)
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: MARKET
+    kind: market
+  notes: Not named in §25; included as 'where justified' (P2).
+- id: GLB_CHINA_ACT
+  name: Chinese activity (global factor)
+  category: Global economic indicators
+  subcategory: Global activity
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: DERIVED
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'Chinese activity'
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived from CHN ACT_* rows
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: DERIVED
+    kind: flow
+  notes: null
+- id: GLB_PARTNER_ACT
+  name: Trading-partner activity (derived)
+  category: Global economic indicators
+  subcategory: Global activity
+  intended_role: PREDICTOR_ONLY
+  beai_eligible: N
+  beai_exclusion_reason: Not one of the eight §11 core coincident indicators; financial/leading/other series never enter BEAI
+    (§9, §11).
+  form: growth
+  lag_class: DERIVED
+  kind: flow
+  sign_1q_2q: NEGATIVE
+  sign_4q: AMBIGUOUS
+  priority: P3
+  redundancy_group: null
+  ablation_tier1: F
+  ablation_tier2: III
+  proposal_ref: §25 'major trading-partner activity'
+  variants:
+  - freq: Q
+    tag: DERIVED
+    description: Derived; needs bilateral trade weights
+    applies_to: GLOBAL
+    us_fred_id: null
+    lag_class: DERIVED
+    kind: flow
+  notes: Weights source PENDING; must be built from training countries only under LOCO (§29, §53).

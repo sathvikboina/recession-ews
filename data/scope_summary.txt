@@ -1,0 +1,12 @@
+catalogue rows          : 1883
+selected rows           : 68
+dropped                 : {'country_not_enabled': 1704, 'priority': 111}
+countries               : 4  {'USA': 25, 'JPN': 21, 'DEU': 21, 'GLOBAL': 1}
+priority                : {'P0': 30, 'P1': 38}
+batch                   : {'B01': 21, 'B04': 26, 'B02': 9, 'B05': 12}
+id_status               : {'ID_RECALLED_NOT_VERIFIED': 15, 'PENDING_VERIFICATION': 50, 'DERIVED': 3}
+beai_eligible = Y rows  : 30
+core indicators present : {'DEU': 8, 'JPN': 8, 'USA': 8}
+
+gate reminder: a country needs >=6 of the 8 core indicators at >=70% coverage
+of the target window before its BEAI label can be built (spec §19).

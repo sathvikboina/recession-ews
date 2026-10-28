@@ -1,0 +1,315 @@
+# GENERATED FILE - do not edit by hand.
+# Source: spec.py via scripts/export_spec.py.
+# Change spec.py, re-run the exporter, then commit the diff.
+version: 1
+n_countries: 40
+countries:
+- iso3: USA
+  name: United States
+  group: TIER1
+  chain_keys:
+  - FRED
+  - OECD
+  - BIS
+  source_chain:
+  - FRED (St. Louis Fed)
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: JPN
+  name: Japan
+  group: TIER1
+  chain_keys:
+  - BOJ_OFFICIAL
+  - OECD
+  - BIS
+  source_chain:
+  - BOJ / Japanese official statistics (BOJ, Cabinet Office-ESRI, METI, MIC, MHLW via e-Stat)
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: IND
+  name: India
+  group: TIER1
+  chain_keys:
+  - RBI
+  - MoSPI
+  - OECD
+  - BIS
+  source_chain:
+  - RBI Database on Indian Economy (DBIE)
+  - MoSPI (NSO India)
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: GBR
+  name: United Kingdom
+  group: TIER2
+  chain_keys: &id001
+  - OECD
+  - BIS
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: FRA
+  name: France
+  group: TIER2
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: ITA
+  name: Italy
+  group: TIER2
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CAN
+  name: Canada
+  group: TIER2
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: DEU
+  name: Germany
+  group: TIER2
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: AUS
+  name: Australia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: AUT
+  name: Austria
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: BEL
+  name: Belgium
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CHL
+  name: Chile
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: COL
+  name: Colombia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CRI
+  name: Costa Rica
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CZE
+  name: Czechia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: DNK
+  name: Denmark
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: EST
+  name: Estonia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: FIN
+  name: Finland
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: GRC
+  name: Greece
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: HUN
+  name: Hungary
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: ISL
+  name: Iceland
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: IRL
+  name: Ireland
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: ISR
+  name: Israel
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: KOR
+  name: Korea
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: LVA
+  name: Latvia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: LTU
+  name: Lithuania
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: LUX
+  name: Luxembourg
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: MEX
+  name: Mexico
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: NLD
+  name: Netherlands
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: NZL
+  name: New Zealand
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: NOR
+  name: Norway
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: POL
+  name: Poland
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: PRT
+  name: Portugal
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: SVK
+  name: Slovak Republic
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: SVN
+  name: Slovenia
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: ESP
+  name: Spain
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: SWE
+  name: Sweden
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CHE
+  name: Switzerland
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: TUR
+  name: Turkiye
+  group: BROAD_OECD
+  chain_keys: *id001
+  source_chain:
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: CHN
+  name: China
+  group: CHINA
+  chain_keys:
+  - NBS
+  - OECD
+  - BIS
+  source_chain:
+  - NBS China
+  - OECD (Data Explorer / SDMX API)
+  - BIS (Data Portal)
+- iso3: GLOBAL
+  name: Global / panel-level
+  group: GLOBAL
+  chain_keys:
+  - FRED
+  - IMF
+  source_chain:
+  - FRED (USA chain assumed; Q-18)
+  - IMF/World Bank supplement

@@ -1,0 +1,43 @@
+field,value,meaning
+beai_eligible,Y,One of the eight §11 indicators
+beai_eligible,N,Never a BEAI input
+intended_role,LABEL_AND_PREDICTOR_SEPARATE,Label (A) and predictor (B) copies built separately
+intended_role,PREDICTOR_ONLY,Pipeline B only
+intended_role,SUPPORT_INPUT,Denominator only
+intended_role,COMPARATOR_ONLY,Compared with model output only (§63)
+priority_class,P0,Label construction inputs
+priority_class,P1,Core predictors
+priority_class,P2,Supplementary
+priority_class,P3,Optional
+inclusion_status,CANDIDATE_CORE,P0/P1 candidate
+inclusion_status,CANDIDATE_SUPPLEMENTARY,P2 candidate
+inclusion_status,CANDIDATE_OPTIONAL,P3 candidate
+inclusion_status,CANDIDATE_CONDITIONAL,"Kept only if a §7 source hosts it (Q-17, Q-18)"
+inclusion_status,EXCLUDED_BY_DECISION,Excluded by a logged decision
+inclusion_status,NOT_APPLICABLE,Structurally n/a
+inclusion_status,COMPARATOR_ONLY,Not a feature
+inclusion_status,SUPPORT_INPUT,Input only
+inclusion_status,INCLUDED_AFTER_AUDIT,Post-audit decision (future)
+inclusion_status,EXCLUDED_AFTER_AUDIT,Post-audit decision (future)
+expected_sign,POSITIVE,Higher/rising value raises recession risk
+expected_sign,NEGATIVE,Higher/rising value lowers recession risk
+expected_sign,AMBIGUOUS,No pre-registered direction
+decision_status,DECIDED,Settled by a plan-aligned decision
+decision_status,DECIDED_PENDING_VERIFICATION,Decision taken; a fact still needs verifying
+decision_status,OPEN_ACTION,Action not yet done
+deviation_type,NONE,Follows the plan
+deviation_type,INTERPRETATION,Plan ambiguous; one reading chosen
+deviation_type,EXTENSION,Plan silent; rule added
+id_status,ID_RECALLED_NOT_VERIFIED,"Recalled US FRED ID, unchecked"
+id_status,PENDING_VERIFICATION,Unknown
+null tokens,PENDING_VERIFICATION,Fact not yet verified (never a guess)
+null tokens,NOT_APPLICABLE,Field does not apply
+null tokens,NOT_YET_RETRIEVED,Phase 3 not run
+frequency,D|W|M|Q|A,"Daily, weekly, monthly, quarterly, annual"
+category,Coincident activity,One of the seven categories in the brief
+category,Labor market and wages,One of the seven categories in the brief
+category,Income and prices,One of the seven categories in the brief
+category,Credit and financial conditions,One of the seven categories in the brief
+category,"External trade, exchange rates and commodities",One of the seven categories in the brief
+category,Expectations and business sentiment,One of the seven categories in the brief
+category,Global economic indicators,One of the seven categories in the brief

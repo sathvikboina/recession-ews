@@ -1,0 +1,12 @@
+batch,scope,rationale,gate
+B01,"Tier 1 (USA, JPN, IND) x P0",Label inputs for the three case studies; decides BEAI feasibility (§19),None
+B02,Tier 2 x P0,Label inputs for the five deep-dive countries,None
+B03,Broader OECD + China x P0,Coverage audit: which countries pass §19 (>=6/8 core at >=70% coverage) before predictors are collected,Gate for B06/B09
+B04,Tier 1 x P1 + GLOBAL P1,Core predictors incl. Baseline 2 inputs (§32),After B01
+B05,Tier 2 x P1,Core predictors,After B02
+B06,Broader panel x P1,Core predictors for countries passing the B03 gate only,B03 pass
+B07,Tier 1 x P2 + GLOBAL P2,Supplementary predictors for full ablation (§55 Track 1),After B04
+B08,Tier 2 x P2,Supplementary predictors,After B05
+B09,Broader panel x P2,"Supplementary predictors, gated",B03 pass
+B10,All x P3,"Optional, comparators and low-support series",Time permitting
+NOT_COLLECTED,EXCLUDED_BY_DECISION / NOT_APPLICABLE,Excluded by a logged decision or structurally not applicable,See exclusion_reason
