@@ -1,0 +1,93 @@
+{
+  "label_version": "labels-v1",
+  "country": "USA",
+  "created": "2026-10-29",
+  "window": {
+    "start": "1990Q1",
+    "end": "2025Q4",
+    "quarters": 144
+  },
+  "inputs": {
+    "series": [
+      "ACT_GDP_REAL",
+      "ACT_IP",
+      "ACT_EMP",
+      "ACT_HOURS",
+      "ACT_RINC",
+      "ACT_CONS",
+      "ACT_RETAIL",
+      "ACT_INV"
+    ],
+    "coverage_window": {
+      "ACT_GDP_REAL": 144,
+      "ACT_IP": 144,
+      "ACT_EMP": 144,
+      "ACT_HOURS": 144,
+      "ACT_RINC": 144,
+      "ACT_CONS": 144,
+      "ACT_RETAIL": 134,
+      "ACT_INV": 144
+    },
+    "source": "FRED, revised historical data (not real-time vintages)",
+    "growth_file_sha256": "0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d"
+  },
+  "method": {
+    "estimator": "dfm",
+    "converged": true,
+    "loglik": -1830.8784471689123,
+    "factor_notes": "factor sign flipped to align with activity",
+    "params": {
+      "min_phase": 2,
+      "min_cycle": 5,
+      "censor": 2,
+      "diffusion_gate": 0.5
+    },
+    "loadings": {
+      "ACT_GDP_REAL": 0.3923,
+      "ACT_IP": 0.383,
+      "ACT_EMP": 0.3791,
+      "ACT_HOURS": 0.3948,
+      "ACT_RINC": 0.3158,
+      "ACT_CONS": 0.364,
+      "ACT_RETAIL": 0.2698,
+      "ACT_INV": 0.3082
+    }
+  },
+  "episodes": {
+    "candidates_in_window": 4,
+    "kept": 4,
+    "dates": [
+      {
+        "peak": "1990Q2",
+        "trough": "1991Q1",
+        "duration": 3,
+        "depth_sd": 1.678572,
+        "diffusion": 0.857143
+      },
+      {
+        "peak": "2001Q1",
+        "trough": "2001Q4",
+        "duration": 3,
+        "depth_sd": 0.914665,
+        "diffusion": 0.666667
+      },
+      {
+        "peak": "2007Q4",
+        "trough": "2009Q3",
+        "duration": 7,
+        "depth_sd": 6.740581,
+        "diffusion": 0.839286
+      },
+      {
+        "peak": "2019Q4",
+        "trough": "2020Q2",
+        "duration": 2,
+        "depth_sd": 10.678562,
+        "diffusion": 0.875
+      }
+    ]
+  },
+  "hashes": {
+    "labels_csv_sha256": "1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a"
+  }
+}

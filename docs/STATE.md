@@ -4,19 +4,32 @@ Last updated: **2026-10-29**. One page of truth for the next session.
 
 ## Where we are
 
-Phase 2 (dictionary + design) is complete. The build scaffolding is in place and validated.
-**No data has been collected and no model code exists yet.**
+The USA milestone is complete: FRED verified, the eight core indicators harmonised, the
+BEAI label built and validated against NBER, and the label frozen. **No feature or model
+pipeline exists yet.** Other countries have not been collected.
 
 | Item | Value |
 |---|---|
-| Countries enabled | USA, JPN, DEU (+ GLOBAL predictors) |
-| Indicators in scope | 21 (P0: 8 core, P1: 13 predictors) |
-| Series shortlist | 68 rows (30 BEAI-eligible; 65 download, 3 derived) |
+| Countries with data | USA (JPN, DEU still `PENDING_VERIFICATION`) |
+| FRED series verified | 22 (1 rejected for history, 2 derived) |
+| Series shortlist | 68 rows; USA 25/25 resolved |
 | Window / horizons | 1990Q1–2025Q4 / 1Q, 2Q, 4Q (2Q primary) |
-| Verified series | **0 of 68** |
-| Label version | none yet |
-| Config check | `make check` → 26 ok, 10 warnings (missing model deps), 0 failures |
-| Tests | 12 passing (config + scope) |
+| Label version | **labels-v1**, frozen |
+| NBER validation | 4/4 episodes, 0 false, accuracy 0.986, recall 1.000 |
+| Tests | 21 passing |
+| Config check | `make check` → 26 ok, 10 warnings (model deps), 0 failures |
+
+## Label result
+
+| NBER peak–trough | label peak–trough | peak diff | trough diff | diffusion |
+|---|---|---:|---:|---:|
+| 1990Q3–1991Q1 | 1990Q2–1991Q1 | −1 | 0 | 0.857 |
+| 2001Q1–2001Q4 | 2001Q1–2001Q4 | 0 | 0 | 0.667 |
+| 2007Q4–2009Q2 | 2007Q4–2009Q3 | 0 | +1 | 0.839 |
+| 2019Q4–2020Q2 | 2019Q4–2020Q2 | 0 | 0 | 0.875 |
+
+Quarter-level: 13 TP, 2 FP, 0 FN, 129 TN → precision 0.867, recall 1.000, F1 0.929.
+Full narrative and falsification checks: `docs/LABEL_VALIDATION.md`.
 
 ## Fingerprints (2026-10-29)
 
@@ -25,55 +38,57 @@ Phase 2 (dictionary + design) is complete. The build scaffolding is in place and
 f0d72b84e5e257bd7a4e13a699dfab135141dc6cf23ae456afd20fd6c223c5fd  config/indicators.yaml
 13651bc11e8f55f436aa44b6d01e24f17130d99e01789a9947a466cbbddd477e  config/countries.yaml
 a6983a62b99532010ec88e642b79203df05f694f34eefc7d227b76aafcbf7e9c  config/sources.yaml
-b10bff4dc6bd01d36bfc4da565647f0afe9005ddcc2b1311674f5e50b5244f6a  data/scope.csv
-e6a5ca4c7c8e270a3862684f3cfaaa989fb58d132771cb01b1c97cf1cba8bc90  data/scope_coverage.csv
+f0dbaa5889e704fb953e29db8538502d1b800a858d268ad9d9d5a29d092bb42e  data/scope.csv
+d6559f657e58927cdd5126c12162b9ab6b3941c0f629b94cdeb63fc8a6350cea  data/series_resolution.csv
+753b2863ce8be0eb4cc1236b5fba3f0bfc6409c32b7d7f1b93e7fe5baa83b943  data/manifest.csv
+1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a  outputs/labels/USA_labels.csv
+0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d  data/clean/USA_growth.parquet
 ```
 
-If a hash changes, re-run `make check test` before trusting any downstream result.
+If a hash changes, re-run `make pipeline test` before trusting any downstream result.
 
 ## Done in this session
 
-- Fixed `build.py`: portable paths, `EWS_OUT` output root (default `build/`), removed a
-  non-existent width key, rewrote the V-16 verification note.
-- Rewrote `README.md` for the real (flat) repository layout and current status.
-- Added the build skeleton: `config/`, `src/ews/`, `scripts/`, `tests/`, `docs/`, `outputs/`.
-- Added `pyproject.toml`, `Makefile`, `.gitignore`, `src/ews/__init__.py`.
-- `scripts/export_spec.py` → deterministic `config/indicators.yaml`, `countries.yaml`, `sources.yaml`.
-- `scripts/scope_catalog.py` → `data/scope.csv` (68 rows) + `data/scope_coverage.csv` + summary.
-- `scripts/00_env.py` → 26 assertions incl. firewall and key-format checks.
-- `tests/test_config.py`, `tests/test_scope.py` → 12 tests, runnable with or without pytest.
-- `docs/BUILD_CONTRACT.md` (rules C-01…C-12), `docs/DECISIONS.md` (D-R01…D-R21),
-  `docs/VERIFICATION.md` (scoped pass + progress table).
-- Marked `spec.py` as documentation-only; runtime reads `config/*.yaml`.
-- Initialised git history with one baseline commit (Phase 2 deliverable + build scaffold).
+- `scripts/fetch_fred.py`: curl-based verification + download, 24 series, metadata
+  (title/units/frequency/SA), coverage over the window, SHA-256 manifest, resolution table.
+- `scripts/harmonize.py`: monthly/daily → quarterly mean with complete-quarter rule, Δlog,
+  sign alignment, 1960–2025 estimation sample + 1990–2025 reporting window, no imputation.
+- `src/ews/labels/{dfm,bbq,diffusion,build}.py`: corrected factor scaling, smoothed factor,
+  BBQ with min phase/cycle and endpoint censoring, diffusion gate.
+- `scripts/03_labels.py`, `scripts/04_compare_nber.py`: frozen label + NBER report.
+- `tests/test_labels.py`: 9 invariants (BBQ, flag semantics, diffusion, frozen file, no NBER).
+- Docs: `LABEL_VALIDATION.md`, rewritten `VERIFICATION.md`, D-R22…D-R25 in `DECISIONS.md`,
+  C-02 implementation notes in `BUILD_CONTRACT.md`.
+- Data fixes found during validation: income → `W875RX1`; investment → `GPDIC1`;
+  `PNFIC1`/`PCEC96`/`WILL5000IND` rejected with reasons.
 
 ## Next five actions
 
-1. **Verify FRED rows** (25). Use the API metadata endpoint; write results into
-   `docs/VERIFICATION.md` and the manifest. Acceptance: 25/25 have ID, frequency,
-   start, end, units, SA status or a recorded reason for failure.
-2. **Resolve OECD dataflows** for the 22 OECD rows. Cache one structure response per
-   family; stay under 60 requests/hour. Acceptance: each row has a dataflow + key
-   pattern or is marked unavailable.
-3. **Resolve BOJ series keys** for the 18 Japanese rows. Acceptance as above.
-4. **Write `fetch_fred.py` + manifest schema** (`series_key, source, source_id, url,
-   retrieved_at, sha256, n_rows, start, end, status`). Acceptance: `make fetch` is
-   idempotent and manifest rows equal scope rows.
-5. **Build the USA BEAI label** (DFM + BBQ + diffusion) and compare with NBER
-   1990, 2001, 2008 (and document 2020). This is the stop/go gate for the whole design.
+1. **JPN and DEU collection.** 42 rows. Resolve BOJ keys and OECD dataflows; same manifest
+   and verification contract. Acceptance: 21/21 rows per country with ID, frequency, SA,
+   coverage.
+2. **Run the label on JPN and DEU.** Compare with ESRI (Japan) and the German
+   Sachverständigenrat / OECD chronology. A country that does not reproduce its official
+   dates is a finding, not a bug.
+3. **Build the feature table** (`src/ews/features.py`): C-06 aggregation, C-07 transforms,
+   C-05 availability lags, predictors only (firewall C-01). Acceptance: one row per
+   country×quarter, no BEAI column, leakage test passes.
+4. **Walk-forward harness** (C-08): expanding window, threshold locked before test, PR-AUC
+   pooled across folds.
+5. **Widen scope to P0–P2** (O-4) only after JPN/DEU labels pass their own chronologies.
 
 ## Open decisions (block their step, not this one)
 
 | ID | Question | Default | Needed by |
 |---|---|---|---|
-| O-1 | Use pre-1990 history for long-series countries? | no | Step 6 (harmonise) |
-| O-2 | India fallback if §19 fails? | Label B only, reported | Step 8 (labels) |
-| O-3 | Threshold objective? | max F1 | Step 10 (harness) |
-| O-4 | Widen scope to P0–P2 (68 → 140 rows)? | P0–P1 first | Step 4 (verification) |
-| O-5 | COVID 2020 treatment + with/without evaluation? | keep, document, evaluate | Step 11 (experiments) |
+| O-1 | Report pre-1990 labels now that the estimator runs from 1960? | no, 1990–2025 | Step 6 |
+| O-2 | India fallback if §19 fails? | Label B only, reported | JPN/DEU/IND labels |
+| O-3 | Threshold objective? | max F1 | harness |
+| O-4 | Widen scope to P0–P2 (68 → 140 rows)? | after the label gate | collection |
+| O-5 | COVID 2020 treatment + with/without evaluation? | keep, document, evaluate | experiments |
 
 ## Session hand-off rule
 
-Start a session by reading **this file + `docs/BUILD_CONTRACT.md` only**. Do not re-read
-`spec.py`, `build.py` or `series_catalogue.csv`; they are large and already summarised here.
-When a rule changes, update the contract, bump the hash, and note it above.
+Start a session by reading **this file + `docs/BUILD_CONTRACT.md` + `docs/LABEL_VALIDATION.md`**.
+Do not re-read `spec.py`, `build.py` or `series_catalogue.csv`; they are large and already
+summarised here. When a rule changes, update the contract, bump the hash, and note it above.

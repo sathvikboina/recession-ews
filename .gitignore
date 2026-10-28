@@ -20,10 +20,17 @@ data/interim/*
 data/clean/*
 !data/clean/.gitkeep
 
-# Generated artefacts
-outputs/*
-!outputs/*/
-!outputs/*/.gitkeep
+# Generated artefacts. The validated label is frozen and committed on purpose.
+outputs/**
+!outputs/**/
+!outputs/**/.gitkeep
+!outputs/labels/USA_labels.csv
+!outputs/labels/USA_episodes.csv
+!outputs/labels/USA_turning_points.csv
+!outputs/labels/labels-v1.json
+!outputs/results/USA_vs_NBER.md
+!outputs/results/USA_episode_match.csv
+!outputs/results/USA_robustness.csv
 
 # OS
 .DS_Store

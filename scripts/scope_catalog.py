@@ -107,6 +107,28 @@ def main() -> int:
         )
     )
 
+    # Apply verified source resolutions (written by scripts/fetch_fred.py) so
+    # the shortlist carries real IDs and statuses instead of PENDING placeholders.
+    resolution_path = PROJECT / "data" / "series_resolution.csv"
+    resolution: dict[str, dict] = {}
+    if resolution_path.exists():
+        with resolution_path.open(newline="", encoding="utf-8") as fh:
+            resolution = {r["series_key"]: r for r in csv.DictReader(fh)}
+    STATUS_MAP = {
+        "VERIFIED": "VERIFIED",
+        "LOW_COVERAGE": "INSUFFICIENT_HISTORY",
+        "DERIVED_AFTER_INPUTS": "DERIVED",
+        "FAILED": "UNAVAILABLE",
+    }
+    for r in selected:
+        hit = resolution.get(r["series_key"])
+        if not hit:
+            continue
+        r["id_status"] = STATUS_MAP.get(hit["status"], hit["status"])
+        if hit["source"] == "FRED":
+            r["preferred_source"] = "FRED"
+        r["preferred_source_series_id"] = hit["source_id"]
+
     out_path = PROJECT / scope["paths"]["scope_out"]
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as fh:

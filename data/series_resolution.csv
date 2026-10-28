@@ -1,0 +1,27 @@
+series_key,source,source_id,status,native_freq,note
+USA.ACT_GDP_REAL.Q.NA,FRED,GDPC1,VERIFIED,Q,"real GDP, chain-volume, SA"
+USA.ACT_IP.M.STD,FRED,INDPRO,VERIFIED,M,industrial production index
+USA.ACT_EMP.Q.NA,FRED,PAYEMS,VERIFIED,M,quarterly mean of establishment payrolls
+USA.ACT_HOURS.Q.STD,FRED,HOANBS,VERIFIED,Q,nonfarm business hours of all persons
+USA.ACT_RINC.Q.STD,FRED,W875RX1,VERIFIED,M,real personal income ex transfer receipts (coincident measure; transfers make DPI counter-cyclical)
+USA.ACT_CONS.Q.NA,FRED,PCECC96,VERIFIED,Q,real personal consumption expenditures
+USA.ACT_RETAIL.M.STD,FRED,RRSFS,VERIFIED,M,real retail and food services sales
+USA.ACT_INV.Q.STD,FRED,GPDIC1,VERIFIED,Q,real gross private domestic investment (broad proxy)
+USA.ACT_CONS.M.US,FRED,PCEC96,LOW_COVERAGE,M,monthly real PCE; short history
+USA.ACT_EMP.M.ESTAB,FRED,PAYEMS,VERIFIED,M,"all employees, total nonfarm"
+USA.ACT_EMP.M.LFS,FRED,CE16OV,VERIFIED,M,"employment level, household survey"
+USA.ACT_RINC.M.US,FRED,DSPIC96,VERIFIED,M,real disposable personal income (monthly)
+USA.FIN_CREDIT_GDP.Q.STD,FRED,QUSPAM770A,VERIFIED,Q,"BIS total credit to private non-financial sector, % GDP"
+USA.FIN_EQUITY.M.STD,FRED,NASDAQCOM,VERIFIED,D,Nasdaq Composite (daily -> monthly)
+USA.FIN_HOUSEPRICE.M.US_CS,FRED,CSUSHPISA,VERIFIED,M,"Case-Shiller national, SA"
+USA.FIN_HOUSEPRICE.Q.OECD_BIS,FRED,USSTHPI,VERIFIED,Q,FHFA all-transactions HPI (substitute for OECD/BIS)
+USA.FIN_LONG.M.STD,FRED,GS10,VERIFIED,M,10-year Treasury constant maturity
+USA.FIN_POLICY.M.STD,FRED,FEDFUNDS,VERIFIED,M,effective federal funds rate
+USA.FIN_SHORT.M.STD,FRED,TB3MS,VERIFIED,M,"3-month Treasury bill, secondary market"
+USA.LAB_UNEMP.M.STD,FRED,UNRATE,VERIFIED,M,civilian unemployment rate
+USA.PRC_CPI.M.STD,FRED,CPIAUCSL,VERIFIED,M,"CPI all urban consumers, SA"
+USA.SEN_BCI.M.STD,FRED,BSCICP03USM665S,VERIFIED,M,OECD composite business confidence
+USA.SEN_CCI.M.STD,FRED,UMCSENT,VERIFIED,M,University of Michigan consumer sentiment
+USA.NBER.Q,FRED,USRECQ,VERIFIED,Q,"NBER recession indicator, quarterly"
+USA.FIN_CREDIT_GAP.Q.STD,DERIVED,USA.FIN_CREDIT_GDP.Q.STD,DERIVED_AFTER_INPUTS,Q,"one-sided HP filter, lambda=400000: BIS-style credit-to-GDP gap from QUSPAM770A"
+USA.FIN_SLOPE.M.DERIVED,DERIVED,USA.FIN_LONG.M.STD+USA.FIN_SHORT.M.STD,DERIVED_AFTER_INPUTS,M,GS10 - TB3MS: term spread

@@ -4,7 +4,7 @@ dropped                 : {'country_not_enabled': 1704, 'priority': 111}
 countries               : 4  {'USA': 25, 'JPN': 21, 'DEU': 21, 'GLOBAL': 1}
 priority                : {'P0': 30, 'P1': 38}
 batch                   : {'B01': 21, 'B04': 26, 'B02': 9, 'B05': 12}
-id_status               : {'ID_RECALLED_NOT_VERIFIED': 15, 'PENDING_VERIFICATION': 50, 'DERIVED': 3}
+id_status               : {'INSUFFICIENT_HISTORY': 1, 'VERIFIED': 22, 'DERIVED': 4, 'PENDING_VERIFICATION': 40, 'ID_RECALLED_NOT_VERIFIED': 1}
 beai_eligible = Y rows  : 30
 core indicators present : {'DEU': 8, 'JPN': 8, 'USA': 8}
 

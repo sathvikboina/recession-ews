@@ -30,6 +30,10 @@ named step · **OPEN** = not decided yet.
 | D-R19 | Threshold objective: max F1 vs recall-at-precision. | recommendation | OPEN (O-3) | Step 10 |
 | D-R20 | Scope P0–P1 (68 rows) first, widen to P0–P2 (140 rows) after the label gate. | recommendation | CONFIRM (O-4) | Step 4 |
 | D-R21 | COVID 2020 kept in the sample; BBQ treatment documented; with/without-2020 evaluation for Tier-1. | §6, §58 | CONFIRM (O-5) | Step 11 |
+| D-R22 | The DFM is estimated on 1960Q1–2025Q4; labels are reported for 1990Q1–2025Q4. Extending the estimation sample prevents the left endpoint from censoring the 1990Q3 peak. Study window unchanged. | implementation finding | FROZEN | labels |
+| D-R23 | US real household income in the label is `W875RX1` (real personal income excluding transfers), not `DPIC96`. Transfer receipts make disposable income counter-cyclical and distort a coincident factor. | §11 + Stock–Watson practice | FROZEN | labels |
+| D-R24 | The label uses the **smoothed** factor. Pipeline A is an ex-post chronology and applies no availability lag (C-05); the smoothed factor avoids revision noise in the dates. | §13, C-05 | FROZEN | labels |
+| D-R25 | The factor is converted to growth units with `scale = mean(σⱼ·|λⱼ|)`, using the estimated loadings. Not a tuning choice: without it the common component is overstated ~3× and BBQ dates long pseudo-recessions. | implementation finding | FROZEN | labels |
 
 ## Consequences to keep in mind
 
@@ -40,6 +44,14 @@ named step · **OPEN** = not decided yet.
   episodes; if 2020 fails the 2-quarter minimum phase, three remain. Extending US history
   to 1960 roughly doubles that.
 - **D-R04** is the reason India may not receive a primary label. That is a finding, not a bug.
+- **D-R22/D-R25** were discovered while building the US label. Both are reproducibility
+  fixes, not threshold tuning: they change the *estimator*, not the gate. Before the fix the
+  label missed 1990-91 and 2001 entirely; after it, all four NBER episodes are matched with
+  at most a one-quarter boundary shift (`outputs/results/USA_vs_NBER.md`).
+- **D-R23** changes which FRED series feeds `ACT_RINC.Q.STD`. The scope row and the manifest
+  record the substitution; the old `DPIC96` is still downloaded as the monthly predictor copy.
+- **O-1** is now half-answered: the *estimation* sample extends to 1960, but the *study*
+  window is still 1990–2025. Whether to report pre-1990 labels remains open.
 
 ## Verification items still pending (facts, not decisions)
 

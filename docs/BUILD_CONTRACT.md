@@ -34,14 +34,24 @@ Per country, independently (never pooled):
 3. Standardise within country (training-free at this stage; this is label construction on the final revised series).
 4. Estimate a **one-factor** dynamic factor model on the aligned `gᵢ,ₜ`, EM/Kalman for missing cells.
    `statsmodels.tsa.statespace.DynamicFactorMQ` is the reference implementation.
+   Use the **smoothed** factor: Pipeline A is ex-post and applies no availability lag (C-05).
 5. **Cumulate the factor to a level index** `Fₜ` (log-level). Turning points are dated on `Fₜ`,
    never on growth rates (§12–13).
+   The factor is identified with unit variance, so the common component of series `j` is
+   `σⱼ·|λⱼ|·fₜ`, not `σⱼ·fₜ`. Convert with `scale = mean(σⱼ·|λⱼ|)` before cumulating; using
+   `mean(σⱼ)` overstates the common component by roughly `1/|λ|` (about 3× in the US sample)
+   and manufactures long pseudo-recessions.
 6. Run BBQ on `Fₜ` with the frozen parameters below.
 7. Candidate peak→trough episodes are contractions.
 8. Compute episode diffusion `D̄ₑ` = mean over the episode of the share of available core
    indicators deteriorating. Keep the episode only if `D̄ₑ ≥ 0.50`.
 9. `Rₜ = 1` for quarters inside a surviving contraction, else 0.
 10. Depth is **reported**, not a gate. Flag episodes with depth < 0.10 SD for manual review.
+
+**Estimation sample vs reporting window.** The factor is estimated on the longest
+common sample available (US: 1960Q1–2025Q4) and dated turning points are reported for
+1990Q1–2025Q4 only. Estimating on the reporting window alone censors the 1990Q3 peak at
+the left endpoint. This changes the estimation sample, not the study window (D-R22).
 
 Frozen parameters:
 
@@ -52,6 +62,10 @@ Frozen parameters:
 | endpoint censoring | no turning point in last 2 quarters | §13 |
 | peak/trough symmetry | symmetric | §13 |
 | factor count | 1 | §12 |
+| factor estimator | DynamicFactorMQ, factor_orders=1, idiosyncratic_ar1=True | §12 |
+| factor smoother | smoothed (ex-post label) | C-05 |
+| estimation sample | 1960Q1–2025Q4 (USA) | D-R22 |
+| minimum data to date a quarter | 4 of 8 core indicators | §18 |
 | diffusion gate | 0.50 | §15 |
 | robustness diffusion | 0.60 (Tier-1 only, one re-run) | §15, §58 |
 | robustness min phase | 3 quarters (Tier-1 only) | §58 |

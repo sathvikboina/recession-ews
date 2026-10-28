@@ -2,8 +2,8 @@
 
 Machine-learning framework for predicting recession **onset** at 1, 2 and 4 quarters,
 with a leakage-controlled evaluation design. This repository currently contains the
-Phase 2 data dictionary, the runtime specification, and the build scaffolding. **No data
-has been downloaded and no model has been trained yet.**
+Phase 2 data dictionary, the runtime specification, the USA data, and a **validated,
+frozen recession label**. No feature table and no model have been built yet.
 
 Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 
@@ -13,8 +13,10 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 |---|---|
 | Phase 1 — literature matrix | done (`literature_matrix.xlsx`, v4) |
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
-| Phase 3 — scoped verification | **0 of 68 series verified** — next task |
-| Phase 4–8 — collect / harmonise / label / features / harness | not started |
+| Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 40 pending |
+| Phase 4 — collect + harmonise | USA done; JPN/DEU not started |
+| Phase 5 — BEAI label | **USA validated and frozen (`labels-v1`)** |
+| Phase 6–8 — features / harness / models | not started |
 | Phase 9+ — experiments, interpretation, dashboard | not started |
 
 ## Quickstart
@@ -26,13 +28,27 @@ pip install -e ".[dev]"
 
 make config      # regenerate config/*.yaml from spec.py
 make scope       # build the 68-row collection shortlist
+make fetch       # verify + download the FRED series (no API key needed)
+make pipeline    # harmonise -> label -> NBER validation
 make check       # environment + configuration gate
 make test        # test suite
 ```
 
-`make bootstrap` runs all four. Without a virtualenv, `python3 scripts/…` works for the
-config and scope scripts (they need only `pyyaml`); the modelling dependencies are
-required from Step 5 onward.
+`make bootstrap` runs config, scope, check and test. The pipeline scripts need pandas,
+statsmodels and pyarrow (installed by `pip install -e ".[dev]"`).
+
+## USA milestone result
+
+| NBER peak–trough | label peak–trough | peak diff | trough diff |
+|---|---|---:|---:|
+| 1990Q3–1991Q1 | 1990Q2–1991Q1 | −1 | 0 |
+| 2001Q1–2001Q4 | 2001Q1–2001Q4 | 0 | 0 |
+| 2007Q4–2009Q2 | 2007Q4–2009Q3 | 0 | +1 |
+| 2019Q4–2020Q2 | 2019Q4–2020Q2 | 0 | 0 |
+
+4/4 episodes matched, 0 false episodes, quarter accuracy 0.986, recall 1.000.
+Method, discrepancy discussion and falsification checks: `docs/LABEL_VALIDATION.md`.
+Rejected data variants and substitutions: `docs/VERIFICATION.md`.
 
 ## Layout
 
@@ -42,9 +58,10 @@ data/
   scope.csv        the 68 series this build will actually collect
   scope_coverage.csv  country x indicator availability view
   raw/ interim/ clean/   data stages (git-ignored)
-src/ews/           package: fetch, harmonize, labels, features, validation, models
-scripts/           00_env, export_spec, scope_catalog, (fetch/harmonize/labels next)
-tests/             config, scope, and (later) BBQ and leakage tests
+src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
+scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
+                   04_compare_nber
+tests/             config, scope, label invariants (BBQ, flag, diffusion, frozen file)
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md
 outputs/           labels, folds, results, figures, runs
 ```
@@ -100,6 +117,7 @@ those rules to the Phase 2 decision log and lists the five items still awaiting 
 
 ## Next task
 
-The scoped verification pass (`docs/VERIFICATION.md`): confirm IDs, frequency, start/end,
-units and SA status for the 68 rows, starting with FRED. Then collect, harmonise, and build
-the BEAI label for the USA as the first stop/go gate.
+Extend collection to Japan and Germany (42 rows), run the same label pipeline, and compare
+with ESRI and the German official chronology. Then build the predictor feature table and the
+walk-forward harness. Do not widen to P0–P2 until the other two countries pass their own
+label checks.
