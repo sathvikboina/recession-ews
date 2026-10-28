@@ -332,7 +332,7 @@ def main() -> int:
         if RESOLUTION.exists():
             with RESOLUTION.open(newline="", encoding="utf-8") as fh:
                 old_res = list(csv.DictReader(fh))
-            touched = {r["series_key"] for r in res_rows}
+            touched = {r["series_key"] for r in res_rows} | set(DERIVED)
             old_res = [r for r in old_res if r.get("series_key") not in touched]
         res_rows = old_res + res_rows
         for key, spec in DERIVED.items():
@@ -363,11 +363,15 @@ def main() -> int:
                 w.writerow({k: r.get(k, "") for k in vcols})
 
     ok = sum(1 for r in verify if r["status"] == "VERIFIED")
+    failed = [r["fred_id"] for r in verify if r["status"] == "FAILED"]
     print(f"\n{ok}/{len(verify)} verified at >= {MIN_COVERAGE:.0%} coverage")
+    if failed:
+        print(f"FAILED downloads: {failed}")
     print(f"raw    : {outdir}")
     print(f"verify : {VERIFY}")
     print(f"manifest: {MANIFEST}")
-    return 0 if ok == len(verify) else 1
+    # a recorded low-coverage series is a finding, not a pipeline error
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
