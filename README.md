@@ -60,10 +60,11 @@ data/
   raw/ interim/ clean/   data stages (git-ignored)
 src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
 scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
-                   04_compare_nber
+                   04_compare_nber, make_worklog
 tests/             config, scope, label invariants (BBQ, flag, diffusion, frozen file)
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md
 outputs/           labels, folds, results, figures, runs
+EWS_Work_Log.xlsx  generated work log: every action, source, test and decision
 ```
 
 Root-level files are the **Phase 2 deliverable** and stay in place:
