@@ -162,6 +162,7 @@ WORK_LOG = [
     ("2026-10-29", "2", "Docs", "Wrote docs/LABEL_VALIDATION.md; updated VERIFICATION, DECISIONS (D-R22..D-R25), BUILD_CONTRACT C-02, STATE, README", "docs/*.md", "Method, discrepancies, falsification checks documented"),
     ("2026-10-29", "2", "Repo", "Committed the USA milestone and the fetch exit-code fix", "commits 5c042e9, a117998", "Clean tree, labels reproducible byte-for-byte"),
     ("2026-11-04", "3", "Packaging", "Generated this workbook and a portable repository (bare mirror + bundle)", "EWS_Work_Log.xlsx, recession-ews.git, recession-ews.bundle", "Shareable without GitHub credentials"),
+    ("2026-11-04", "4", "Maintenance", "Applied review fixes without touching the frozen label: window episode ids, in_window turning points, stale DPIC96 removal, preserved freeze date, canonical growth digest, committed result CSVs, $(PY) Makefile fix, docs corrections", "USA_episodes.csv, USA_turning_points.csv, labels-v1.json, data/superseded_series.csv, tests/test_freeze.py", "Frozen labels CSV byte-identical; clean clone matches"),
 ]
 
 DATA_NOTES = {
@@ -215,6 +216,13 @@ TESTS = [
     ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 144 rows, contiguous episodes"),
     ("test_labels.py", "test_label_pipeline_does_not_use_nber", "No external chronology reaches the label"),
     ("test_labels.py", "test_episode_peak_is_before_trough", "Every episode has duration >= 2"),
+    ("test_freeze.py", "test_frozen_label_hash_is_unchanged", "Frozen label CSV stays byte-identical"),
+    ("test_freeze.py", "test_frozen_label_dates_and_factor_values", "D-R25 factor/level values and episode dates"),
+    ("test_freeze.py", "test_episode_ids_join_across_frozen_artefacts", "label and episode ids share one window numbering"),
+    ("test_freeze.py", "test_turning_points_carry_in_window_flag", "pre-1990 points are flagged, not hidden"),
+    ("test_freeze.py", "test_one_active_source_per_scope_key", "one active provenance row per scope key"),
+    ("test_freeze.py", "test_created_date_is_preserved", "re-running the builder does not rewrite the freeze date"),
+    ("test_freeze.py", "test_canonical_digest_tracks_values_not_parquet_bytes", "freeze digest is environment-independent"),
 ]
 
 REPO_MAP = [
@@ -224,13 +232,15 @@ REPO_MAP = [
     ("docs/VERIFICATION.md", "FRED verification table, substitutions, progress", "data provenance"),
     ("docs/LABEL_VALIDATION.md", "Method, NBER agreement, discrepancies, falsification checks", "label evidence"),
     ("docs/STATE.md", "One-page hand-off with hashes and next actions", "start here each session"),
+    ("docs/DECISION_NOTE_Q02_Q04_Q05.md", "Q-02/Q-04/Q-05 concept comparison, no selection", "decision support"),
     ("config/scope.yaml", "Countries, window, horizons, coverage, firewall", "runtime config"),
     ("config/indicators.yaml", "68 indicators, roles, forms, lag classes, variants", "generated from spec.py"),
     ("config/countries.yaml", "40 countries + GLOBAL with source chains", "generated"),
     ("config/sources.yaml", "9 sources with access method and caveats", "generated"),
     ("data/scope.csv", "68-row collection shortlist with resolved ids", "collection plan"),
-    ("data/manifest.csv", "One row per download with SHA-256 and coverage", "provenance"),
+    ("data/manifest.csv", "One active row per scope key with SHA-256 and coverage", "provenance"),
     ("data/fred_verification.csv", "Title, units, frequency, SA, first/last, coverage", "verification facts"),
+    ("data/superseded_series.csv", "Retired source ids replaced by a new active source", "provenance history"),
     ("data/series_resolution.csv", "scope_key -> concrete source id / derivation", "join table"),
     ("data/raw/fred/<date>/", "Immutable downloads (git-ignored)", "raw layer"),
     ("data/clean/", "Quarterly panel and growth matrix (git-ignored)", "clean layer"),
@@ -238,6 +248,8 @@ REPO_MAP = [
     ("src/ews/labels/bbq.py", "Turning points, episodes, recession flag", "dating"),
     ("src/ews/labels/diffusion.py", "Deterioration share and episode gate", "label gate"),
     ("src/ews/labels/build.py", "Orchestrates DFM -> BBQ -> diffusion", "label pipeline"),
+    ("src/ews/labels/freeze.py", "Preserves the freeze date and hashes values, not parquet bytes", "freeze helpers"),
+    ("src/ews/labels/ids.py", "Renumbers window episodes for label/episode joins", "freeze helpers"),
     ("scripts/00_env.py", "Environment and configuration gate", "CI entry"),
     ("scripts/export_spec.py", "spec.py -> config/*.yaml", "config build"),
     ("scripts/scope_catalog.py", "Catalogue -> 68-row shortlist + resolutions", "scope build"),
@@ -247,7 +259,7 @@ REPO_MAP = [
     ("scripts/04_compare_nber.py", "NBER comparison + robustness", "validation"),
     ("scripts/make_worklog.py", "This workbook", "reporting"),
     ("EWS_Work_Log.xlsx", "Generated work log (this file)", "deliverable"),
-    ("tests/", "21 invariants (config, scope, labels)", "software checks"),
+    ("tests/", "28 invariants (config, scope, labels, freeze)", "software checks"),
     ("outputs/labels/USA_labels.csv", "Frozen label: factor, level, diffusion, R", "deliverable"),
     ("outputs/labels/labels-v1.json", "Parameters, loadings, hashes", "freeze record"),
     ("outputs/results/USA_vs_NBER.md", "Episode matching, confusion matrix, robustness", "validation report"),
@@ -306,7 +318,7 @@ RUNBOOK = [
     ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v1"),
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
-    ("Checks", "make check && make test", "26 config checks + 21 tests"),
+    ("Checks", "make check && make test", "26 config checks + 28 tests"),
     ("Workbook", "python scripts/make_worklog.py", "regenerate this file"),
 ]
 
@@ -346,13 +358,13 @@ def main() -> int:
         ("", ""),
         ("Scope", "68 series rows: USA 25, JPN 21, DEU 21, GLOBAL 1; 30 BEAI-eligible"),
         ("Window", "1990Q1-2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
-        ("USA data", "24 FRED series probed; 22 verified, 1 rejected for history, 2 derived"),
+        ("USA data", "23 scope FRED series + 1 auxiliary chronology; 22 verified, 1 insufficient, 2 derived"),
         ("USA label", f"labels-v1 frozen: {int(eps['kept'].sum())} episodes, "
                       f"{len(false_eps)} false positives"),
         ("NBER agreement", f"{episodes_matched}/{len(match)} episodes, accuracy {cm['accuracy']:.3f}, "
                            f"recall {cm['recall']:.3f}, precision {cm['precision']:.3f}, F1 {cm['f1']:.3f}"),
-        ("Tests", "21 passing (config 6, scope 6, labels 9)"),
-        ("Config gate", "26 ok, 10 warnings (optional model packages), 0 failures"),
+        ("Tests", "28 passing (config 6, scope 6, labels 9, freeze 7)"),
+        ("Config gate", "26 ok, 3 warnings (optional model packages), 0 failures"),
         ("Not started", "JPN/DEU collection, feature table, harness, experiments, dashboard"),
         ("", ""),
         ("How to read", "Status = phase state. Work Log = chronological actions. Data Sources = verified series. Labels = result. "
@@ -530,7 +542,7 @@ def main() -> int:
           number_formats={2: "0", 3: "0"})
 
     # 7. Tests -------------------------------------------------------------
-    sheet(wb, "Tests", "Test suite (21 invariants)",
+    sheet(wb, "Tests", "Test suite (28 invariants)",
           "These establish software correctness only; economic credibility comes from the NBER comparison.",
           ["Module", "Test", "What it protects"],
           TESTS, [18, 58, 70])

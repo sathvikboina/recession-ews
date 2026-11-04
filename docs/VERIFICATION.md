@@ -19,13 +19,15 @@ Phase 2 left every series ID, date, unit, SA status and coverage figure as
 
 | Source | Rows in scope | Verified | Notes |
 |---|---:|---:|---|
-| FRED | 25 | 22 | 1 insufficient history (`PCEC96`), 2 derived; 24 downloads probed |
+| FRED | 25 | 22 | 1 insufficient history (`PCEC96`, 52.8%), 2 derived; 23 scope downloads + 1 auxiliary chronology |
 | OECD | 22 | 0 | dataflow IDs unresolved (Q-15) |
 | BOJ / Japanese official | 18 | 0 | API exists; series keys unresolved |
-| DERIVED | 3 | n/a | 1 built (`FIN_CREDIT_GAP`); 2 pending inputs |
+| DERIVED | 3 | n/a | 3 defined, 0 built: `harmonize.py` consumes `VERIFIED` downloads only, and the JPN/DEU inputs are still pending |
 | **Total** | **68** | **22** | USA complete except one rejected variant |
 
-Run date: **2026-10-29**. Downloads: `data/raw/fred/2026-10-29/`.
+Run date: **2026-10-29**. Verification facts refreshed **2026-11-04** (stale `DPIC96`
+row removed; see `data/superseded_series.csv`). Downloads:
+`data/raw/fred/2026-10-29/`.
 Verification facts: `data/fred_verification.csv`. Resolution table:
 `data/series_resolution.csv`. Hashes: `data/manifest.csv`.
 
@@ -68,7 +70,7 @@ a complete observation at native frequency (a monthly quarter needs all three mo
 | Item | Decision | Reason |
 |---|---|---|
 | `PCEC96` (`ACT_CONS.M.US`) | rejected: 52.8% coverage | FRED monthly real PCE starts 2007. The quarterly variant `PCECC96` covers the label; the monthly predictor copy is dropped. |
-| `DPIC96` for `ACT_RINC.Q.STD` | replaced by `W875RX1` | `DPIC96` is monthly (frequency mismatch) and real DPI including transfers is counter-cyclical (COVID stimulus). Coincident indices use income excluding transfers. See D-R23. |
+| `DPIC96` for `ACT_RINC.Q.STD` | replaced by `W875RX1` | `DPIC96` is monthly (frequency mismatch) and real DPI including transfers is counter-cyclical (COVID stimulus). Coincident indices use income excluding transfers. See D-R23; the retired row is retained in `data/superseded_series.csv`. |
 | `PNFIC1` for `ACT_INV.Q.STD` | replaced by `GPDIC1` | `PNFIC1` (real nonresidential fixed investment) only starts 2007 in the current FRED vintage; `PNFIC1` discontinued (`PNFIC96`) ends 2017. `GPDIC1` (real gross private domestic investment) is complete from 1947. Broad proxy, documented. |
 | `WILL5000IND` for `FIN_EQUITY` | replaced by `NASDAQCOM` | `WILL5000IND` returns 301/404 (moved). `SP500` has only 10 years. `NASDAQCOM` starts 1971. |
 | OECD/BIS house price for `FIN_HOUSEPRICE.Q.OECD_BIS` | substituted `USSTHPI` | No OECD/BIS series resolved in the FRED chain; FHFA all-transactions HPI is the official US quarterly index from 1975. |
@@ -81,6 +83,7 @@ a complete observation at native frequency (a monthly quarter needs all three mo
 | Date | Source | Rows checked | Result | Checked by |
 |---|---|---|---|---|
 | 2026-10-29 | FRED | 24 downloads + 2 derived | 22 verified, 1 low coverage, 2 derived | automated (`scripts/fetch_fred.py`) |
+| 2026-11-04 | FRED | provenance maintenance | removed stale `DPIC96` duplicate; one active row per scope key | review fix |
 | 2026-10-29 | — | JPN, DEU, OECD, BOJ | not started | — |
 
 ## Commands

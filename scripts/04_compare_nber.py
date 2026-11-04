@@ -188,11 +188,11 @@ def main() -> int:
         f"| label 0 | {fn} | {tn} |",
         "",
         f"- accuracy {accuracy:.3f} · precision {precision:.3f} · recall {recall:.3f} · F1 {f1:.3f}",
-        f"- recession quarters: NBER {tp + fn}, label {tp + fp}",
+        f"- USRECQ quarters: NBER {tp + fn}, label {tp + fp}",
         "",
         "## Episode matching",
         "",
-        "| NBER peak–trough | recession quarters | label peak–trough | overlap | peak diff | trough diff |",
+        "| NBER peak–trough | USRECQ quarters | label peak–trough | overlap | peak diff | trough diff |",
         "|---|---:|---|---:|---:|---:|",
     ]
     for _, r in match.iterrows():

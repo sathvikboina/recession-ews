@@ -22,30 +22,30 @@ env:
 	$(BIN)/pip install -e ".[dev]"
 
 config:
-	$(PY) scripts/export_spec.py
+	"$(PY)" scripts/export_spec.py
 
 scope:
-	$(PY) scripts/scope_catalog.py
+	"$(PY)" scripts/scope_catalog.py
 
 fetch:
-	python3 scripts/fetch_fred.py
+	"$(PY)" scripts/fetch_fred.py
 
 harmonize:
-	$(PY) scripts/harmonize.py
+	"$(PY)" scripts/harmonize.py
 
 labels:
-	$(PY) scripts/03_labels.py
+	"$(PY)" scripts/03_labels.py
 
 validate:
-	$(PY) scripts/04_compare_nber.py
+	"$(PY)" scripts/04_compare_nber.py
 
 pipeline: fetch harmonize labels validate
 
 check:
-	python3 scripts/00_env.py
+	"$(PY)" scripts/00_env.py
 
 test:
-	$(PY) -m pytest
+	"$(PY)" -m pytest
 
 bootstrap: config scope check test
 

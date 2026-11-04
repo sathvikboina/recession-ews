@@ -1,5 +1,4 @@
 series_key,fred_id,title,units,frequency,native_freq,seasonal,sa_detail,first_obs,last_obs,n_obs,n_quarters_in_window,coverage_pct,page_http,csv_http,status,checked_on
-USA.ACT_RINC.Q.STD,DPIC96,Real Disposable Personal Income,Billions of Chained 2017 Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_GDP_REAL.Q.NA,GDPC1,Real Gross Domestic Product,Billions of Chained 2017 Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_IP.M.STD,INDPRO,Industrial Production: Total Index,Index 2017=100,Monthly,M,SA,Seasonally Adjusted,1919-01-01,2026-09-01,1293,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_EMP.Q.NA,PAYEMS,"All Employees, Total Nonfarm",Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1939-01-01,2026-09-01,1053,144,1.0,200,200,VERIFIED,2026-10-29

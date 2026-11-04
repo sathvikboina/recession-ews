@@ -104,7 +104,12 @@ def test_frozen_labels_present_and_sane() -> None:
 
 
 def test_label_pipeline_does_not_use_nber() -> None:
-    growth = pd.read_parquet(PROJECT / "data" / "clean" / "USA_growth.parquet")
+    path = PROJECT / "data" / "clean" / "USA_growth.parquet"
+    if not path.exists():
+        # data/clean is git-ignored; a clean clone must pass before
+        # `make fetch && make harmonize` has been run.
+        return
+    growth = pd.read_parquet(path)
     assert "USA.NBER.Q" not in growth.columns
     assert "NBER" not in "".join(growth.columns)
     result = build(growth, country="USA")

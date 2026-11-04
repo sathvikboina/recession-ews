@@ -11,11 +11,11 @@ NBER = `USRECQ` (period after peak through trough). Label = DFM factor -> BBQ ->
 | label 0 | 0 | 129 |
 
 - accuracy 0.986 · precision 0.867 · recall 1.000 · F1 0.929
-- recession quarters: NBER 13, label 15
+- USRECQ quarters: NBER 13, label 15
 
 ## Episode matching
 
-| NBER peak–trough | recession quarters | label peak–trough | overlap | peak diff | trough diff |
+| NBER peak–trough | USRECQ quarters | label peak–trough | overlap | peak diff | trough diff |
 |---|---:|---|---:|---:|---:|
 | 1990Q3–1991Q1 | 2 | 1990Q2–1991Q1 | 2 | -1 | 0 |
 | 2001Q1–2001Q4 | 3 | 2001Q1–2001Q4 | 3 | 0 | 0 |

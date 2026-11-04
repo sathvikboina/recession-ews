@@ -26,6 +26,8 @@ PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT / "src"))
 
 from ews.labels import build as build_label  # noqa: E402
+from ews.labels.freeze import canonical_frame_sha256, existing_created  # noqa: E402
+from ews.labels.ids import renumber_window_episodes  # noqa: E402
 
 OUT = PROJECT / "outputs" / "labels"
 FIG = PROJECT / "outputs" / "figures"
@@ -44,17 +46,9 @@ def main() -> int:
 
     window = pd.period_range("1990Q1", "2025Q4", freq="Q")
     frame = result.frame.reindex(window).copy()
-    eps = result.episodes.copy()
     # renumber episode ids inside the reporting window (the estimation sample
     # starts in 1960 and carries earlier episodes that are not reported)
-    if "episode_id" in frame.columns:
-        mapping = {
-            old: new
-            for new, old in enumerate(sorted(frame.loc[frame["R"] == 1, "episode_id"].unique()), 1)
-        }
-        frame["episode_id"] = frame["episode_id"].map(lambda v: mapping.get(v, 0)).astype(int)
-    if len(eps):
-        eps = eps[eps["peak"].isin([str(q) for q in window])].reset_index(drop=True)
+    frame, eps = renumber_window_episodes(frame, result.episodes, window)
     result.diagnostics["n_kept_episodes"] = int(eps["kept"].sum()) if len(eps) else 0
     frame.index = frame.index.astype(str)
     frame.index.name = "quarter"
@@ -68,6 +62,7 @@ def main() -> int:
 
     tps = result.turning_points.copy()
     if len(tps):
+        tps["in_window"] = tps["quarter"].isin([str(q) for q in window]).astype(bool)
         tps = tps.round(6)
     tps.to_csv(OUT / "USA_turning_points.csv", index=False)
 
@@ -95,16 +90,19 @@ def main() -> int:
     except Exception as exc:  # pragma: no cover
         print(f"figure skipped: {exc}")
 
+    meta_path = OUT / "labels-v1.json"
+    created = existing_created(meta_path, date.today().isoformat())
     record = {
         "label_version": "labels-v1",
         "country": "USA",
-        "created": date.today().isoformat(),
+        "created": created,
         "window": {"start": str(frame.index[0]), "end": str(frame.index[-1]), "quarters": int(len(frame))},
         "inputs": {
             "series": list(growth.columns),
             "coverage_window": {c: int(growth[c].reindex(window).notna().sum()) for c in growth.columns},
             "source": "FRED, revised historical data (not real-time vintages)",
             "growth_file_sha256": sha256(PROJECT / "data" / "clean" / "USA_growth.parquet"),
+            "growth_values_sha256": canonical_frame_sha256(growth),
         },
         "method": {
             "estimator": result.diagnostics["method"],
@@ -123,7 +121,7 @@ def main() -> int:
         },
         "hashes": {"labels_csv_sha256": sha256(labels_path)},
     }
-    (OUT / "labels-v1.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    meta_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
 
     print(f"estimator        : {result.diagnostics['method']} (converged={result.diagnostics['converged']})")
     print(f"quarters         : {len(frame)}  {frame.index[0]} .. {frame.index[-1]}")

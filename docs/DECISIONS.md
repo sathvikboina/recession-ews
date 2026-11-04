@@ -49,7 +49,8 @@ named step · **OPEN** = not decided yet.
   label missed 1990-91 and 2001 entirely; after it, all four NBER episodes are matched with
   at most a one-quarter boundary shift (`outputs/results/USA_vs_NBER.md`).
 - **D-R23** changes which FRED series feeds `ACT_RINC.Q.STD`. The scope row and the manifest
-  record the substitution; the old `DPIC96` is still downloaded as the monthly predictor copy.
+  record the substitution; the retired quarterly `DPIC96` duplicate is recorded in
+  `data/superseded_series.csv`. The monthly predictor copy is the separate `DSPIC96` row.
 - **O-1** is now half-answered: the *estimation* sample extends to 1960, but the *study*
   window is still 1990–2025. Whether to report pre-1990 labels remains open.
 
@@ -58,3 +59,7 @@ named step · **OPEN** = not decided yet.
 From `decisions_log.csv`: Q-02, Q-03, Q-05, Q-06, Q-07, Q-08, Q-09, Q-11, Q-12, Q-15,
 Q-16, Q-17, Q-23, Q-27, Q-28. These are closed by the scoped verification pass
 (`docs/VERIFICATION.md`), not by a judgement call.
+
+Q-02, Q-04 and Q-05 are not closed by this note. The current series, alternatives,
+coverage and chronology sensitivity are compared in
+`docs/DECISION_NOTE_Q02_Q04_Q05.md`; no replacement is selected there.

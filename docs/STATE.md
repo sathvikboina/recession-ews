@@ -1,6 +1,6 @@
 # Build State
 
-Last updated: **2026-10-29**. One page of truth for the next session.
+Last updated: **2026-11-04**. One page of truth for the next session.
 
 ## Where we are
 
@@ -16,8 +16,8 @@ pipeline exists yet.** Other countries have not been collected.
 | Window / horizons | 1990Q1–2025Q4 / 1Q, 2Q, 4Q (2Q primary) |
 | Label version | **labels-v1**, frozen |
 | NBER validation | 4/4 episodes, 0 false, accuracy 0.986, recall 1.000 |
-| Tests | 21 passing |
-| Config check | `make check` → 26 ok, 10 warnings (model deps), 0 failures |
+| Tests | 28 passing |
+| Config check | `make check` → 26 ok, 3 warnings (uninstalled `sklearn`/`xgboost`/`shap`), 0 failures |
 
 ## Label result
 
@@ -31,7 +31,23 @@ pipeline exists yet.** Other countries have not been collected.
 Quarter-level: 13 TP, 2 FP, 0 FN, 129 TN → precision 0.867, recall 1.000, F1 0.929.
 Full narrative and falsification checks: `docs/LABEL_VALIDATION.md`.
 
-## Fingerprints (2026-10-29)
+## Maintenance (2026-11-04)
+
+Review fixes applied **without touching the frozen chronology**:
+
+- window episode ids in `USA_episodes.csv` renumbered 1–4 to join `USA_labels.csv`;
+- `USA_turning_points.csv` gained an `in_window` flag (pre-1990 points stay visible);
+- stale `DPIC96` provenance removed; `data/superseded_series.csv` records it;
+- `labels-v1.json.created` is preserved on re-run and gains a value-level growth digest;
+- the three result CSVs needed by `make_worklog.py` are committed, and data-dependent
+  tests skip cleanly when `data/clean/` is absent;
+- `make check` / `make fetch` use `$(PY)` instead of the system interpreter;
+- docs corrected (1990Q3 extra quarter, USRECQ column, JPN/DEU row counts).
+
+The frozen label CSV hash is unchanged: `1a1b1f6a…b749e29a`. `USA_episodes.csv`,
+`USA_turning_points.csv` and `labels-v1.json` changed as supporting artefacts only.
+
+## Fingerprints (2026-11-04)
 
 ```
 00b53eafb124c5cde5e62e21b8b26da9474202051a03fcda9c9308a830e3a6f0  config/scope.yaml
@@ -40,14 +56,19 @@ f0d72b84e5e257bd7a4e13a699dfab135141dc6cf23ae456afd20fd6c223c5fd  config/indicat
 a6983a62b99532010ec88e642b79203df05f694f34eefc7d227b76aafcbf7e9c  config/sources.yaml
 f0dbaa5889e704fb953e29db8538502d1b800a858d268ad9d9d5a29d092bb42e  data/scope.csv
 d6559f657e58927cdd5126c12162b9ab6b3941c0f629b94cdeb63fc8a6350cea  data/series_resolution.csv
-753b2863ce8be0eb4cc1236b5fba3f0bfc6409c32b7d7f1b93e7fe5baa83b943  data/manifest.csv
+44457e078bd031f1624f6aac936b1aec777c09f5f6d27c8fcde496b34c4f60c9  data/manifest.csv
+cc35737fd05c752d39d0188b74b37af7021e1847e2e75b3d27a60e0fcbb070fe  data/fred_verification.csv
+c3a77f4109244f3d4a45ec2af3ec4012d3c0ee9f7e124a8a525719d7f27dd782  data/superseded_series.csv
 1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a  outputs/labels/USA_labels.csv
+f921ad38e6ccdde482700deaaba3e3ea3a6cda1fd09a78389abc7bcf8f40aa1d  outputs/labels/USA_episodes.csv
+9f83438c4d57e7fea3ed2f13030379e112d4f24bc24a85a2cd4e4564ab80a1a1  outputs/labels/USA_turning_points.csv
+954565d2e2cd137109153b376389b1920c9d9d3598f6a027d574be7770991834  outputs/labels/labels-v1.json
 0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d  data/clean/USA_growth.parquet
 ```
 
 If a hash changes, re-run `make pipeline test` before trusting any downstream result.
 
-## Done in this session
+## Done in the USA milestone session (2026-10-29)
 
 - `scripts/fetch_fred.py`: curl-based verification + download, 24 series, metadata
   (title/units/frequency/SA), coverage over the window, SHA-256 manifest, resolution table.

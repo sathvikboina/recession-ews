@@ -43,6 +43,8 @@ PROJECT = Path(__file__).resolve().parents[1]
 RAW = PROJECT / "data" / "raw" / "fred"
 MANIFEST = PROJECT / "data" / "manifest.csv"
 VERIFY = PROJECT / "data" / "fred_verification.csv"
+SUPERSEDED = PROJECT / "data" / "superseded_series.csv"
+SUPERSEDED_COLS = ["series_key", "source", "source_id", "superseded_on", "superseded_by", "reason"]
 
 START, END = "1990-01-01", "2025-12-31"
 WINDOW_QUARTERS = 144
@@ -93,6 +95,47 @@ DERIVED = {
         "note": "term spread",
     },
 }
+
+
+def record_superseded(existing: list[dict], fetched: list[dict], run_date: str) -> None:
+    """Record a scope key whose active source id changed.
+
+    One scope key must resolve to one active source. When a replacement removes
+    an older download, the old row is written to ``data/superseded_series.csv``
+    before it is dropped from the manifest.
+    """
+    new_by_key = {row["series_key"]: row for row in fetched}
+    changes: list[dict] = []
+    for old in existing:
+        key = old.get("series_key")
+        new = new_by_key.get(key)
+        old_id = old.get("source_id")
+        if not new or not old_id or old_id == new.get("source_id"):
+            continue
+        changes.append({
+            "series_key": key,
+            "source": old.get("source", ""),
+            "source_id": old_id,
+            "superseded_on": run_date,
+            "superseded_by": new.get("source_id", ""),
+            "reason": "active source changed for this scope key",
+        })
+    if not changes:
+        return
+
+    previous: list[dict] = []
+    if SUPERSEDED.exists():
+        with SUPERSEDED.open(newline="", encoding="utf-8") as fh:
+            previous = list(csv.DictReader(fh))
+    seen = {(row.get("series_key"), row.get("source_id")) for row in previous}
+    merged = previous + [
+        row for row in changes if (row["series_key"], row["source_id"]) not in seen
+    ]
+    with SUPERSEDED.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=SUPERSEDED_COLS)
+        writer.writeheader()
+        for row in merged:
+            writer.writerow({key: row.get(key, "") for key in SUPERSEDED_COLS})
 
 
 def curl(url: str, timeout: int = 40) -> tuple[str, str]:
@@ -308,13 +351,14 @@ def main() -> int:
         })
         print(f"{status:12s} {sid:18s} {freq:2s} {cov:6.1%}  {first} -> {last}  {meta.get('title')}")
 
-    # ---- manifest (append-or-replace by source_id) ----------------------
+    # ---- manifest (append-or-replace by scope key) ----------------------
     cols = list(fetched[0].keys()) if fetched else []
     existing: list[dict] = []
     if MANIFEST.exists() and fetched:
         with MANIFEST.open(newline="", encoding="utf-8") as fh:
             existing = list(csv.DictReader(fh))
-        existing = [r for r in existing if r.get("source_id") not in {f["source_id"] for f in fetched}]
+        record_superseded(existing, fetched, run_date)
+        existing = [r for r in existing if r.get("series_key") not in {f["series_key"] for f in fetched}]
     if fetched:
         MANIFEST.parent.mkdir(parents=True, exist_ok=True)
         with MANIFEST.open("w", newline="", encoding="utf-8") as fh:
@@ -355,7 +399,7 @@ def main() -> int:
         if VERIFY.exists():
             with VERIFY.open(newline="", encoding="utf-8") as fh:
                 old = list(csv.DictReader(fh))
-            old = [r for r in old if r.get("fred_id") not in {v["fred_id"] for v in verify}]
+            old = [r for r in old if r.get("series_key") not in {v["series_key"] for v in verify}]
         with VERIFY.open("w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, fieldnames=vcols)
             w.writeheader()

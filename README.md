@@ -13,7 +13,7 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 |---|---|
 | Phase 1 — literature matrix | done (`literature_matrix.xlsx`, v4) |
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
-| Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 40 pending |
+| Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 42 rows, 40 pending + 2 derived |
 | Phase 4 — collect + harmonise | USA done; JPN/DEU not started |
 | Phase 5 — BEAI label | **USA validated and frozen (`labels-v1`)** |
 | Phase 6–8 — features / harness / models | not started |
@@ -57,12 +57,14 @@ config/            runtime configuration (scope, indicators, countries, sources)
 data/
   scope.csv        the 68 series this build will actually collect
   scope_coverage.csv  country x indicator availability view
+  superseded_series.csv  retired source ids, kept for provenance
   raw/ interim/ clean/   data stages (git-ignored)
 src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
 scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
                    04_compare_nber, make_worklog
 tests/             config, scope, label invariants (BBQ, flag, diffusion, frozen file)
-docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md
+docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md,
+                   DECISION_NOTE_Q02_Q04_Q05.md
 outputs/           labels, folds, results, figures, runs
 EWS_Work_Log.xlsx  generated work log: every action, source, test and decision
 ```
@@ -93,7 +95,7 @@ checked-in deliverables. Set `EWS_OUT=/path` to choose the destination.
 
 - Countries: **USA, JPN, DEU** (edit `config/scope.yaml` to add the rest of Tier 1/2).
 - Indicators: **P0 + P1** — the eight §11 core indicators plus 13 core predictors.
-- Series: **68 rows** (30 BEAI-eligible, 3 derived, 1 global).
+- Series: **68 rows** (30 BEAI-eligible, 4 derived, 1 global).
 - Window: 1990Q1–2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary.
 - Labels: BEAI (primary), technical GDP and NBER-US (robustness).
 

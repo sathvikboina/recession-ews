@@ -1,0 +1,2 @@
+series_key,source,source_id,superseded_on,superseded_by,reason
+USA.ACT_RINC.Q.STD,FRED,DPIC96,2026-11-04,W875RX1,Real disposable income includes transfers and is counter-cyclical; W875RX1 is the coincident income measure (D-R23)

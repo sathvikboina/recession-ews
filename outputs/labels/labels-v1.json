@@ -29,7 +29,8 @@
       "ACT_INV": 144
     },
     "source": "FRED, revised historical data (not real-time vintages)",
-    "growth_file_sha256": "0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d"
+    "growth_file_sha256": "0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d",
+    "growth_values_sha256": "fb9c1e064956db22a21867807d0984cb47cde693ac71dc3f07498821a6d625c2"
   },
   "method": {
     "estimator": "dfm",
