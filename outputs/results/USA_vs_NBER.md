@@ -7,11 +7,11 @@ NBER = `USRECQ` (period after peak through trough). Label = DFM factor -> BBQ ->
 
 | | NBER 1 | NBER 0 |
 |---|---:|---:|
-| label 1 | 13 | 2 |
-| label 0 | 0 | 129 |
+| label 1 | 13 | 1 |
+| label 0 | 0 | 130 |
 
-- accuracy 0.986 · precision 0.867 · recall 1.000 · F1 0.929
-- USRECQ quarters: NBER 13, label 15
+- accuracy 0.993 · precision 0.929 · recall 1.000 · F1 0.963
+- USRECQ quarters: NBER 13, label 14
 
 ## Episode matching
 
@@ -19,7 +19,7 @@ NBER = `USRECQ` (period after peak through trough). Label = DFM factor -> BBQ ->
 |---|---:|---|---:|---:|---:|
 | 1990Q3–1991Q1 | 2 | 1990Q2–1991Q1 | 2 | -1 | 0 |
 | 2001Q1–2001Q4 | 3 | 2001Q1–2001Q4 | 3 | 0 | 0 |
-| 2007Q4–2009Q2 | 6 | 2007Q4–2009Q3 | 6 | 0 | 1 |
+| 2007Q4–2009Q2 | 6 | 2007Q4–2009Q2 | 6 | 0 | 0 |
 | 2019Q4–2020Q2 | 2 | 2019Q4–2020Q2 | 2 | 0 | 0 |
 
 Matched 4/4 NBER episodes; 0 label episode(s) with no NBER counterpart.
@@ -28,10 +28,10 @@ Matched 4/4 NBER episodes; 0 label episode(s) with no NBER counterpart.
 
 | peak | trough | duration | depth (SD) | diffusion | review flag |
 |---|---|---:|---:|---:|---|
-| 1990Q2 | 1991Q1 | 3 | 1.679 | 0.857 | no |
-| 2001Q1 | 2001Q4 | 3 | 0.915 | 0.667 | no |
-| 2007Q4 | 2009Q3 | 7 | 6.741 | 0.839 | no |
-| 2019Q4 | 2020Q2 | 2 | 10.679 | 0.875 | no |
+| 1990Q2 | 1991Q1 | 3 | 1.447 | 0.810 | no |
+| 2001Q1 | 2001Q4 | 3 | 0.679 | 0.708 | no |
+| 2007Q4 | 2009Q2 | 6 | 6.211 | 0.875 | no |
+| 2019Q4 | 2020Q2 | 2 | 10.919 | 0.938 | no |
 
 ## Rejected candidate episodes
 
@@ -42,10 +42,10 @@ Matched 4/4 NBER episodes; 0 label episode(s) with no NBER counterpart.
 
 | variant | candidates | kept | kept dates |
 |---|---:|---:|---|
-| baseline | 4 | 4 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q3; 2019Q4->2020Q2 |
-| min_phase=3 | 3 | 3 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q3 |
-| diffusion=0.60 | 4 | 4 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q3; 2019Q4->2020Q2 |
-| sample ends 2019Q4 | 7 | 3 | 1990Q2->1991Q2; 2000Q4->2001Q4; 2007Q4->2009Q3 |
+| baseline | 4 | 4 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q2; 2019Q4->2020Q2 |
+| min_phase=3 | 3 | 3 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q2 |
+| diffusion=0.60 | 4 | 4 | 1990Q2->1991Q1; 2001Q1->2001Q4; 2007Q4->2009Q2; 2019Q4->2020Q2 |
+| sample ends 2019Q4 | 7 | 3 | 1990Q2->1991Q1; 2000Q4->2002Q1; 2007Q4->2009Q3 |
 
 ## Label B (technical GDP) cross-check
 

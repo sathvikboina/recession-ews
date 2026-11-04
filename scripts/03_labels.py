@@ -32,6 +32,21 @@ from ews.labels.ids import renumber_window_episodes  # noqa: E402
 OUT = PROJECT / "outputs" / "labels"
 FIG = PROJECT / "outputs" / "figures"
 
+# labels-v1 remains byte-identical under outputs/labels/archive/labels-v1/.
+# v2 changes two label inputs (Q-02 and Q-04), not the estimator or thresholds.
+LABEL_VERSION = "labels-v2"
+SUPERSEDES = "labels-v1"
+CORE_KEYS = {
+    "ACT_GDP_REAL": "USA.ACT_GDP_REAL.Q.NA",
+    "ACT_IP": "USA.ACT_IP.M.STD",
+    "ACT_EMP": "USA.ACT_EMP.Q.NA",
+    "ACT_HOURS": "USA.ACT_HOURS.Q.STD",
+    "ACT_RINC": "USA.ACT_RINC.Q.STD",
+    "ACT_CONS": "USA.ACT_CONS.Q.NA",
+    "ACT_RETAIL": "USA.ACT_RETAIL.M.STD",
+    "ACT_INV": "USA.ACT_INV.Q.STD",
+}
+
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -90,15 +105,49 @@ def main() -> int:
     except Exception as exc:  # pragma: no cover
         print(f"figure skipped: {exc}")
 
-    meta_path = OUT / "labels-v1.json"
+    meta_path = OUT / f"{LABEL_VERSION}.json"
     created = existing_created(meta_path, date.today().isoformat())
+    resolution = (
+        pd.read_csv(PROJECT / "data" / "series_resolution.csv")
+        .drop_duplicates("series_key", keep="last")
+        .set_index("series_key")
+    )
+    source_ids = {
+        ind: str(resolution.loc[key, "source_id"])
+        for ind, key in CORE_KEYS.items()
+        if key in resolution.index
+    }
     record = {
-        "label_version": "labels-v1",
+        "label_version": LABEL_VERSION,
+        "supersedes": SUPERSEDES,
         "country": "USA",
         "created": created,
         "window": {"start": str(frame.index[0]), "end": str(frame.index[-1]), "quarters": int(len(frame))},
+        "decisions": {
+            "Q-02": {
+                "choice": "constructed real non-residential business fixed investment",
+                "components": [
+                    "Y033RC1Q027SBEA",
+                    "B009RC1Q027SBEA",
+                    "Y001RC1Q027SBEA",
+                    "A008RD3Q086SBEA",
+                ],
+                "method": "(equipment + structures + intellectual property products) / (deflator/100)",
+                "supersedes": "GPDIC1 (broad private investment, included residential and inventories)",
+            },
+            "Q-04": {
+                "choice": "CE16OV LFS fallback, quarterly mean",
+                "reason": "US national-accounts quarterly employment is not available in OECD QNA; PAYEMS is an establishment survey, not the Q-04 fallback.",
+                "supersedes": "PAYEMS (establishment payrolls)",
+            },
+            "Q-05": {
+                "choice": "keep HOANBS",
+                "reason": "Only full-coverage quarterly total-hours series on FRED; nonfarm-business sector coverage is documented. No re-freeze driver.",
+            },
+        },
         "inputs": {
             "series": list(growth.columns),
+            "source_ids": source_ids,
             "coverage_window": {c: int(growth[c].reindex(window).notna().sum()) for c in growth.columns},
             "source": "FRED, revised historical data (not real-time vintages)",
             "growth_file_sha256": sha256(PROJECT / "data" / "clean" / "USA_growth.parquet"),
@@ -119,8 +168,15 @@ def main() -> int:
             if len(eps)
             else [],
         },
-        "hashes": {"labels_csv_sha256": sha256(labels_path)},
+        "hashes": {
+            "labels_csv_sha256": sha256(labels_path),
+            "episodes_csv_sha256": sha256(OUT / "USA_episodes.csv"),
+            "turning_points_csv_sha256": sha256(OUT / "USA_turning_points.csv"),
+        },
     }
+    v1_labels = OUT / "archive" / SUPERSEDES / "USA_labels.csv"
+    if v1_labels.exists():
+        record["hashes"]["superseded_labels_csv_sha256"] = sha256(v1_labels)
     meta_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
 
     print(f"estimator        : {result.diagnostics['method']} (converged={result.diagnostics['converged']})")

@@ -1,2 +1,4 @@
 series_key,source,source_id,superseded_on,superseded_by,reason
 USA.ACT_RINC.Q.STD,FRED,DPIC96,2026-11-04,W875RX1,Real disposable income includes transfers and is counter-cyclical; W875RX1 is the coincident income measure (D-R23)
+USA.ACT_EMP.Q.NA,FRED,PAYEMS,2026-11-04,CE16OV,active source changed for this scope key
+USA.ACT_INV.Q.STD,FRED,GPDIC1,2026-11-04,USA.ACT_INV_EQ.Q.STD+USA.ACT_INV_STRUCT.Q.STD+USA.ACT_INV_IPP.Q.STD+USA.ACT_INV_DEFL.Q.STD,Q-02: broad private investment (residential + inventories) replaced by constructed real non-residential business fixed investment

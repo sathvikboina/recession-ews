@@ -142,6 +142,26 @@ def main() -> int:
     panel = pd.DataFrame(levels).sort_index()
     panel.index.name = "quarter"
 
+    # ---- Q-02: real non-residential business fixed investment -----------
+    # The current FRED vintage has no full-history single series for this
+    # concept (PNFIC1 starts in 2007).  Construct it from the three nominal
+    # BEA asset components and the non-residential implicit price deflator.
+    # Over the 2007Q1-2026Q3 overlap this reproduces PNFIC1 to <0.02bn.
+    inv_inputs = [
+        "USA.ACT_INV_EQ.Q.STD",
+        "USA.ACT_INV_STRUCT.Q.STD",
+        "USA.ACT_INV_IPP.Q.STD",
+        "USA.ACT_INV_DEFL.Q.STD",
+    ]
+    missing = [k for k in inv_inputs if k not in panel.columns]
+    if missing:
+        raise RuntimeError(f"Q-02 component series missing from panel: {missing}")
+    panel["USA.ACT_INV.Q.STD"] = (
+        panel["USA.ACT_INV_EQ.Q.STD"]
+        + panel["USA.ACT_INV_STRUCT.Q.STD"]
+        + panel["USA.ACT_INV_IPP.Q.STD"]
+    ) / (panel["USA.ACT_INV_DEFL.Q.STD"] / 100.0)
+
     # ---- label matrix: eight core series, dlog, sign-aligned -----------
     core_cols: dict[str, pd.Series] = {}
     for ind_id, key in CORE.items():

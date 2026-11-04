@@ -56,12 +56,19 @@ REGISTRY: dict[str, dict] = {
     # ---- eight core (BEAI) indicators, label variants -------------------
     "USA.ACT_GDP_REAL.Q.NA": {"id": "GDPC1", "note": "real GDP, chain-volume, SA"},
     "USA.ACT_IP.M.STD": {"id": "INDPRO", "note": "industrial production index"},
-    "USA.ACT_EMP.Q.NA": {"id": "PAYEMS", "note": "quarterly mean of establishment payrolls"},
+    # Q-04: national-accounts quarterly employment is not available for the USA
+    # in OECD QNA; the permitted LFS fallback is the household-survey level.
+    "USA.ACT_EMP.Q.NA": {"id": "CE16OV", "note": "Q-04 LFS fallback: quarterly mean of household-survey employment"},
     "USA.ACT_HOURS.Q.STD": {"id": "HOANBS", "note": "nonfarm business hours of all persons"},
     "USA.ACT_RINC.Q.STD": {"id": "W875RX1", "note": "real personal income ex transfer receipts (coincident measure; transfers make DPI counter-cyclical)"},
     "USA.ACT_CONS.Q.NA": {"id": "PCECC96", "note": "real personal consumption expenditures"},
     "USA.ACT_RETAIL.M.STD": {"id": "RRSFS", "note": "real retail and food services sales"},
-    "USA.ACT_INV.Q.STD": {"id": "GPDIC1", "note": "real gross private domestic investment (broad proxy)"},
+    # Q-02: real non-residential business fixed investment is constructed from
+    # the three BEA asset components and the non-residential price deflator.
+    "USA.ACT_INV_EQ.Q.STD": {"id": "Y033RC1Q027SBEA", "note": "Q-02 component: non-residential equipment, nominal"},
+    "USA.ACT_INV_STRUCT.Q.STD": {"id": "B009RC1Q027SBEA", "note": "Q-02 component: non-residential structures, nominal"},
+    "USA.ACT_INV_IPP.Q.STD": {"id": "Y001RC1Q027SBEA", "note": "Q-02 component: non-residential intellectual property products, nominal"},
+    "USA.ACT_INV_DEFL.Q.STD": {"id": "A008RD3Q086SBEA", "note": "Q-02 component: non-residential implicit price deflator, 2017=100"},
     # ---- BEAI-eligible monthly variants (predictor copies) --------------
     "USA.ACT_CONS.M.US": {"id": "PCEC96", "note": "monthly real PCE; short history"},
     "USA.ACT_EMP.M.ESTAB": {"id": "PAYEMS", "note": "all employees, total nonfarm"},
@@ -84,6 +91,16 @@ REGISTRY: dict[str, dict] = {
 }
 
 DERIVED = {
+    "USA.ACT_INV.Q.STD": {
+        "inputs": [
+            "USA.ACT_INV_EQ.Q.STD",
+            "USA.ACT_INV_STRUCT.Q.STD",
+            "USA.ACT_INV_IPP.Q.STD",
+            "USA.ACT_INV_DEFL.Q.STD",
+        ],
+        "method": "(equipment + structures + intellectual property products) / (deflator/100)",
+        "note": "Q-02 real non-residential business fixed investment",
+    },
     "USA.FIN_CREDIT_GAP.Q.STD": {
         "inputs": ["USA.FIN_CREDIT_GDP.Q.STD"],
         "method": "one-sided HP filter, lambda=400000",
@@ -141,7 +158,10 @@ def record_superseded(existing: list[dict], fetched: list[dict], run_date: str) 
 def curl(url: str, timeout: int = 40) -> tuple[str, str]:
     """Return (http_code, body). Uses the system curl; see module docstring."""
     proc = subprocess.run(
-        ["curl", "-sS", "--max-time", str(timeout), "-w", "\n__HTTP__%{http_code}", url],
+        [
+            "curl", "-sS", "--http1.1", "--max-time", str(timeout),
+            "-A", "curl/8.0", "-w", "\n__HTTP__%{http_code}", url,
+        ],
         capture_output=True, text=True, errors="replace",
     )
     body = proc.stdout

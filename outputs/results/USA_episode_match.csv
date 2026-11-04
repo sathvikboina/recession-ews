@@ -1,5 +1,5 @@
 nber_peak,nber_trough,nber_flag_start,nber_len,label_peak,label_trough,overlap_quarters,matched,peak_diff_q,trough_diff_q
 1990Q3,1991Q1,1990Q4,2,1990Q2,1991Q1,2,True,-1,0
 2001Q1,2001Q4,2001Q2,3,2001Q1,2001Q4,3,True,0,0
-2007Q4,2009Q2,2008Q1,6,2007Q4,2009Q3,6,True,0,1
+2007Q4,2009Q2,2008Q1,6,2007Q4,2009Q2,6,True,0,0
 2019Q4,2020Q2,2020Q1,2,2019Q4,2020Q2,2,True,0,0

@@ -1,13 +1,37 @@
 # Decision Note: Q-02, Q-04, Q-05
 
-Status: **decision requested — no replacement selected**. This note compares the
-current USA inputs with the alternatives that were checked on 2026-11-04. It does
-not amend Q-02, Q-04 or Q-05, does not change the eight BEAI inputs, and does not
-change the frozen `labels-v1` chronology.
+Status: **decided and implemented in `labels-v2` (2026-11-04)**. The alternative
+comparison below is retained as the evidence record. `labels-v1` is archived
+byte-for-byte under `outputs/labels/archive/labels-v1/` and is not amended.
 
-The current label is a validated **USA activity chronology**. It is not yet a
-strict implementation of the three concept decisions below. That gap is why these
-questions need an explicit decision before JPN and DEU are collected.
+The three selections are:
+
+| Question | Selected option | USA implementation |
+|---|---|---|
+| Q-02 | **Option B** — concept-correct replacement | Constructed real non-residential business fixed investment from BEA equipment + structures + intellectual property products, deflated by the non-residential implicit price deflator |
+| Q-04 | **Option B** — concept-correct replacement | `CE16OV` household-survey employment, quarterly mean (the Q-04 LFS fallback) |
+| Q-05 | **Option A** — keep and document | `HOANBS` retained; nonfarm-business sector coverage recorded as the known limitation |
+
+Why these are the best-supported choices:
+
+- **Q-02 B.** Q-02 explicitly forbids total GFCF. `PNFIC1` is the right concept but
+  starts in 2007 and fails the 70% coverage gate. The BEA components are available
+  from 1947 and the constructed series reproduces `PNFIC1` to under 0.02 billion
+  over 2007Q1–2026Q3, so the concept is implemented without a coverage loss.
+- **Q-04 B.** OECD QNA employment is not published for the USA (or Japan) in the
+  checked dataflow; only Germany returned quarterly employment. `PAYEMS` is an
+  establishment survey and is not the Q-04 fallback. `CE16OV` is the permitted LFS
+  fallback and is the closest available concept.
+- **Q-05 A.** `HOANBS` is the only full-coverage quarterly total-hours series on
+  FRED. Q-05's formal rule excludes annual-only data; `HOANBS` is quarterly, and
+  the narrower nonfarm-business sector is a documented coverage limitation rather
+  than a rule breach. No alternative improves the total-hours concept.
+
+The joint Q-02 + Q-04 re-validation is more stable than either one-at-a-time test:
+it keeps all four episodes, moves only the 2009 trough one quarter earlier, and
+raises quarter-level NBER F1 from 0.929 to 0.963. The one-at-a-time Q-02 test was
+unstable (F1 0.743, nine false positives), which is why the combined package was
+re-validated before freezing.
 
 ## Evidence base and limits
 
@@ -27,11 +51,11 @@ questions need an explicit decision before JPN and DEU are collected.
 
 ## 1. At a glance
 
-| Question | Current US series | Current concept | Main alternatives | Verdict for the note |
+| Question | Current US series | Current concept | Main alternatives | Selection |
 |---|---|---|---|---|
-| Q-02 investment | `GPDIC1` | Real **gross private domestic** investment: residential + inventories + business | Constructed real nonresidential total; `PNFIC1`; `PNFIC96`; `FPIC1`; equipment only | Current series is **not Q-02 compliant**. The only full-coverage strict option is a derived series. |
-| Q-04 employment | `PAYEMS` | Establishment-survey employees, total nonfarm | `CE16OV` (household/LFS); `PRS85006013` (nonfarm business); `CEU0500000001` (private establishment); BEA persons engaged; OECD QNA | Current series is a **third concept**, not the Q-04 preferred national accounts or LFS fallback. |
-| Q-05 hours | `HOANBS` | Total hours, **nonfarm business** sector | `PRS85006023` (average weekly hours); `AWHNONAG` (production/nonsupervisory hours); `AWHAETP`; BEA annual hours; OECD total hours | Current series is quarterly total hours but **narrower than whole economy**. No FRED alternative improves the total-hours concept. |
+| Q-02 investment | `GPDIC1` in v1 (retired); constructed real non-residential total in v2 | Real **gross private domestic** investment: residential + inventories + business | Constructed real nonresidential total; `PNFIC1`; `PNFIC96`; `FPIC1`; equipment only | **Option B selected.** v1 was not Q-02 compliant; v2 uses the only full-coverage strict option. |
+| Q-04 employment | `PAYEMS` in v1 (retired); `CE16OV` in v2 | v1: establishment-survey employees, total nonfarm; v2: household-survey employment | `CE16OV` (household/LFS); `PRS85006013` (nonfarm business); `CEU0500000001` (private establishment); BEA persons engaged; OECD QNA | **Option B selected.** US national-accounts quarterly employment is unavailable; `CE16OV` is the Q-04 LFS fallback. |
+| Q-05 hours | `HOANBS` | Total hours, **nonfarm business** sector | `PRS85006023` (average weekly hours); `AWHNONAG` (production/nonsupervisory hours); `AWHAETP`; BEA annual hours; OECD total hours | **Option A selected.** Quarterly total hours; nonfarm-business coverage is documented. No FRED alternative improves the concept. |
 
 ## 2. Q-02 — business / non-residential fixed investment
 
@@ -39,7 +63,7 @@ questions need an explicit decision before JPN and DEU are collected.
 only. Total GFCF is not substituted; where business investment is missing the
 component counts as missing." (`decisions_log.csv`, Q-02.)
 
-### Current: `GPDIC1`
+### v1 input: `GPDIC1` (retired)
 
 | Property | Value |
 |---|---|
@@ -59,7 +83,7 @@ and inventories. It is a complete, long, quarterly series, but it is not the §1
 
 | Series | Title / construction | Source | Freq / SA | History | Coverage | Fit and constraints |
 |---|---|---|---|---|---|---|
-| Constructed real non-residential total | `Y033RC1Q027SBEA` (equipment) + `B009RC1Q027SBEA` (structures) + `Y001RC1Q027SBEA` (intellectual property products), deflated by `A008RD3Q086SBEA` (non-residential implicit price deflator, 2017=100) | BEA NIPA via FRED | Q, SA | 1947Q1–2026Q3 | 144/144 (100%) | **Concept-compliant.** It is a derivation, not a single download. Over 2007Q1–2026Q3 it reproduces `PNFIC1` to within about 0.02 billion (mean absolute percentage error ≈ 0.0002%). |
+| Constructed real non-residential total | `Y033RC1Q027SBEA` (equipment) + `B009RC1Q027SBEA` (structures) + `Y001RC1Q027SBEA` (intellectual property products), deflated by `A008RD3Q086SBEA` (non-residential implicit price deflator, 2017=100) | BEA NIPA via FRED | Q, SA | 1947Q1–2026Q3 | 144/144 (100%) | **Selected (Option B).** Concept-compliant. It is a derivation, not a single download. Over 2007Q1–2026Q3 it reproduces `PNFIC1` to within about 0.02 billion (mean absolute percentage error ≈ 0.0002%). |
 | `PNFIC1` | Real Private Nonresidential Fixed Investment | BEA via FRED | Q, SA | 2007Q1–2026Q3 | 76/144 (52.8%) | Correct concept, **fails the 70% coverage gate**. Cannot be the sole 1990–2025 input. |
 | `PNFIC96` | Real Private Nonresidential Fixed Investment (discontinued) | BEA via FRED | Q, SA | 1999Q1–2017Q2 | 74/144 (51.4%) | Correct concept, discontinued, ends 2017, **fails coverage**. |
 | `FPIC1` | Real Private Fixed Investment | BEA via FRED | Q, SA | 2007Q1–2026Q3 | 76/144 (52.8%) | Still includes residential investment; fails coverage. |
@@ -77,27 +101,42 @@ components for JPN/DEU.
 
 | ACT_INV series | Label episodes 1990–2025 | TP | FP | FN | Accuracy | Precision | Recall | F1 |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| `GPDIC1` (current) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
+| `GPDIC1` (v1) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 | Constructed real non-residential | 1990Q1–1991Q2; 2000Q3–2002Q1; 2007Q2–2009Q3; 2019Q4–2020Q2 | 13 | 9 | 0 | 0.938 | 0.591 | 1.000 | 0.743 |
 | Equipment only (real) | 1990Q1–1991Q2; 2007Q2–2009Q3; 2019Q3–2020Q2 | 10 | 7 | 3 | 0.931 | 0.588 | 0.769 | 0.667 |
 | `PNFIC1` (not gate-compliant) | 1990Q1–1991Q2; 2001Q1–2002Q1; 2007Q2–2009Q3; 2019Q4–2020Q2 | 13 | 7 | 0 | 0.951 | 0.650 | 1.000 | 0.788 |
 
-The strict alternatives move peaks 1–3 quarters earlier and add false positives.
-The current chronology is therefore partly supported by the broad investment
-proxy. This is a substantive trade-off, not a cosmetic data substitution.
+The strict alternatives move peaks 1–3 quarters earlier and add false positives
+when replaced one at a time. That is why Q-02 was **not** frozen from this table
+alone: the selected Q-02 + Q-04 package was re-validated jointly (§5), where it
+keeps all four episodes and raises F1 to 0.963.
 
-### Options (none selected)
+### Selected: Option B — constructed real non-residential total
 
-- **A. Keep `GPDIC1` and record an explicit deviation from Q-02**, with the
-  residential/inventory content and the US-only scope documented. No re-freeze.
+Implemented in `labels-v2`. The series is derived inside `scripts/harmonize.py`
+from four new downloads:
+
+```
+(Y033RC1Q027SBEA + B009RC1Q027SBEA + Y001RC1Q027SBEA)
+-----------------------------------------------------
+             A008RD3Q086SBEA / 100
+```
+
+- all four components: quarterly, SA, 1947Q1–2026Q3, 144/144 window coverage;
+- reproduces `PNFIC1` over 2007Q1–2026Q3 with max absolute error < 0.02bn;
+- recorded as `USA.ACT_INV.Q.STD` (status `DERIVED_AFTER_INPUTS`) in
+  `data/series_resolution.csv`, with the four inputs in the manifest;
+- `GPDIC1` retired to `data/superseded_series.csv`.
+
+**Options considered (retained for the record).**
+
+- **A. Keep `GPDIC1` and record an explicit deviation from Q-02.** Not selected:
+  Q-02 explicitly forbids substituting total GFCF / broad investment.
 - **B. Replace with the constructed real non-residential total and re-validate.**
-  Requires a new derived series, a resolution/manifest entry, a new label version
-  and a full NBER/robustness re-run. The sensitivity above suggests the dates and
-  precision will change.
-- **C. Drop `ACT_INV` and run with seven indicators.** §19 still permits a label
-  with 7/8 core indicators; this avoids a concept deviation but changes the label
-  definition and requires re-validation.
-- **D. Defer.** Keep `labels-v1` as the USA milestone and decide before JPN/DEU.
+  **Selected and implemented.**
+- **C. Drop `ACT_INV` and run with seven indicators.** Not selected: unnecessary,
+  because a full-coverage concept-compliant construction exists.
+- **D. Defer.** Not selected: the evidence was sufficient to decide.
 
 ## 3. Q-04 — employment concept
 
@@ -105,7 +144,7 @@ proxy. This is a substantive trade-off, not a cosmetic data substitution.
 preferred, LFS monthly (quarterly mean) as fallback; one concept is locked per
 country at the audit and counted once toward §19." (`decisions_log.csv`, Q-04.)
 
-### Current: `PAYEMS`
+### v1 input: `PAYEMS` (retired)
 
 | Property | Value |
 |---|---|
@@ -122,18 +161,20 @@ This is neither the national-accounts concept nor the LFS fallback named in Q-04
 
 | Series | Title / concept | Source | Freq / SA | History | Coverage | Fit and constraints |
 |---|---|---|---|---|---|---|
-| `CE16OV` | Employment Level, household survey (LFS analogue) | BLS CPS via FRED | M, SA | 1948M1–2026M9 | 143/144 (99.3%) | Closest to the Q-04 **LFS fallback**. Includes self-employed and agricultural workers; CPS sample revisions can create breaks. |
+| `CE16OV` | Employment Level, household survey (LFS analogue) | BLS CPS via FRED | M, SA | 1948M1–2026M9 | 143/144 (99.3%) | **Selected (Option B).** Q-04 **LFS fallback**. Includes self-employed and agricultural workers; CPS sample revisions can create breaks. |
 | `PRS85006013` | Nonfarm Business Sector: Employment for All Workers | BLS productivity via FRED | Q, SA | 1947Q1–2026Q2 | 144/144 (100%) | Consistent with `HOANBS`/`OPHNFB`, but a **nonfarm business** concept: excludes government, nonprofit and agriculture. Not total economy. |
 | `CEU0500000001` | All Employees, Total Private | BLS CES via FRED | M, NSA | 1939M1–2026M9 | 144/144 (100%) | Establishment concept, excludes government; NSA, so it would need X-13 under D-R07, and it is narrower than `PAYEMS`. |
 | `A4601C0A173NBEA` | Persons engaged in production (BEA national accounts) | BEA via FRED | A, NSA | 1929–2022 | 132/144 (91.7%) | National-accounts concept, but **annual and ends 2022**. Q-05-style annual-only data are inadmissible without disaggregation; interpolation is forbidden (C-03). |
 | OECD QNA employment | Employment, persons, quarterly | OECD | Q | Expected 1990+ | Unconfirmed | The Q-04 **preferred** concept. Dataflow IDs unresolved (Q-15). This is the only option that directly supports cross-country comparability. |
 
 **Cross-country availability.** OECD QNA employment is the standard quarterly
-source for JPN/DEU and is the concept Q-04 names first. The US quarterly national
-accounts employment series is not available on FRED in the required form (BEA
-persons engaged is annual and ends 2022), so a US switch to national accounts
-would require the OECD dataflow. `PAYEMS`, `CE16OV` and `PRS85006013` are all
-US-only.
+source for JPN/DEU and is the concept Q-04 names first. A direct check of
+`OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA_POP_EMPNC,1.1` on 2026-11-04 returned quarterly
+employment for **Germany only** (1991Q1–2022Q4); the USA and Japan returned no
+employment observations in that dataflow. The US BEA "persons engaged" series is
+annual and ends 2022. A US national-accounts switch is therefore not available,
+and `CE16OV` is the Q-04 fallback. `PAYEMS`, `CE16OV` and `PRS85006013` are all
+US-only; JPN and DEU will be audited against their own QNA/LFS availability.
 
 **Chronology sensitivity (one input replaced, current parameters).**
 

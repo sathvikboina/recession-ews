@@ -1,15 +1,12 @@
 series_key,fred_id,title,units,frequency,native_freq,seasonal,sa_detail,first_obs,last_obs,n_obs,n_quarters_in_window,coverage_pct,page_http,csv_http,status,checked_on
 USA.ACT_GDP_REAL.Q.NA,GDPC1,Real Gross Domestic Product,Billions of Chained 2017 Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_IP.M.STD,INDPRO,Industrial Production: Total Index,Index 2017=100,Monthly,M,SA,Seasonally Adjusted,1919-01-01,2026-09-01,1293,144,1.0,200,200,VERIFIED,2026-10-29
-USA.ACT_EMP.Q.NA,PAYEMS,"All Employees, Total Nonfarm",Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1939-01-01,2026-09-01,1053,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_HOURS.Q.STD,HOANBS,Nonfarm Business Sector: Hours Worked for All Workers,Index 2017=100,Quarterly,Q,SA,Seasonally Adjusted,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_RINC.Q.STD,W875RX1,Real personal income excluding current transfer receipts,Billions of Chained 2017 Dollars,Monthly,M,SA,Seasonally Adjusted Annual Rate,1959-01-01,2026-08-01,812,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_CONS.Q.NA,PCECC96,Real Personal Consumption Expenditures,Billions of Chained 2017 Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_RETAIL.M.STD,RRSFS,Advance Real Retail and Food Services Sales,Millions of 1982-84 CPI Adjusted Dollars,Monthly,M,SA,Seasonally Adjusted,1992-01-01,2026-09-01,416,135,0.9375,200,200,VERIFIED,2026-10-29
-USA.ACT_INV.Q.STD,GPDIC1,Real Gross Private Domestic Investment,Billions of Chained 2017 Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-04-01,318,144,1.0,200,200,VERIFIED,2026-10-29
 USA.ACT_CONS.M.US,PCEC96,Real Personal Consumption Expenditures,Billions of Chained 2017 Dollars,Monthly,M,SA,Seasonally Adjusted Annual Rate,2007-01-01,2026-08-01,236,76,0.5278,200,200,LOW_COVERAGE,2026-10-29
 USA.ACT_EMP.M.ESTAB,PAYEMS,"All Employees, Total Nonfarm",Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1939-01-01,2026-09-01,1053,144,1.0,200,200,VERIFIED,2026-10-29
-USA.ACT_EMP.M.LFS,CE16OV,Employment Level,Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1948-01-01,2026-09-01,944,143,0.9931,200,200,VERIFIED,2026-10-29
 USA.ACT_RINC.M.US,DSPIC96,Real Disposable Personal Income,Billions of Chained 2017 Dollars,Monthly,M,SA,Seasonally Adjusted Annual Rate,1959-01-01,2026-08-01,812,144,1.0,200,200,VERIFIED,2026-10-29
 USA.FIN_CREDIT_GDP.Q.STD,QUSPAM770A,"Total Credit to Private Non-Financial Sector, Adjusted for Breaks, for United States",Percentage of GDP,"Quarterly,",Q,NSA,Not Seasonally Adjusted,1947-10-01,2025-10-01,313,144,1.0,200,200,VERIFIED,2026-10-29
 USA.FIN_EQUITY.M.STD,NASDAQCOM,NASDAQ Composite,"Index Feb 5, 1971=100","Daily,",D,NSA,Not Seasonally Adjusted,1971-02-05,2026-10-27,14050,144,1.0,200,200,VERIFIED,2026-10-29
@@ -23,3 +20,9 @@ USA.PRC_CPI.M.STD,CPIAUCSL,Consumer Price Index for All Urban Consumers: All Ite
 USA.SEN_BCI.M.STD,BSCICP03USM665S,Composite Leading Indicators: Composite Business Confidence Amplitude Adjusted for United States,Normalised (Normal=100),Monthly,M,SA,Seasonally Adjusted,1950-01-01,2024-01-01,889,136,0.9444,200,200,VERIFIED,2026-10-29
 USA.SEN_CCI.M.STD,UMCSENT,University of Michigan: Consumer Sentiment,Index 1966:Q1=100,Monthly,M,NSA,Not Seasonally Adjusted,1952-11-01,2026-09-01,677,144,1.0,200,200,VERIFIED,2026-10-29
 USA.NBER.Q,USRECQ,NBER based Recession Indicators for the United States from the Period following the Peak through the Trough,+1 or 0,Quarterly,Q,NSA,Not Seasonally Adjusted,1854-10-01,2026-07-01,688,144,1.0,200,200,VERIFIED,2026-10-29
+USA.ACT_EMP.Q.NA,CE16OV,Employment Level,Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1948-01-01,2026-09-01,944,143,0.9931,200,200,VERIFIED,2026-11-04
+USA.ACT_INV_EQ.Q.STD,Y033RC1Q027SBEA,Gross Private Domestic Investment: Fixed Investment: Nonresidential: Equipment,Billions of Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-07-01,319,144,1.0,200,200,VERIFIED,2026-11-04
+USA.ACT_INV_STRUCT.Q.STD,B009RC1Q027SBEA,Private fixed investment: Nonresidential: Structures,Billions of Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-07-01,319,144,1.0,200,200,VERIFIED,2026-11-04
+USA.ACT_INV_IPP.Q.STD,Y001RC1Q027SBEA,Gross Private Domestic Investment: Fixed Investment: Nonresidential: Intellectual Property Products,Billions of Dollars,Quarterly,Q,SA,Seasonally Adjusted Annual Rate,1947-01-01,2026-07-01,319,144,1.0,200,200,VERIFIED,2026-11-04
+USA.ACT_INV_DEFL.Q.STD,A008RD3Q086SBEA,Gross private domestic investment: Fixed investment: Nonresidential (implicit price deflator),Index 2017=100,Quarterly,Q,SA,Seasonally Adjusted,1947-01-01,2026-07-01,319,144,1.0,200,200,VERIFIED,2026-11-04
+USA.ACT_EMP.M.LFS,CE16OV,Employment Level,Thousands of Persons,Monthly,M,SA,Seasonally Adjusted,1948-01-01,2026-09-01,944,143,0.9931,200,200,VERIFIED,2026-11-04
