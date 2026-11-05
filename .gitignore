@@ -28,13 +28,19 @@ outputs/**
 !outputs/labels/USA_episodes.csv
 !outputs/labels/USA_turning_points.csv
 !outputs/labels/labels-v1.json
+!outputs/labels/labels-v2.json
+!outputs/labels/archive/**
 !outputs/results/USA_vs_NBER.md
 !outputs/results/USA_vs_NBER.csv
 !outputs/results/USA_episode_match.csv
 !outputs/results/USA_robustness.csv
 !outputs/results/USA_false_episodes.csv
 !outputs/results/USA_labelB.csv
+!outputs/results/archive/**
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Office lock files
+.~lock.*#

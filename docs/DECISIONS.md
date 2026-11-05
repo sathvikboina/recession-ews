@@ -34,6 +34,9 @@ named step · **OPEN** = not decided yet.
 | D-R23 | US real household income in the label is `W875RX1` (real personal income excluding transfers), not `DPIC96`. Transfer receipts make disposable income counter-cyclical and distort a coincident factor. | §11 + Stock–Watson practice | FROZEN | labels |
 | D-R24 | The label uses the **smoothed** factor. Pipeline A is an ex-post chronology and applies no availability lag (C-05); the smoothed factor avoids revision noise in the dates. | §13, C-05 | FROZEN | labels |
 | D-R25 | The factor is converted to growth units with `scale = mean(σⱼ·|λⱼ|)`, using the estimated loadings. Not a tuning choice: without it the common component is overstated ~3× and BBQ dates long pseudo-recessions. | implementation finding | FROZEN | labels |
+| D-R26 | Q-02 Option B. USA business investment is **constructed real non-residential fixed investment** = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` (residential + inventories) is retired. The construction reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3 and has 144/144 window coverage. Implemented in `labels-v2`. | Q-02, §11 | FROZEN | labels |
+| D-R27 | Q-04 Option B. USA employment is `CE16OV`, household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA (checked 2026-11-04); `PAYEMS` is an establishment survey, not the Q-04 fallback. `PAYEMS` is retired from the label. Implemented in `labels-v2`. | Q-04, §8, §11 | FROZEN | labels |
+| D-R28 | Q-05 Option A. USA hours stay on `HOANBS` (quarterly total hours, nonfarm business). Q-05 bars annual-only data, not narrower sector coverage; the nonfarm-business limitation is recorded. No FRED whole-economy quarterly total-hours series exists. Implemented unchanged in `labels-v2`. | Q-05, §11 | FROZEN | labels |
 
 ## Consequences to keep in mind
 
@@ -56,10 +59,18 @@ named step · **OPEN** = not decided yet.
 
 ## Verification items still pending (facts, not decisions)
 
-From `decisions_log.csv`: Q-02, Q-03, Q-05, Q-06, Q-07, Q-08, Q-09, Q-11, Q-12, Q-15,
+From `decisions_log.csv`: Q-03, Q-06, Q-07, Q-08, Q-09, Q-11, Q-12, Q-15,
 Q-16, Q-17, Q-23, Q-27, Q-28. These are closed by the scoped verification pass
 (`docs/VERIFICATION.md`), not by a judgement call.
 
-Q-02, Q-04 and Q-05 are not closed by this note. The current series, alternatives,
-coverage and chronology sensitivity are compared in
-`docs/DECISION_NOTE_Q02_Q04_Q05.md`; no replacement is selected there.
+Q-02, Q-04 and Q-05 are **closed for the USA** by D-R26–D-R28 and implemented in
+`labels-v2` (2026-11-04). Q-02 and Q-05 still need a country-level availability
+check when JPN/DEU are collected: non-residential GFCF components and quarterly
+total hours may be missing there, in which case the component counts as missing
+under the same decisions. Q-04 for JPN/DEU uses their own audit; German QNA
+employment is available (1991Q1–2022Q4), while the USA and Japan returned no
+employment observations in the checked OECD QNA dataflow.
+
+`labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/`.
+The active chronology is `labels-v2`; see `docs/DECISION_NOTE_Q02_Q04_Q05.md`
+for the comparison, selected options and joint re-validation.

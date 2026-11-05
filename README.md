@@ -15,7 +15,7 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
 | Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 42 rows, 40 pending + 2 derived |
 | Phase 4 — collect + harmonise | USA done; JPN/DEU not started |
-| Phase 5 — BEAI label | **USA validated and frozen (`labels-v1`)** |
+| Phase 5 — BEAI label | **USA validated and frozen (`labels-v2`; `labels-v1` archived)** |
 | Phase 6–8 — features / harness / models | not started |
 | Phase 9+ — experiments, interpretation, dashboard | not started |
 
@@ -43,11 +43,16 @@ statsmodels and pyarrow (installed by `pip install -e ".[dev]"`).
 |---|---|---:|---:|
 | 1990Q3–1991Q1 | 1990Q2–1991Q1 | −1 | 0 |
 | 2001Q1–2001Q4 | 2001Q1–2001Q4 | 0 | 0 |
-| 2007Q4–2009Q2 | 2007Q4–2009Q3 | 0 | +1 |
+| 2007Q4–2009Q2 | 2007Q4–2009Q2 | 0 | 0 |
 | 2019Q4–2020Q2 | 2019Q4–2020Q2 | 0 | 0 |
 
-4/4 episodes matched, 0 false episodes, quarter accuracy 0.986, recall 1.000.
+4/4 episodes matched, 0 false episodes, quarter accuracy 0.993, precision 0.929,
+recall 1.000, F1 0.963. The label uses the Q-02 constructed real non-residential
+business fixed investment series and the Q-04 `CE16OV` LFS fallback; Q-05 keeps
+`HOANBS` with its nonfarm-business coverage documented. `labels-v1` remains
+byte-identical in `outputs/labels/archive/labels-v1/`.
 Method, discrepancy discussion and falsification checks: `docs/LABEL_VALIDATION.md`.
+Selected options and the alternative comparison: `docs/DECISION_NOTE_Q02_Q04_Q05.md`.
 Rejected data variants and substitutions: `docs/VERIFICATION.md`.
 
 ## Layout

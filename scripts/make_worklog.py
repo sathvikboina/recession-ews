@@ -163,20 +163,27 @@ WORK_LOG = [
     ("2026-10-29", "2", "Repo", "Committed the USA milestone and the fetch exit-code fix", "commits 5c042e9, a117998", "Clean tree, labels reproducible byte-for-byte"),
     ("2026-11-04", "3", "Packaging", "Generated this workbook and a portable repository (bare mirror + bundle)", "EWS_Work_Log.xlsx, recession-ews.git, recession-ews.bundle", "Shareable without GitHub credentials"),
     ("2026-11-04", "4", "Maintenance", "Applied review fixes without touching the frozen label: window episode ids, in_window turning points, stale DPIC96 removal, preserved freeze date, canonical growth digest, committed result CSVs, $(PY) Makefile fix, docs corrections", "USA_episodes.csv, USA_turning_points.csv, labels-v1.json, data/superseded_series.csv, tests/test_freeze.py", "Frozen labels CSV byte-identical; clean clone matches"),
+    ("2026-11-04", "5", "Decision", "Resolved Q-02/Q-04/Q-05. Q-02 B: constructed real non-residential business fixed investment from four BEA components; Q-04 B: CE16OV LFS fallback; Q-05 A: keep HOANBS with sector limitation documented", "scripts/fetch_fred.py, scripts/harmonize.py, data/series_resolution.csv, data/superseded_series.csv, docs/DECISION_NOTE_Q02_Q04_Q05.md", "All four NBER episodes matched; 2009 trough now exact; F1 0.929 -> 0.963"),
+    ("2026-11-04", "5", "Freeze", "Archived labels-v1 byte-identical and issued labels-v2 with Q-02/Q-04 provenance and the archived v1 hash; rewrote freeze tests", "outputs/labels/archive/labels-v1/*, outputs/labels/labels-v2.json, tests/test_freeze.py", "v1 hash unchanged; v2 label hash f5ed42a6...; 30 tests"),
+    ("2026-11-05", "5", "Verify", "Repaired a failed-retry provenance overwrite with a full 30-series FRED re-fetch, re-ran harmonize/labels/validate, and confirmed the v2 hashes reproduce", "data/manifest.csv, data/fred_verification.csv, data/series_resolution.csv, data/raw/fred/2026-11-05/*", "26 verified + 1 low coverage; labels-v2 byte-identical"),
 ]
 
 DATA_NOTES = {
     "USA.ACT_GDP_REAL.Q.NA": "Core BEAI input",
     "USA.ACT_IP.M.STD": "Core BEAI input",
-    "USA.ACT_EMP.Q.NA": "Core BEAI input; quarterly mean of PAYEMS",
+    "USA.ACT_EMP.Q.NA": "Core BEAI input; CE16OV LFS fallback (Q-04)",
     "USA.ACT_EMP.M.ESTAB": "Predictor; establishment survey",
     "USA.ACT_EMP.M.LFS": "Predictor; household survey",
     "USA.ACT_RINC.M.US": "Predictor; monthly real disposable income",
-    "USA.ACT_HOURS.Q.STD": "Core BEAI input",
+    "USA.ACT_HOURS.Q.STD": "Core BEAI input; HOANBS, nonfarm business (Q-05)",
     "USA.ACT_RINC.Q.STD": "Core BEAI input; replaced DPIC96 (D-R23)",
     "USA.ACT_CONS.Q.NA": "Core BEAI input",
     "USA.ACT_RETAIL.M.STD": "Core BEAI input; starts 1992",
-    "USA.ACT_INV.Q.STD": "Core BEAI input; replaced PNFIC1",
+    "USA.ACT_INV_EQ.Q.STD": "Q-02 component; non-residential equipment (nominal)",
+    "USA.ACT_INV_STRUCT.Q.STD": "Q-02 component; non-residential structures (nominal)",
+    "USA.ACT_INV_IPP.Q.STD": "Q-02 component; intellectual property products (nominal)",
+    "USA.ACT_INV_DEFL.Q.STD": "Q-02 component; non-residential implicit price deflator",
+    "USA.ACT_INV.Q.STD": "Core BEAI input; constructed real non-residential (Q-02)",
     "USA.ACT_CONS.M.US": "Rejected: 52.8% coverage",
     "USA.FIN_EQUITY.M.STD": "Replaced WILL5000IND",
     "USA.FIN_HOUSEPRICE.M.US_CS": "Predictor; Case-Shiller national",
@@ -216,11 +223,13 @@ TESTS = [
     ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 144 rows, contiguous episodes"),
     ("test_labels.py", "test_label_pipeline_does_not_use_nber", "No external chronology reaches the label"),
     ("test_labels.py", "test_episode_peak_is_before_trough", "Every episode has duration >= 2"),
-    ("test_freeze.py", "test_frozen_label_hash_is_unchanged", "Frozen label CSV stays byte-identical"),
-    ("test_freeze.py", "test_frozen_label_dates_and_factor_values", "D-R25 factor/level values and episode dates"),
+    ("test_freeze.py", "test_v1_archive_is_byte_identical", "labels-v1 and its metadata stay byte-identical"),
+    ("test_freeze.py", "test_active_label_hash_is_v2", "active labels-v2 CSV stays byte-identical"),
+    ("test_freeze.py", "test_v2_label_dates_and_factor_values", "D-R25 factor/level values and v2 episode dates"),
     ("test_freeze.py", "test_episode_ids_join_across_frozen_artefacts", "label and episode ids share one window numbering"),
     ("test_freeze.py", "test_turning_points_carry_in_window_flag", "pre-1990 points are flagged, not hidden"),
     ("test_freeze.py", "test_one_active_source_per_scope_key", "one active provenance row per scope key"),
+    ("test_freeze.py", "test_v2_metadata_records_the_input_decisions", "labels-v2 records Q-02/Q-04/Q-05 and source ids"),
     ("test_freeze.py", "test_created_date_is_preserved", "re-running the builder does not rewrite the freeze date"),
     ("test_freeze.py", "test_canonical_digest_tracks_values_not_parquet_bytes", "freeze digest is environment-independent"),
 ]
@@ -228,11 +237,11 @@ TESTS = [
 REPO_MAP = [
     ("README.md", "Project overview, status, quickstart, USA result", "entry point"),
     ("docs/BUILD_CONTRACT.md", "Frozen runtime rules C-01..C-12", "read before writing pipeline code"),
-    ("docs/DECISIONS.md", "D-R01..D-R25 and open items O-1..O-5", "decision record"),
+    ("docs/DECISIONS.md", "D-R01..D-R28 and open items O-1..O-5", "decision record"),
     ("docs/VERIFICATION.md", "FRED verification table, substitutions, progress", "data provenance"),
     ("docs/LABEL_VALIDATION.md", "Method, NBER agreement, discrepancies, falsification checks", "label evidence"),
     ("docs/STATE.md", "One-page hand-off with hashes and next actions", "start here each session"),
-    ("docs/DECISION_NOTE_Q02_Q04_Q05.md", "Q-02/Q-04/Q-05 concept comparison, no selection", "decision support"),
+    ("docs/DECISION_NOTE_Q02_Q04_Q05.md", "Q-02/Q-04/Q-05 comparison and selected options", "decision support"),
     ("config/scope.yaml", "Countries, window, horizons, coverage, firewall", "runtime config"),
     ("config/indicators.yaml", "68 indicators, roles, forms, lag classes, variants", "generated from spec.py"),
     ("config/countries.yaml", "40 countries + GLOBAL with source chains", "generated"),
@@ -259,9 +268,10 @@ REPO_MAP = [
     ("scripts/04_compare_nber.py", "NBER comparison + robustness", "validation"),
     ("scripts/make_worklog.py", "This workbook", "reporting"),
     ("EWS_Work_Log.xlsx", "Generated work log (this file)", "deliverable"),
-    ("tests/", "28 invariants (config, scope, labels, freeze)", "software checks"),
+    ("tests/", "30 invariants (config, scope, labels, freeze)", "software checks"),
     ("outputs/labels/USA_labels.csv", "Frozen label: factor, level, diffusion, R", "deliverable"),
-    ("outputs/labels/labels-v1.json", "Parameters, loadings, hashes", "freeze record"),
+    ("outputs/labels/labels-v2.json", "Parameters, loadings, decisions, hashes", "freeze record"),
+    ("outputs/labels/archive/labels-v1/", "Byte-identical v1 label, metadata and SHA-256 sums", "archive"),
     ("outputs/results/USA_vs_NBER.md", "Episode matching, confusion matrix, robustness", "validation report"),
 ]
 
@@ -284,6 +294,9 @@ DECISIONS = [
     ("D-R23", "US income uses W875RX1 (excluding transfers), not DPIC96", "FROZEN"),
     ("D-R24", "Label uses the smoothed factor (ex-post, no availability lag)", "FROZEN"),
     ("D-R25", "Convert factor with scale = mean(sigma*|lambda|)", "FROZEN"),
+    ("D-R26", "Q-02 B: constructed real non-residential business fixed investment", "FROZEN"),
+    ("D-R27", "Q-04 B: USA employment uses CE16OV (LFS fallback)", "FROZEN"),
+    ("D-R28", "Q-05 A: keep HOANBS; document nonfarm-business coverage", "FROZEN"),
 ]
 
 OPEN_ITEMS = [
@@ -299,7 +312,7 @@ PHASES = [
     ("2", "Data dictionary", "Done", "16-sheet workbook, 1,883-row catalogue", ""),
     ("3", "Scoped verification", "USA done; JPN/DEU pending", "22 verified, 1 rejected, 2 derived", "JPN 21 + DEU 21 rows"),
     ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "264-quarter panel, 8 core indicators", "BOJ/OECD access"),
-    ("5", "BEAI label", "USA done, frozen", "4/4 NBER, accuracy 0.986", "JPN/DEU labels"),
+    ("5", "BEAI label", "USA done, frozen", "4/4 NBER, accuracy 0.993, F1 0.963", "JPN/DEU labels"),
     ("6", "JPN + DEU labels", "Not started", "-", "Phase 3/4 for those countries"),
     ("7", "Feature table", "Not started", "-", "O-4, firewall tests"),
     ("8", "Walk-forward harness", "Not started", "-", "O-3, folds"),
@@ -315,10 +328,10 @@ RUNBOOK = [
     ("Scope", "make scope", "rebuild the 68-row shortlist"),
     ("Fetch", "make fetch", "verify + download FRED, write manifest"),
     ("Harmonise", "make harmonize", "quarterly panel + growth matrix"),
-    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v1"),
+    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v2"),
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
-    ("Checks", "make check && make test", "26 config checks + 28 tests"),
+    ("Checks", "make check && make test", "26 config checks + 30 tests"),
     ("Workbook", "python scripts/make_worklog.py", "regenerate this file"),
 ]
 
@@ -334,7 +347,7 @@ def main() -> int:
     eps = pd.read_csv(PROJECT / "outputs" / "labels" / "USA_episodes.csv")
     rob = pd.read_csv(PROJECT / "outputs" / "results" / "USA_robustness.csv")
     false_eps = pd.read_csv(PROJECT / "outputs" / "results" / "USA_false_episodes.csv")
-    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v1.json").read_text())
+    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v2.json").read_text())
     vs_nber = pd.read_csv(PROJECT / "outputs" / "results" / "USA_vs_NBER.csv")
     match = pd.read_csv(PROJECT / "outputs" / "results" / "USA_episode_match.csv")
     cm = compute_confusion(vs_nber)
@@ -358,12 +371,12 @@ def main() -> int:
         ("", ""),
         ("Scope", "68 series rows: USA 25, JPN 21, DEU 21, GLOBAL 1; 30 BEAI-eligible"),
         ("Window", "1990Q1-2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
-        ("USA data", "23 scope FRED series + 1 auxiliary chronology; 22 verified, 1 insufficient, 2 derived"),
-        ("USA label", f"labels-v1 frozen: {int(eps['kept'].sum())} episodes, "
-                      f"{len(false_eps)} false positives"),
+        ("USA data", "30 FRED downloads: 26 verified + 1 low coverage; 4 Q-02 components, 1 auxiliary chronology, 3 derived scope series"),
+        ("USA label", f"labels-v2 frozen: {int(eps['kept'].sum())} episodes, "
+                      f"{len(false_eps)} false positives; labels-v1 archived"),
         ("NBER agreement", f"{episodes_matched}/{len(match)} episodes, accuracy {cm['accuracy']:.3f}, "
                            f"recall {cm['recall']:.3f}, precision {cm['precision']:.3f}, F1 {cm['f1']:.3f}"),
-        ("Tests", "28 passing (config 6, scope 6, labels 9, freeze 7)"),
+        ("Tests", "30 passing (config 6, scope 6, labels 9, freeze 9)"),
         ("Config gate", "26 ok, 3 warnings (optional model packages), 0 failures"),
         ("Not started", "JPN/DEU collection, feature table, harness, experiments, dashboard"),
         ("", ""),
@@ -437,7 +450,7 @@ def main() -> int:
     # 5. Labels ------------------------------------------------------------
     ws = wb.create_sheet("Labels")
     ws.sheet_view.showGridLines = False
-    ws["A1"] = "USA BEAI label (labels-v1)"
+    ws["A1"] = "USA BEAI label (labels-v2)"
     ws["A1"].font = TITLE_FONT
     ws["A2"] = "DFM on eight core indicators -> cumulated level -> BBQ -> diffusion gate >= 0.50"
     ws["A2"].font = SUB_FONT
@@ -533,6 +546,22 @@ def main() -> int:
         ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=5)
         r += 1
 
+    r += 1
+    ws.cell(row=r, column=1, value="Selected label decisions").font = Font(bold=True, size=11, color=NAVY)
+    r += 1
+    decision_rows = [
+        ("Q-02", "B: constructed real non-residential business fixed investment (4 BEA components); GPDIC1 retired"),
+        ("Q-04", "B: CE16OV household/LFS employment, quarterly mean; PAYEMS retired from the label"),
+        ("Q-05", "A: keep HOANBS; nonfarm-business sector coverage documented"),
+    ]
+    for qid, text in decision_rows:
+        ws.cell(row=r, column=1, value=qid).font = MONO
+        c = ws.cell(row=r, column=2, value=text)
+        c.font = BODY_FONT
+        c.alignment = WRAP
+        ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=5)
+        r += 1
+
     # 6. Robustness --------------------------------------------------------
     sheet(wb, "Robustness", "Label robustness",
           "Dates must not move by more than one quarter when the specification changes.",
@@ -542,7 +571,7 @@ def main() -> int:
           number_formats={2: "0", 3: "0"})
 
     # 7. Tests -------------------------------------------------------------
-    sheet(wb, "Tests", "Test suite (28 invariants)",
+    sheet(wb, "Tests", "Test suite (30 invariants)",
           "These establish software correctness only; economic credibility comes from the NBER comparison.",
           ["Module", "Test", "What it protects"],
           TESTS, [18, 58, 70])

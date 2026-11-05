@@ -200,7 +200,7 @@ scaffolding currently assumes.
 | config | `make check` passes with 0 failures |
 | collection | manifest rows = scope rows, raw files hashed |
 | harmonisation | one row per series×quarter, coverage table produced |
-| labels | US episodes match NBER 1990/2001/2008; `labels-v1` hash frozen |
+| labels | US episodes match NBER 1990/2001/2008; `labels-v2` hash frozen (`labels-v1` archived byte-identical) |
 | features | leakage test passes; `dataset.parquet` + `folds.json` written |
 | harness | one country × one horizon × six models reproducible from a seed |
 | experiments | headline table + episode table reproducible via `make run` |

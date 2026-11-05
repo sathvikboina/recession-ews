@@ -39,15 +39,17 @@ re-validated before freezing.
   FRED on 2026-11-04. Coverage is the share of the 144 quarters in 1990Q1–2025Q4
   with a complete observation at native frequency (monthly series need all three
   months).
-- The chronology sensitivity runs in §5 are **read-only**. They replace one label
-  input at a time, keep the frozen DFM, BBQ and diffusion parameters, and do not
-  write to `data/clean` or `outputs`. They are indicative, not a re-freeze.
+- The one-at-a-time chronology sensitivity runs in §2–§4 are **read-only**.
+  They replace one label input at a time, keep the frozen DFM, BBQ and diffusion
+  parameters, and do not write to `data/clean` or `outputs`. The selected package
+  was then re-run jointly (§5) before `labels-v2` was frozen.
 - NBER agreement is a plausibility check, not the optimisation target (C-04,
   FW-06). A lower NBER score is a finding to discuss, not automatically a reason
   to reject a concept-correct series.
-- OECD dataflow IDs for JPN/DEU are still unresolved (Q-15), so cross-country
-  availability below is stated as "expected from OECD QNA" where it could not be
-  confirmed from a downloaded series.
+- The OECD QNA population/employment dataflow was checked directly on 2026-11-04
+  (`DF_QNA_POP_EMPNC`); other JPN/DEU dataflow IDs remain unresolved (Q-15), so
+  cross-country availability outside that check is stated as expected rather than
+  confirmed.
 
 ## 1. At a glance
 
@@ -180,26 +182,38 @@ US-only; JPN and DEU will be audited against their own QNA/LFS availability.
 
 | ACT_EMP series | Label episodes 1990–2025 | TP | FP | FN | Accuracy | Precision | Recall | F1 |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| `PAYEMS` (current) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
+| `PAYEMS` (v1) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 | `CE16OV` | 1990Q2–1991Q1; 2000Q4–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 3 | 0 | 0.979 | 0.812 | 1.000 | 0.897 |
 | `PRS85006013` | 1990Q1–1991Q2; 2007Q2–2009Q3; 2019Q4–2020Q2 | 10 | 6 | 3 | 0.938 | 0.625 | 0.769 | 0.690 |
 | `CEU0500000001` | 1990Q2–1991Q1; 2000Q4–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 
 `CE16OV` is the lowest-cost conceptual improvement: one extra false-positive
-quarter and the 2001 peak moves one quarter earlier. `PRS85006013` is too narrow
-and misses 2001. `CEU0500000001` matches the current quarter-level metrics but is
-private-only and NSA.
+quarter and the 2001 peak moves one quarter earlier in the one-at-a-time test.
+`PRS85006013` is too narrow and misses 2001. `CEU0500000001` matches the current
+quarter-level metrics but is private-only and NSA. Because the one-at-a-time
+`CE16OV` test was no better than v1 on F1, it was re-validated jointly with Q-02
+(§5), where the package reaches F1 0.963.
 
-### Options (none selected)
+### Selected: Option B — `CE16OV` LFS fallback
 
-- **A. Keep `PAYEMS` and record an explicit deviation from Q-04**, documenting
-  the establishment concept and the government/nonfarm scope.
-- **B. Replace with `CE16OV` (LFS fallback) and re-validate.** Conceptually
-  closer, US-only, modest chronology cost.
-- **C. Resolve Q-15 and use OECD QNA employment for USA, JPN and DEU.** Best
-  cross-country consistency; requires collection and a full re-run.
-- **D. Defer until the JPN/DEU collection shows which concept is actually
-  available quarterly.**
+Implemented in `labels-v2`:
+
+- source `CE16OV`, monthly SA, aggregated to a quarterly mean with the
+  complete-quarter rule; 143/144 (99.3%) window coverage;
+- recorded as `USA.ACT_EMP.Q.NA` in the manifest; `PAYEMS` retired to
+  `data/superseded_series.csv`;
+- one concept is locked for the USA: household-survey employment, not a blend
+  with the establishment series.
+
+**Options considered (retained for the record).**
+
+- **A. Keep `PAYEMS` and record an explicit deviation from Q-04.** Not selected:
+  `PAYEMS` is an establishment survey, not the named LFS fallback.
+- **B. Replace with `CE16OV` and re-validate.** **Selected and implemented.**
+- **C. Resolve Q-15 and use OECD QNA employment for USA, JPN and DEU.** Not
+  selected for the USA: the checked OECD QNA dataflow returns no US employment.
+  Germany can use QNA; Japan will use its own audit.
+- **D. Defer.** Not selected: the US source could be settled now.
 
 ## 4. Q-05 — hours worked
 
@@ -208,7 +222,7 @@ component is missing; no temporal disaggregation." (`decisions_log.csv`, Q-05.)
 The indicator definition also says "Total hours worked, whole economy"
 (`spec.py`, `ACT_HOURS`).
 
-### Current: `HOANBS`
+### Selected input: `HOANBS` (kept from v1)
 
 | Property | Value |
 |---|---|
@@ -244,7 +258,7 @@ only full-coverage quarterly total-hours series available on FRED.
 
 | ACT_HOURS series | Label episodes 1990–2025 | TP | FP | FN | Accuracy | Precision | Recall | F1 |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| `HOANBS` (current) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
+| `HOANBS` (v1 and v2) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 | `PRS85006023` | 1990Q2–1991Q1; 2000Q4–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 | `AWHNONAG` | 1990Q2–1991Q1; 2000Q4–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
 
@@ -254,40 +268,72 @@ trough one quarter earlier. They also change what the factor measures: total
 labour input versus hours per worker. That is a concept change, not a data
 upgrade.
 
-### Options (none selected)
+### Selected: Option A — keep `HOANBS`
 
-- **A. Keep `HOANBS` and record the sector-coverage deviation** ("total hours,
-  nonfarm business") in the decision record. No re-freeze.
-- **B. Use OECD total hours worked when it is available quarterly** for USA,
-  JPN and DEU; if it is annual-only, Q-05 says the component is missing.
-- **C. Switch to a per-worker hours series (`PRS85006023` or `AWHNONAG`).**
-  Preserves quarter-level NBER agreement here but weakens the total-hours
-  concept and shifts dates.
-- **D. Defer until JPN/DEU hours availability is verified.**
+Retained unchanged in `labels-v2`:
 
-## 5. What a change would require
+- quarterly, SA, 144/144 window coverage, 1947Q1–2026Q2;
+- concept is total hours in the **nonfarm business** sector, not whole economy;
+- Q-05's formal rule only excludes annual-only data, so `HOANBS` passes;
+- the sector limitation is recorded in `labels-v2.json` and
+  `data/series_resolution.csv`. JPN/DEU will use OECD total hours where it is
+  quarterly; annual-only data remain missing.
 
-Any selected replacement would need the same sequence, in order:
+**Options considered (retained for the record).**
 
-1. Add the source (or derivation) to `data/series_resolution.csv`,
-   `data/manifest.csv` and `data/fred_verification.csv`; if it replaces a source,
-   record the retired row in `data/superseded_series.csv`.
-2. Update `config/indicators.yaml` only if the indicator semantics change; the
-   eight BEAI indicator ids stay the same.
-3. Re-run `harmonize.py`, `03_labels.py` and `04_compare_nber.py`.
-4. Re-run the robustness variants and the frozen-artefact tests.
-5. Issue a new label version, update `docs/DECISIONS.md`, `docs/LABEL_VALIDATION.md`
-   and `docs/STATE.md`, and re-freeze. The current `labels-v1` stays untouched
-   until that decision is made.
+- **A. Keep `HOANBS` and record the sector-coverage limitation.** **Selected.**
+- **B. Use OECD total hours worked when it is available quarterly.** Not selected
+  for the USA: the available FRED sources do not provide a US whole-economy
+  quarterly series. This remains the cross-country option for JPN/DEU.
+- **C. Switch to a per-worker hours series.** Not selected: it changes the
+  concept from total labour input to hours per worker.
+- **D. Defer.** Not selected: keeping a rule-compliant quarterly series requires
+  no re-freeze driver.
 
-## 6. Decision requested
+## 5. What the selected change required
 
-| Question | Option A (keep + record deviation) | Option B (concept-correct replacement) | Option C (alternative) | Option D |
-|---|---|---|---|---|
-| Q-02 | Keep `GPDIC1`, document residential/inventory content | Constructed real non-residential total; re-validate | Drop `ACT_INV` (7/8) | Defer |
-| Q-04 | Keep `PAYEMS`, document establishment concept | `CE16OV` LFS fallback; re-validate | OECD QNA employment (resolve Q-15) | Defer |
-| Q-05 | Keep `HOANBS`, document nonfarm-business scope | OECD total hours when quarterly | Per-worker hours series | Defer |
+The selected package was implemented in this order:
 
-No option is selected in this note. The current frozen chronology remains
-`labels-v1` with the unchanged `USA_labels.csv` hash
+1. Added the four Q-02 components and `CE16OV` to `scripts/fetch_fred.py`,
+   `data/series_resolution.csv`, `data/manifest.csv` and
+   `data/fred_verification.csv`; retired `GPDIC1` and `PAYEMS` into
+   `data/superseded_series.csv`.
+2. Added the Q-02 derivation to `scripts/harmonize.py`. The eight BEAI indicator
+   ids and `config/indicators.yaml` semantics are unchanged.
+3. Re-ran `make fetch`, `make harmonize`, `make labels` and `make validate`.
+4. Re-ran the robustness variants and the frozen-artefact tests. `labels-v1` was
+   archived first and remains byte-identical under
+   `outputs/labels/archive/labels-v1/`; `labels-v2.json` records the archived v1
+   label hash.
+5. Updated `docs/DECISIONS.md`, `docs/LABEL_VALIDATION.md`, `docs/STATE.md`,
+   `docs/VERIFICATION.md`, `README.md` and this note.
+
+**Joint Q-02 + Q-04 re-validation (selected package).**
+
+| Variant | Label episodes 1990–2025 | TP | FP | FN | Accuracy | Precision | Recall | F1 |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| `labels-v1` (`GPDIC1` + `PAYEMS`) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 2 | 0 | 0.986 | 0.867 | 1.000 | 0.929 |
+| `labels-v2` (constructed INV + `CE16OV`) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 | 13 | 1 | 0 | 0.993 | 0.929 | 1.000 | 0.963 |
+| Q-02 only | 1990Q1–1991Q2; 2000Q3–2002Q1; 2007Q2–2009Q3; 2019Q4–2020Q2 | 13 | 9 | 0 | 0.938 | 0.591 | 1.000 | 0.743 |
+| Q-04 only | 1990Q2–1991Q1; 2000Q4–2001Q4; 2007Q4–2009Q3; 2019Q4–2020Q2 | 13 | 3 | 0 | 0.979 | 0.812 | 1.000 | 0.897 |
+
+The factor correlation between v1 and the selected package over 1990Q1–2025Q4 is
+0.9966, and the level correlation is 0.9982. The only date change is the 2009
+trough, which moves from 2009Q3 to 2009Q2 and now matches NBER exactly. The
+selected package is stable, and NBER agreement is a plausibility check rather
+than the optimisation target (C-04, FW-06).
+
+## 6. Decision record
+
+| Question | Selected option | Rationale |
+|---|---|---|
+| Q-02 | **B — constructed real non-residential business fixed investment** | Q-02 forbids total GFCF; `PNFIC1` is too short; the construction is full-coverage and reproduces `PNFIC1` to <0.02bn |
+| Q-04 | **B — `CE16OV` LFS fallback** | OECD QNA employment is unavailable for the USA; `PAYEMS` is an establishment survey, not the Q-04 fallback |
+| Q-05 | **A — keep `HOANBS`** | Only full-coverage quarterly total-hours series; Q-05 bars annual-only data, not narrower sector coverage |
+
+Decisions are recorded in `decisions_log.csv` (Q-02, Q-04, Q-05) and
+`docs/DECISIONS.md` (D-R26–D-R28). The active chronology is `labels-v2`
+(`USA_labels.csv` SHA-256
+`f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e`).
+`labels-v1` remains archived with its original hash
 `1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a`.

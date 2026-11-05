@@ -1,76 +1,81 @@
 # Build State
 
-Last updated: **2026-11-04**. One page of truth for the next session.
+Last updated: **2026-11-05**. One page of truth for the next session.
 
 ## Where we are
 
 The USA milestone is complete: FRED verified, the eight core indicators harmonised, the
-BEAI label built and validated against NBER, and the label frozen. **No feature or model
-pipeline exists yet.** Other countries have not been collected.
+BEAI label built and validated against NBER, and the label frozen as **`labels-v2`**.
+`labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/`.
+**No feature or model pipeline exists yet.** Other countries have not been collected.
 
 | Item | Value |
 |---|---|
 | Countries with data | USA (JPN, DEU still `PENDING_VERIFICATION`) |
-| FRED series verified | 22 (1 rejected for history, 2 derived) |
+| FRED downloads verified | 26 verified + 1 low coverage; 4 Q-02 components, 1 auxiliary chronology, 3 derived scope series |
 | Series shortlist | 68 rows; USA 25/25 resolved |
 | Window / horizons | 1990Q1–2025Q4 / 1Q, 2Q, 4Q (2Q primary) |
-| Label version | **labels-v1**, frozen |
-| NBER validation | 4/4 episodes, 0 false, accuracy 0.986, recall 1.000 |
-| Tests | 28 passing |
+| Label version | **labels-v2**, frozen (supersedes labels-v1) |
+| NBER validation | 4/4 episodes, 0 false, accuracy 0.993, precision 0.929, recall 1.000, F1 0.963 |
+| Tests | 30 passing |
 | Config check | `make check` → 26 ok, 3 warnings (uninstalled `sklearn`/`xgboost`/`shap`), 0 failures |
 
-## Label result
+## Label result (`labels-v2`)
 
 | NBER peak–trough | label peak–trough | peak diff | trough diff | diffusion |
 |---|---|---:|---:|---:|
-| 1990Q3–1991Q1 | 1990Q2–1991Q1 | −1 | 0 | 0.857 |
-| 2001Q1–2001Q4 | 2001Q1–2001Q4 | 0 | 0 | 0.667 |
-| 2007Q4–2009Q2 | 2007Q4–2009Q3 | 0 | +1 | 0.839 |
-| 2019Q4–2020Q2 | 2019Q4–2020Q2 | 0 | 0 | 0.875 |
+| 1990Q3–1991Q1 | 1990Q2–1991Q1 | −1 | 0 | 0.810 |
+| 2001Q1–2001Q4 | 2001Q1–2001Q4 | 0 | 0 | 0.708 |
+| 2007Q4–2009Q2 | 2007Q4–2009Q2 | 0 | 0 | 0.875 |
+| 2019Q4–2020Q2 | 2019Q4–2020Q2 | 0 | 0 | 0.938 |
 
-Quarter-level: 13 TP, 2 FP, 0 FN, 129 TN → precision 0.867, recall 1.000, F1 0.929.
-Full narrative and falsification checks: `docs/LABEL_VALIDATION.md`.
+Quarter-level: 13 TP, 1 FP, 0 FN, 130 TN → accuracy 0.993, precision 0.929,
+recall 1.000, F1 0.963. v1 was 13 TP, 2 FP, 0 FN, 129 TN → accuracy 0.986,
+precision 0.867, F1 0.929. Full narrative and falsification checks:
+`docs/LABEL_VALIDATION.md`. Selected options and alternatives:
+`docs/DECISION_NOTE_Q02_Q04_Q05.md`.
 
-## Maintenance (2026-11-04)
+## labels-v2 change set (2026-11-04)
 
-Review fixes applied **without touching the frozen chronology**:
+- **Q-02 Option B.** `ACT_INV` is now constructed real non-residential business
+  fixed investment: `(Y033RC1Q027SBEA + B009RC1Q027SBEA + Y001RC1Q027SBEA) /
+  (A008RD3Q086SBEA/100)`. `GPDIC1` (residential + inventories) is retired.
+- **Q-04 Option B.** `ACT_EMP` is now `CE16OV` (household/LFS, quarterly mean).
+  `PAYEMS` is an establishment survey, not the Q-04 fallback, and is retired from
+  the label.
+- **Q-05 Option A.** `ACT_HOURS` stays `HOANBS`; the nonfarm-business sector
+  limitation is documented. No re-freeze driver.
+- The estimator, BBQ parameters, diffusion gate and eight-indicator structure are
+  unchanged. The only label-date change is the 2009 trough (2009Q3 → 2009Q2).
+- v1 label hash `1a1b1f6a…b749e29a` is preserved in the archive and recorded in
+  `labels-v2.json`.
 
-- window episode ids in `USA_episodes.csv` renumbered 1–4 to join `USA_labels.csv`;
-- `USA_turning_points.csv` gained an `in_window` flag (pre-1990 points stay visible);
-- stale `DPIC96` provenance removed; `data/superseded_series.csv` records it;
-- `labels-v1.json.created` is preserved on re-run and gains a value-level growth digest;
-- the three result CSVs needed by `make_worklog.py` are committed, and data-dependent
-  tests skip cleanly when `data/clean/` is absent;
-- `make check` / `make fetch` use `$(PY)` instead of the system interpreter;
-- docs corrected (1990Q3 extra quarter, USRECQ column, JPN/DEU row counts).
-
-The frozen label CSV hash is unchanged: `1a1b1f6a…b749e29a`. `USA_episodes.csv`,
-`USA_turning_points.csv` and `labels-v1.json` changed as supporting artefacts only.
-
-## Fingerprints (2026-11-04)
+## Fingerprints (2026-11-05)
 
 ```
 00b53eafb124c5cde5e62e21b8b26da9474202051a03fcda9c9308a830e3a6f0  config/scope.yaml
 f0d72b84e5e257bd7a4e13a699dfab135141dc6cf23ae456afd20fd6c223c5fd  config/indicators.yaml
 13651bc11e8f55f436aa44b6d01e24f17130d99e01789a9947a466cbbddd477e  config/countries.yaml
 a6983a62b99532010ec88e642b79203df05f694f34eefc7d227b76aafcbf7e9c  config/sources.yaml
-f0dbaa5889e704fb953e29db8538502d1b800a858d268ad9d9d5a29d092bb42e  data/scope.csv
-d6559f657e58927cdd5126c12162b9ab6b3941c0f629b94cdeb63fc8a6350cea  data/series_resolution.csv
-44457e078bd031f1624f6aac936b1aec777c09f5f6d27c8fcde496b34c4f60c9  data/manifest.csv
-cc35737fd05c752d39d0188b74b37af7021e1847e2e75b3d27a60e0fcbb070fe  data/fred_verification.csv
-c3a77f4109244f3d4a45ec2af3ec4012d3c0ee9f7e124a8a525719d7f27dd782  data/superseded_series.csv
-1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a  outputs/labels/USA_labels.csv
-f921ad38e6ccdde482700deaaba3e3ea3a6cda1fd09a78389abc7bcf8f40aa1d  outputs/labels/USA_episodes.csv
-9f83438c4d57e7fea3ed2f13030379e112d4f24bc24a85a2cd4e4564ab80a1a1  outputs/labels/USA_turning_points.csv
-954565d2e2cd137109153b376389b1920c9d9d3598f6a027d574be7770991834  outputs/labels/labels-v1.json
-0ed053423d2dbb95eabf27870565813a67641e40b28160a32e2ebd3ae6da780d  data/clean/USA_growth.parquet
+0512580c3cba26f5343db3fc9e998ed37bfd316f707095966e4e57affc626247  data/scope.csv
+04d11a47743782cf857dc08ff0c62031ceda2878821e26e855c32bb5b91d9f40  data/series_resolution.csv
+c0153fdbbebd3eda50985ca1d6f47e9233a40a81afce78dbda6dd8356c9e0ede  data/manifest.csv
+bf75a908dd685d4f15e9f6517e9ec32aa00b7b9be1a806fd0b7e30d12b4f3614  data/fred_verification.csv
+6b71ee76d393c22291330d3aca132b844752f648604e433b34b5b73d2c397b5b  data/superseded_series.csv
+124d2b26f8919a1cf9fec9d899b324c2419be6fa1f66ec206808615d05ffd3c1  data/clean/USA_growth.parquet
+f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e  outputs/labels/USA_labels.csv
+45aca14077868d95639a69ac8d1c0666b059258635c05a70bf90bf5815a2d4f9  outputs/labels/USA_episodes.csv
+26883399153f6bddb9a8ce6808faaedda96fe2bf35fc08f8d36d7371a45efecf  outputs/labels/USA_turning_points.csv
+1fb38a7691a0ecd5ba25921cf05b7357766aa9fb4ba350b5ebbdc032ca909e74  outputs/labels/labels-v2.json
+1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a  outputs/labels/archive/labels-v1/USA_labels.csv
+954565d2e2cd137109153b376389b1920c9d9d3598f6a027d574be7770991834  outputs/labels/archive/labels-v1/labels-v1.json
 ```
 
 If a hash changes, re-run `make pipeline test` before trusting any downstream result.
 
 ## Done in the USA milestone session (2026-10-29)
 
-- `scripts/fetch_fred.py`: curl-based verification + download, 24 series, metadata
+- `scripts/fetch_fred.py`: curl-based verification + download, metadata
   (title/units/frequency/SA), coverage over the window, SHA-256 manifest, resolution table.
 - `scripts/harmonize.py`: monthly/daily → quarterly mean with complete-quarter rule, Δlog,
   sign alignment, 1960–2025 estimation sample + 1990–2025 reporting window, no imputation.
@@ -87,7 +92,9 @@ If a hash changes, re-run `make pipeline test` before trusting any downstream re
 
 1. **JPN and DEU collection.** 42 rows. Resolve BOJ keys and OECD dataflows; same manifest
    and verification contract. Acceptance: 21/21 rows per country with ID, frequency, SA,
-   coverage.
+   coverage. Q-02 non-residential GFCF components and Q-05 quarterly hours may be missing;
+   missing stays missing. German QNA employment is available (1991Q1–2022Q4); Japan needs
+   its own audit.
 2. **Run the label on JPN and DEU.** Compare with ESRI (Japan) and the German
    Sachverständigenrat / OECD chronology. A country that does not reproduce its official
    dates is a finding, not a bug.

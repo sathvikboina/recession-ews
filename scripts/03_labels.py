@@ -6,7 +6,7 @@ Writes
 outputs/labels/USA_labels.csv      quarter-level factor, level, R, episode id
 outputs/labels/USA_episodes.csv    every candidate episode, kept or rejected
 outputs/labels/USA_turning_points.csv
-outputs/labels/labels-v1.json      frozen parameter + hash record
+outputs/labels/labels-v2.json      frozen parameter + hash record
 outputs/figures/USA_factor.png     factor/level with labelled recessions
 
 Run:
