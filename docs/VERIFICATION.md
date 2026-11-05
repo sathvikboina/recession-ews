@@ -130,7 +130,7 @@ under O-2 pending the final downloaded-data count in Part 4.
 | 2026-11-04 | FRED | Q-02 components + Q-04 source | 5 additions, `GPDIC1`/`PAYEMS` retired from the label, `labels-v2` built | automated + decision note |
 | 2026-11-05 | FRED | 30 registry entries = 27 downloads + 3 derived | 26 verified, 1 low coverage, 3 derived; v2 hashes reproduced | automated |
 | 2026-11-05 | IND | documentary pre-audit | best case 4/8; Label-B-only under O-2; final count pending downloads | review |
-| 2026-10-29 | — | JPN, DEU, OECD, BOJ | not started | — |
+| 2026-11-05 | — | JPN, DEU, OECD, BOJ | still not started; Part 1 of the team plan begins with source resolution | — |
 
 ## Commands
 
