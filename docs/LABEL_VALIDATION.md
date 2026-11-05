@@ -9,6 +9,12 @@ boundary shift. `labels-v1` is archived byte-for-byte under
 `outputs/labels/archive/labels-v1/`; `labels-v2` changes only the Q-02 investment
 and Q-04 employment inputs (D-R26, D-R27), while Q-05 keeps `HOANBS` (D-R28).
 
+**Claim scope.** This document validates a label, not a forecasting model. The label is an
+ex-post chronology built from the eight §11 activity measures; no predictor has been
+trained or scored. Until the walk-forward results exist, use "we built and validated a
+recession label", not "we predict recessions". The pre-registered model evaluation is
+described in `docs/PROPOSAL_ADDENDUM.md`.
+
 ## 1. Data
 
 Eight core indicators, all ≥93% coverage of the 144-quarter window (`data/clean/coverage.csv`):

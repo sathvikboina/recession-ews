@@ -4,7 +4,8 @@ Runtime rules for the implementation. This is the page the code and any AI sessi
 should read instead of the 72 KB `spec.py`. Each rule has an ID; cite the ID in code
 comments, tests and commit messages. Section references (§n) point to `plan_ML.docx`.
 
-Status: **frozen 2026-10-29** for rules marked ✅. Rules marked ⏳ still need a human
+Status: **frozen 2026-10-29** for rules marked ✅. C-13 was pre-registered
+**2026-11-05**, before any model result. Rules marked ⏳ still need a human
 decision; do not hard-code a choice for them.
 
 ---
@@ -178,6 +179,23 @@ Every run stores: data version, series IDs, transform list, feature list, fold b
 model parameters, selected features, threshold, metrics, seed, and a manifest hash (§73).
 Raw files are immutable; cleaned data is separate; no full-sample transforms are stored.
 
+## C-13 — Pre-registered ensemble ✅
+
+- The confirmatory ensemble is fixed before any result: **equal-weight probability average
+  of the top-3 single-model configurations**, ranked by pooled PR-AUC on the inner,
+  time-ordered validation folds of the current outer training block.
+- Members, weights, scalers and threshold are fitted inside the outer training block. The
+  ensemble uses the same folds and feature matrix as the single models. No BEAI output,
+  NBER chronology or held-out-country information contributes (C-01, C-08, C-11).
+- **Beat-the-best test:** the ensemble must improve pooled out-of-sample PR-AUC by at least
+  **0.01 absolute** over the inner-fold-selected best single model, a paired bootstrap
+  (1,000 resamples) must give a 95% interval excluding zero, and episode-level recall must
+  not fall. If any condition fails, the best single model is primary and the ensemble is a
+  reported **negative result**.
+- A logistic stack of the six singles is a secondary, exploratory variant only. No member,
+  weight or threshold may change after the test scores are seen.
+- Full text and sign-off: `docs/PROPOSAL_ADDENDUM.md`.
+
 ---
 
 ## Not frozen yet ⏳
@@ -200,7 +218,7 @@ scaffolding currently assumes.
 | config | `make check` passes with 0 failures |
 | collection | manifest rows = scope rows, raw files hashed |
 | harmonisation | one row per series×quarter, coverage table produced |
-| labels | US episodes match NBER 1990/2001/2008; `labels-v2` hash frozen (`labels-v1` archived byte-identical) |
+| labels | USA matches all 4 NBER episodes in 1990Q1–2025Q4 (including 2019Q4–2020Q2); `labels-v2` hash frozen; `labels-v1` archived byte-identical; JPN/DEU match their own chronology when built |
 | features | leakage test passes; `dataset.parquet` + `folds.json` written |
 | harness | one country × one horizon × six models reproducible from a seed |
 | experiments | headline table + episode table reproducible via `make run` |

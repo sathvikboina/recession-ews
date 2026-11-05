@@ -32,6 +32,11 @@ that date folder; it does not supply any active row and is superseded by the
 2026-11-05 run. Verification facts: `data/fred_verification.csv`. Resolution
 table: `data/series_resolution.csv`. Hashes: `data/manifest.csv`.
 
+The FRED registry has **30 entries = 27 downloads + 3 derived series**. The
+manifest has 27 rows: 26 `VERIFIED` and 1 `LOW_COVERAGE` (`PCEC96`). The four
+Q-02 asset components and the NBER chronology are supporting downloads; they are
+not separate scope rows.
+
 ## FRED verification (USA)
 
 Coverage is the share of the 144 quarters in 1990Q1–2025Q4 for which the series has
@@ -93,6 +98,29 @@ with `TRANSACTION=EMP`, `SECTOR=S1`, `ACTIVITY=_T`, `UNIT_MEASURE=PS`,
 dataflow. This is why the USA uses the Q-04 LFS fallback `CE16OV`; Germany can
 use QNA employment during its collection; Japan needs its own audit.
 
+## USA data sign-offs (2026-11-05)
+
+The two v1 data defects are explicitly closed for the USA. They are fixed in
+`labels-v2`; `labels-v1` remains archived and unamended.
+
+| Concern | v1 defect | v2 resolution | Evidence | Status |
+|---|---|---|---|---|
+| Q-02 investment (`ACT_INV`) | `GPDIC1` = real gross private domestic investment, which includes residential investment and inventories; this contradicts §11/Q-02 "business (non-residential) fixed investment only". | Constructed real non-residential business fixed investment = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` retired. | Reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3; 144/144 window coverage; four component rows in the manifest; `GPDIC1` in `data/superseded_series.csv`. | **Closed for USA** |
+| Q-04 employment (`ACT_EMP`) | `PAYEMS` = establishment-survey payrolls; this is not the Q-04 fallback. | `CE16OV` household/LFS employment, quarterly mean. `PAYEMS` retired from the label. | OECD QNA employment returned no USA observations in the checked dataflow; 143/144 window coverage; `PAYEMS` in `data/superseded_series.csv`. | **Closed for USA** |
+| Q-05 hours (`ACT_HOURS`) | `HOANBS` was rule-compliant but the sector limitation was under-documented. | `HOANBS` retained; nonfarm-business coverage documented. | 144/144 window coverage; Q-05 bars annual-only data, not narrower sector coverage. | **Closed for USA** |
+
+JPN/DEU remain `DECIDED_PENDING_VERIFICATION` for Q-02/Q-05 availability. That is
+a country-level source check during collection, not a reopening of the US decision.
+
+## India pre-audit (2026-11-05)
+
+`docs/INDIA_COVERAGE_AUDIT.md` checks India against the §19 gate before collection.
+Confirmed passes: GDP and consumption (quarterly from 1996-97, 82.6% of the window).
+Likely passes: industrial production and investment. Structural failures: employment
+(PLFS quarterly only from 2017, urban-only until 2025), hours, household income and
+retail. **Best case 4/8**, below the required 6/8. No relaxation; India is Label-B-only
+under O-2 pending the final downloaded-data count in Part 4.
+
 ## Log
 
 | Date | Source | Rows checked | Result | Checked by |
@@ -100,7 +128,8 @@ use QNA employment during its collection; Japan needs its own audit.
 | 2026-10-29 | FRED | 24 downloads + 2 derived | 22 verified, 1 low coverage, 2 derived | automated (`scripts/fetch_fred.py`) |
 | 2026-11-04 | FRED | provenance maintenance | removed stale `DPIC96` duplicate; one active row per scope key | review fix |
 | 2026-11-04 | FRED | Q-02 components + Q-04 source | 5 additions, `GPDIC1`/`PAYEMS` retired from the label, `labels-v2` built | automated + decision note |
-| 2026-11-05 | FRED | 30 downloads (full re-fetch) | 26 verified, 1 low coverage, 3 derived; v2 hashes reproduced | automated |
+| 2026-11-05 | FRED | 30 registry entries = 27 downloads + 3 derived | 26 verified, 1 low coverage, 3 derived; v2 hashes reproduced | automated |
+| 2026-11-05 | IND | documentary pre-audit | best case 4/8; Label-B-only under O-2; final count pending downloads | review |
 | 2026-10-29 | — | JPN, DEU, OECD, BOJ | not started | — |
 
 ## Commands

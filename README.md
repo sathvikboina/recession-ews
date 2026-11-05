@@ -1,9 +1,9 @@
 # Cross-Country Recession Early-Warning
 
-Machine-learning framework for predicting recession **onset** at 1, 2 and 4 quarters,
-with a leakage-controlled evaluation design. This repository currently contains the
-Phase 2 data dictionary, the runtime specification, the USA data, and a **validated,
-frozen recession label**. No feature table and no model have been built yet.
+This repository is a label-first study of recession dating and early-warning design. It
+currently contains the Phase 2 data dictionary, the runtime specification, the USA data,
+and a **validated, frozen recession label** built from eight activity measures. No feature
+table and no model have been built yet, so no forecasting performance is claimed.
 
 Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 
@@ -15,9 +15,15 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
 | Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 42 rows, 40 pending + 2 derived |
 | Phase 4 — collect + harmonise | USA done; JPN/DEU not started |
-| Phase 5 — BEAI label | **USA validated and frozen (`labels-v2`; `labels-v1` archived)** |
+| Phase 5 — BEAI label | **USA validated and frozen (`labels-v2`; `labels-v1` archived)**; JPN/DEU next |
 | Phase 6–8 — features / harness / models | not started |
 | Phase 9+ — experiments, interpretation, dashboard | not started |
+
+Review state (2026-11-05): the ensemble is pre-registered before results in
+`docs/PROPOSAL_ADDENDUM.md`; the India pre-audit finds a best case of 4/8 under §19, so
+India is a Label-B case study (`docs/INDIA_COVERAGE_AUDIT.md`); the two v1 data defects
+(`GPDIC1`, `PAYEMS`) are signed off in `docs/REVIEW_2026-11-05.md`. The four work packages
+are in `docs/TEAM_PLAN.md`.
 
 ## Quickstart
 
@@ -67,9 +73,10 @@ data/
 src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
 scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
                    04_compare_nber, make_worklog
-tests/             config, scope, label invariants (BBQ, flag, diffusion, frozen file)
+tests/             config, scope, label invariants, frozen artefacts, review invariants
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md,
-                   DECISION_NOTE_Q02_Q04_Q05.md
+                   DECISION_NOTE_Q02_Q04_Q05.md, PROPOSAL_ADDENDUM.md,
+                   INDIA_COVERAGE_AUDIT.md, TEAM_PLAN.md, REVIEW_2026-11-05.md
 outputs/           labels, folds, results, figures, runs
 EWS_Work_Log.xlsx  generated work log: every action, source, test and decision
 ```
@@ -99,6 +106,9 @@ checked-in deliverables. Set `EWS_OUT=/path` to choose the destination.
 ## What is in scope for the first build
 
 - Countries: **USA, JPN, DEU** (edit `config/scope.yaml` to add the rest of Tier 1/2).
+- India: in the dictionary and coverage reporting but not enabled. The pre-audit's best
+  case is **4/8**, below the §19 gate, so India is a Label-B-only case study under O-2
+  pending the final downloaded-data count.
 - Indicators: **P0 + P1** — the eight §11 core indicators plus 13 core predictors.
 - Series: **68 rows** (30 BEAI-eligible, 4 derived, 1 global).
 - Window: 1990Q1–2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary.
@@ -111,8 +121,9 @@ Widening to P0 + P2 takes the shortlist from 68 to 140 rows and is a one-line ch
 
 Read `docs/BUILD_CONTRACT.md` before writing any pipeline code. It contains the firewall,
 the BEAI label algorithm and its parameters, coverage thresholds, the lag table, feature
-forms, the walk-forward protocol, metrics and the LOCO gate. `docs/DECISIONS.md` maps
-those rules to the Phase 2 decision log and lists the five items still awaiting sign-off.
+forms, the walk-forward protocol, metrics, the LOCO gate and the pre-registered ensemble
+rule (C-13). `docs/DECISIONS.md` maps those rules to the Phase 2 decision log and lists the
+five items still awaiting sign-off.
 
 ## Data policy
 
@@ -125,7 +136,15 @@ those rules to the Phase 2 decision log and lists the five items still awaiting 
 
 ## Next task
 
-Extend collection to Japan and Germany (42 rows), run the same label pipeline, and compare
-with ESRI and the German official chronology. Then build the predictor feature table and the
-walk-forward harness. Do not widen to P0–P2 until the other two countries pass their own
-label checks.
+Work is split into four packages in `docs/TEAM_PLAN.md`:
+
+1. **JPN and DEU labels now** — resolve sources, collect, harmonise, run the frozen label
+   and compare with ESRI / the German chronology.
+2. **Feature table and walk-forward harness** — predictors only, leakage tests.
+3. **Models and the pre-registered ensemble** — six singles, then the exact C-13 rule.
+4. **India coverage, scope and integration** — downloaded-data count, docs, pitch,
+   packaging after approval.
+
+Start with Part 1 source resolution. Do not widen to P0–P2 until JPN and DEU pass their
+own label checks. Until a model is run, describe the deliverable as a validated recession
+label, not a forecasting system.

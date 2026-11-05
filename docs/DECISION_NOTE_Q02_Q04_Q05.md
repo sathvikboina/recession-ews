@@ -1,8 +1,9 @@
 # Decision Note: Q-02, Q-04, Q-05
 
-Status: **decided and implemented in `labels-v2` (2026-11-04)**. The alternative
-comparison below is retained as the evidence record. `labels-v1` is archived
-byte-for-byte under `outputs/labels/archive/labels-v1/` and is not amended.
+Status: **decided and implemented in `labels-v2` (2026-11-04); explicitly signed off
+for the USA on 2026-11-05**. The alternative comparison below is retained as the evidence
+record. `labels-v1` is archived byte-for-byte under
+`outputs/labels/archive/labels-v1/` and is not amended.
 
 The three selections are:
 
@@ -11,6 +12,17 @@ The three selections are:
 | Q-02 | **Option B** — concept-correct replacement | Constructed real non-residential business fixed investment from BEA equipment + structures + intellectual property products, deflated by the non-residential implicit price deflator |
 | Q-04 | **Option B** — concept-correct replacement | `CE16OV` household-survey employment, quarterly mean (the Q-04 LFS fallback) |
 | Q-05 | **Option A** — keep and document | `HOANBS` retained; nonfarm-business sector coverage recorded as the known limitation |
+
+## USA sign-off (2026-11-05)
+
+| Item | Finding | Resolution | Sign-off |
+|---|---|---|---|
+| Q-02 | v1 `GPDIC1` included residential investment and inventories, contrary to "business (non-residential) fixed investment". | Constructed non-residential series in `labels-v2`; `GPDIC1` retired. | **Closed for the USA** |
+| Q-04 | v1 `PAYEMS` is an establishment survey, not the Q-04 national-accounts or LFS concept. | `CE16OV` household/LFS employment in `labels-v2`; `PAYEMS` retired from the label. | **Closed for the USA** |
+| Q-05 | `HOANBS` covers nonfarm business only. | Retained and documented; the rule bars annual-only data, not narrower sector coverage. | **Closed for the USA** |
+
+JPN/DEU availability is a separate collection-time check. See
+`docs/REVIEW_2026-11-05.md` for the full evidence and file list.
 
 Why these are the best-supported choices:
 

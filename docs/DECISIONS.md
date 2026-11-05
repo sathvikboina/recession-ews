@@ -37,6 +37,8 @@ named step · **OPEN** = not decided yet.
 | D-R26 | Q-02 Option B. USA business investment is **constructed real non-residential fixed investment** = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` (residential + inventories) is retired. The construction reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3 and has 144/144 window coverage. Implemented in `labels-v2`. | Q-02, §11 | FROZEN | labels |
 | D-R27 | Q-04 Option B. USA employment is `CE16OV`, household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA (checked 2026-11-04); `PAYEMS` is an establishment survey, not the Q-04 fallback. `PAYEMS` is retired from the label. Implemented in `labels-v2`. | Q-04, §8, §11 | FROZEN | labels |
 | D-R28 | Q-05 Option A. USA hours stay on `HOANBS` (quarterly total hours, nonfarm business). Q-05 bars annual-only data, not narrower sector coverage; the nonfarm-business limitation is recorded. No FRED whole-economy quarterly total-hours series exists. Implemented unchanged in `labels-v2`. | Q-05, §11 | FROZEN | labels |
+| D-R29 | Ensemble pre-registered before any model result: equal-weight top-3 by inner-fold pooled PR-AUC, same folds and feature matrix as the singles, all fitting inside the outer training block. It must beat the inner-fold-selected best single model by ≥0.01 pooled PR-AUC, with a paired-bootstrap 95% CI excluding zero and no loss of episode recall; otherwise the single model is primary and the ensemble is a reported negative result. A logistic stack is exploratory only. | proposal addendum, C-13 | FROZEN | models |
+| D-R30 | India pre-audit: best case 4/8 under §19 because employment, hours, household income and retail are structurally missing. No relaxation; India is Label-B-only under O-2, reported as a coverage case study. The final count from downloaded MoSPI/RBI data is still required, but it cannot make 6/8 reachable. | Q-06, §19, O-2 | CONFIRM (O-2) | India / report |
 
 ## Consequences to keep in mind
 
@@ -56,6 +58,24 @@ named step · **OPEN** = not decided yet.
   `data/superseded_series.csv`. The monthly predictor copy is the separate `DSPIC96` row.
 - **O-1** is now half-answered: the *estimation* sample extends to 1960, but the *study*
   window is still 1990–2025. Whether to report pre-1990 labels remains open.
+- **D-R29** is deliberately fixed before any score exists. Changing the member count,
+  weighting, margin, bootstrap rule or recall guardrail after seeing results invalidates
+  the confirmatory claim; it becomes a new, exploratory experiment.
+- **D-R30** changes the project story, not the §19 rule: the label countries are USA, JPN
+  and DEU, and India is a coverage case study. Do not present India as a fourth label.
+
+## USA data sign-off (2026-11-05)
+
+The review asked for explicit closure of the two v1 data defects.
+
+| Item | Sign-off |
+|---|---|
+| Q-02: `GPDIC1` included housing and inventories, contrary to "business (non-residential) fixed investment". | **Closed for the USA.** `labels-v2` uses the constructed non-residential series (D-R26); `GPDIC1` is retired. |
+| Q-04: `PAYEMS` is an establishment survey, not the national-accounts or LFS concept. | **Closed for the USA.** `labels-v2` uses `CE16OV` (D-R27); `PAYEMS` is retired from the label. |
+| Q-05: `HOANBS` covers nonfarm business only. | **Closed for the USA.** Retained and documented (D-R28). |
+
+The full evidence table is in `docs/REVIEW_2026-11-05.md` and
+`docs/VERIFICATION.md`. JPN/DEU availability remains a collection-time check.
 
 ## Verification items still pending (facts, not decisions)
 
@@ -63,13 +83,17 @@ From `decisions_log.csv`: Q-03, Q-06, Q-07, Q-08, Q-09, Q-11, Q-12, Q-15,
 Q-16, Q-17, Q-23, Q-27, Q-28. These are closed by the scoped verification pass
 (`docs/VERIFICATION.md`), not by a judgement call.
 
-Q-02, Q-04 and Q-05 are **closed for the USA** by D-R26–D-R28 and implemented in
-`labels-v2` (2026-11-04). Q-02 and Q-05 still need a country-level availability
-check when JPN/DEU are collected: non-residential GFCF components and quarterly
-total hours may be missing there, in which case the component counts as missing
-under the same decisions. Q-04 for JPN/DEU uses their own audit; German QNA
-employment is available (1991Q1–2022Q4), while the USA and Japan returned no
-employment observations in the checked OECD QNA dataflow.
+Q-02, Q-04 and Q-05 are **closed for the USA** by D-R26–D-R28, implemented in
+`labels-v2` (2026-11-04) and explicitly signed off 2026-11-05. Q-02 and Q-05 still
+need a country-level availability check when JPN/DEU are collected: non-residential
+GFCF components and quarterly total hours may be missing there, in which case the
+component counts as missing under the same decisions. Q-04 for JPN/DEU uses their
+own audit; German QNA employment is available (1991Q1–2022Q4), while the USA and
+Japan returned no employment observations in the checked OECD QNA dataflow.
+
+Q-06 remains `DECIDED_PENDING_VERIFICATION` until the India downloads are counted,
+but the pre-audit already fixes the conclusion at **best case 4/8**, so India is
+Label-B-only under O-2 (D-R30).
 
 `labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/`.
 The active chronology is `labels-v2`; see `docs/DECISION_NOTE_Q02_Q04_Q05.md`

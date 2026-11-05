@@ -9,15 +9,22 @@ BEAI label built and validated against NBER, and the label frozen as **`labels-v
 `labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/`.
 **No feature or model pipeline exists yet.** Other countries have not been collected.
 
+The 2026-11-05 review added the pre-registered ensemble (`docs/PROPOSAL_ADDENDUM.md`), the
+India coverage audit (`docs/INDIA_COVERAGE_AUDIT.md`) and the four-package team plan
+(`docs/TEAM_PLAN.md`). The review changes are a follow-up commit to `3fc5d4e`.
+
 | Item | Value |
 |---|---|
 | Countries with data | USA (JPN, DEU still `PENDING_VERIFICATION`) |
-| FRED downloads verified | 26 verified + 1 low coverage; 4 Q-02 components, 1 auxiliary chronology, 3 derived scope series |
+| FRED registry | 30 entries = **27 downloads + 3 derived** (27 downloads: 26 verified + 1 low coverage) |
+| FRED supporting files | inside the 27: 4 Q-02 components + 1 auxiliary chronology |
 | Series shortlist | 68 rows; USA 25/25 resolved |
 | Window / horizons | 1990Q1–2025Q4 / 1Q, 2Q, 4Q (2Q primary) |
 | Label version | **labels-v2**, frozen (supersedes labels-v1) |
 | NBER validation | 4/4 episodes, 0 false, accuracy 0.993, precision 0.929, recall 1.000, F1 0.963 |
-| Tests | 30 passing |
+| Ensemble | pre-registered 2026-11-05, no results yet (`docs/PROPOSAL_ADDENDUM.md`, C-13) |
+| India | pre-audit best case 4/8 → Label-B-only under O-2, pending final downloads |
+| Tests | 32 passing |
 | Config check | `make check` → 26 ok, 3 warnings (uninstalled `sklearn`/`xgboost`/`shap`), 0 failures |
 
 ## Label result (`labels-v2`)
@@ -73,6 +80,26 @@ f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e  outputs/labels
 
 If a hash changes, re-run `make pipeline test` before trusting any downstream result.
 
+## Review 2026-11-05
+
+- Committed base: `3fc5d4e` (`labels-v2: resolve Q-02/Q-04/Q-05 and archive labels-v1`);
+  not pushed; no tags. The review changes are committed separately after verification.
+- **Ensemble pre-registered before results.** `docs/PROPOSAL_ADDENDUM.md` fixes the
+  equal-weight top-3 by inner-fold pooled PR-AUC, the ≥0.01 pooled PR-AUC beat-the-best
+  test, the paired-bootstrap interval and the no-episode-recall-loss guardrail. Contract
+  rule C-13.
+- **India pre-audit.** `docs/INDIA_COVERAGE_AUDIT.md` finds a structural best case of 4/8
+  under §19. No relaxation; India is Label-B-only under O-2 pending the final download
+  audit. The story is three label countries plus an India coverage case study.
+- **Data sign-offs.** The v1 `GPDIC1` defect (residential + inventories, against Q-02) and
+  the v1 `PAYEMS` defect (establishment survey, against Q-04) are explicitly closed for
+  the USA in `docs/REVIEW_2026-11-05.md`; `HOANBS` is documented under Q-05.
+- **Wording.** The deliverable is a validated label, not a forecasting system, until the
+  walk-forward results exist.
+- **Decision source fixed.** `spec.py` now carries the Q-02/Q-04/Q-05 USA decisions and
+  the Q-06 India pre-audit, so regenerating the CSVs cannot revert them. A regression test
+  enforces source/log agreement.
+
 ## Done in the USA milestone session (2026-10-29)
 
 - `scripts/fetch_fred.py`: curl-based verification + download, metadata
@@ -85,32 +112,32 @@ If a hash changes, re-run `make pipeline test` before trusting any downstream re
 - `tests/test_labels.py`: 9 invariants (BBQ, flag semantics, diffusion, frozen file, no NBER).
 - Docs: `LABEL_VALIDATION.md`, rewritten `VERIFICATION.md`, D-R22…D-R25 in `DECISIONS.md`,
   C-02 implementation notes in `BUILD_CONTRACT.md`.
-- Data fixes found during validation: income → `W875RX1`; investment → `GPDIC1`;
+- Data fixes found during validation: income → `W875RX1`; investment → `GPDIC1` in v1
+  (retired in v2 because it is residential + inventories, not Q-02 business investment);
   `PNFIC1`/`PCEC96`/`WILL5000IND` rejected with reasons.
 
-## Next five actions
+## Next: four work packages (`docs/TEAM_PLAN.md`)
 
-1. **JPN and DEU collection.** 42 rows. Resolve BOJ keys and OECD dataflows; same manifest
-   and verification contract. Acceptance: 21/21 rows per country with ID, frequency, SA,
-   coverage. Q-02 non-residential GFCF components and Q-05 quarterly hours may be missing;
-   missing stays missing. German QNA employment is available (1991Q1–2022Q4); Japan needs
-   its own audit.
-2. **Run the label on JPN and DEU.** Compare with ESRI (Japan) and the German
-   Sachverständigenrat / OECD chronology. A country that does not reproduce its official
-   dates is a finding, not a bug.
-3. **Build the feature table** (`src/ews/features.py`): C-06 aggregation, C-07 transforms,
-   C-05 availability lags, predictors only (firewall C-01). Acceptance: one row per
-   country×quarter, no BEAI column, leakage test passes.
-4. **Walk-forward harness** (C-08): expanding window, threshold locked before test, PR-AUC
-   pooled across folds.
-5. **Widen scope to P0–P2** (O-4) only after JPN/DEU labels pass their own chronologies.
+Parts 1 and 2 start in parallel; Part 3 depends on Part 2's fold contract; Part 4 owns
+integration and the final pitch.
+
+1. **JPN and DEU labels now (Part 1).** Resolve BOJ/OECD/BIS sources, collect 21 rows per
+   country, pass 6/8 at ≥70%, run the frozen estimator, compare with ESRI / the German
+   chronology, freeze `labels-v1-JPN` and `labels-v1-DEU`. This is the largest gap.
+2. **Feature table and walk-forward harness (Part 2).** Predictors only, C-05/C-06/C-07,
+   time-ordered inner folds, leakage tests, `dataset.parquet` and `folds.json`.
+3. **Models and pre-registered ensemble (Part 3).** Six singles plus REWI and baselines,
+   then the exact C-13 ensemble test. If it fails, report the single model as primary and
+   the ensemble as a negative result.
+4. **India, scope and integration (Part 4).** Finish the downloaded-data count, keep O-2,
+   keep the docs in sync, and package only after approval.
 
 ## Open decisions (block their step, not this one)
 
 | ID | Question | Default | Needed by |
 |---|---|---|---|
 | O-1 | Report pre-1990 labels now that the estimator runs from 1960? | no, 1990–2025 | Step 6 |
-| O-2 | India fallback if §19 fails? | Label B only, reported | JPN/DEU/IND labels |
+| O-2 | India fallback if §19 fails? | Label B only, reported (pre-audit 4/8; final count pending) | JPN/DEU/IND labels |
 | O-3 | Threshold objective? | max F1 | harness |
 | O-4 | Widen scope to P0–P2 (68 → 140 rows)? | after the label gate | collection |
 | O-5 | COVID 2020 treatment + with/without evaluation? | keep, document, evaluate | experiments |
