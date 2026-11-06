@@ -29,6 +29,7 @@ outputs/**
 !outputs/labels/USA_turning_points.csv
 !outputs/labels/labels-v1.json
 !outputs/labels/labels-v2.json
+!outputs/labels/labels-v3.json
 !outputs/labels/archive/**
 !outputs/results/USA_vs_NBER.md
 !outputs/results/USA_vs_NBER.csv
