@@ -167,6 +167,10 @@ WORK_LOG = [
     ("2026-11-04", "5", "Freeze", "Archived labels-v1 byte-identical and issued labels-v2 with Q-02/Q-04 provenance and the archived v1 hash; rewrote freeze tests", "outputs/labels/archive/labels-v1/*, outputs/labels/labels-v2.json, tests/test_freeze.py", "v1 hash unchanged; v2 label hash f5ed42a6...; 30 tests"),
     ("2026-11-05", "5", "Verify", "Repaired a failed-retry provenance overwrite with a full FRED re-fetch (30 registry entries = 27 downloads + 3 derived), re-ran harmonize/labels/validate, and confirmed the v2 hashes reproduce", "data/manifest.csv, data/fred_verification.csv, data/series_resolution.csv, data/raw/fred/2026-11-05/*", "26 verified + 1 low coverage; labels-v2 byte-identical"),
     ("2026-11-05", "6", "Review", "Audited the labels-v2 work: fixed the stale spec.py decision source, removed the unsupported forecasting claim, added the India coverage pre-audit, pre-registered the ensemble and leakage rules, fixed the 27-download/3-derived wording, split the work into four packages, and added 2 regression tests", "spec.py, decisions_log.csv, unresolved_questions.csv, README.md, docs/{STATE,BUILD_CONTRACT,VERIFICATION,DECISIONS,DECISION_NOTE_Q02_Q04_Q05,LABEL_VALIDATION,PROPOSAL_ADDENDUM,INDIA_COVERAGE_AUDIT,TEAM_PLAN,REVIEW_2026-11-05}.md, tests/test_review_invariants.py", "32 tests pass; make check 26 ok / 3 warnings / 0 failures; v1 and v2 hashes unchanged"),
+    ("2026-11-05", "7", "Team plan", "Wrote docs/TEAM_PLAN.md: four parallel work packages with owners, outputs, dependencies and acceptance gates", "docs/TEAM_PLAN.md", "JPN/DEU labels, features/folds, models/ensemble and India/integration can run at the same time"),
+    ("2026-11-06", "7", "Workbook", "Built Team_Plan.xlsx (12 sheets) and scripts/make_team_plan.py: plain-English plan, task detail, parallel schedule, hand-offs, combination rules, risks, final review and glossary", "Team_Plan.xlsx, scripts/make_team_plan.py", "One simple plan for four teammates; regenerated from a script, not hand-edited"),
+    ("2026-11-06", "7", "Work log", "Added the Team Plan summary and the 2026-11-05/06 plan rows to this workbook", "EWS_Work_Log.xlsx, scripts/make_worklog.py", "The detailed log and the simple plan agree"),
+    ("2026-11-06", "7", "Verify", "Re-ran pytest and make check; confirmed v1/v2 label hashes and docs consistency after the plan changes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; frozen hashes unchanged"),
 ]
 
 DATA_NOTES = {
@@ -248,6 +252,8 @@ REPO_MAP = [
     ("docs/PROPOSAL_ADDENDUM.md", "Pre-registered ensemble, leakage rules, beat-the-best test, claim wording", "pre-registration"),
     ("docs/INDIA_COVERAGE_AUDIT.md", "India 4/8 best-case finding; Label-B-only under O-2", "coverage finding"),
     ("docs/TEAM_PLAN.md", "Four work packages, owners, acceptance criteria, integration rules", "team plan"),
+    ("Team_Plan.xlsx", "Generated 12-sheet plain-English team plan (what happened, what is next, tasks, schedule, hand-offs, risks, review)", "deliverable"),
+    ("scripts/make_team_plan.py", "Builds Team_Plan.xlsx from the repository state", "reporting"),
     ("docs/REVIEW_2026-11-05.md", "Review discrepancies, fixes, data sign-offs, remaining gaps", "review record"),
     ("config/scope.yaml", "Countries, window, horizons, coverage, firewall", "runtime config"),
     ("config/indicators.yaml", "68 indicators, roles, forms, lag classes, variants", "generated from spec.py"),
@@ -341,6 +347,7 @@ RUNBOOK = [
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
     ("Checks", "make check && make test", "26 config checks + 32 tests"),
+    ("Team plan", "make team-plan", "rebuild Team_Plan.xlsx (12 sheets)"),
     ("Workbook", "python scripts/make_worklog.py", "regenerate this file"),
 ]
 
@@ -368,7 +375,8 @@ def main() -> int:
     ws["A1"] = "Recession Early-Warning - Work Log"
     ws["A1"].font = Font(bold=True, size=18, color=NAVY)
     ws["A2"] = (f"Generated {date.today().isoformat()} from the repository state at "
-                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS, USA milestone + 2026-11-05 review.")
+                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS: USA milestone, "
+                f"2026-11-05 review and 2026-11-06 four-part team plan.")
     ws["A2"].font = SUB_FONT
     ws.column_dimensions["A"].width = 34
     ws.column_dimensions["B"].width = 92
@@ -390,9 +398,11 @@ def main() -> int:
         ("Not started", "JPN/DEU labels (next), feature table, harness, experiments, dashboard"),
         ("Pre-registered", "Equal-weight top-3 ensemble, C-13 (docs/PROPOSAL_ADDENDUM.md); no model result yet"),
         ("India", "Pre-audit best case 4/8; Label-B-only under O-2 pending final downloads"),
+        ("Team plan", "Four parallel packages; plain-English version in Team_Plan.xlsx (12 sheets) and docs/TEAM_PLAN.md"),
         ("", ""),
-        ("How to read", "Status = phase state. Work Log = chronological actions. Data Sources = verified series. Labels = result. "
-                        "Tests = software invariants. Decisions = frozen/open choices. Next Phases = roadmap."),
+        ("How to read", "Team Plan = four packages at a glance. Status = phase state. Work Log = chronological actions. "
+                        "Data Sources = verified series. Labels = result. Tests = software invariants. "
+                        "Decisions = frozen/open choices. Next Phases = roadmap."),
         ("Caveat", "The label is built on revised historical data with no real-time vintages. Results are not a "
                    "real-time forecasting claim (D-R14)."),
     ])
@@ -407,14 +417,39 @@ def main() -> int:
         ws.cell(row=r, column=1, value=c["commit"]).font = MONO
         ws.cell(row=r, column=2, value=f"{c['date']}  {c['subject']}").font = BODY_FONT
 
-    # 2. Status ------------------------------------------------------------
+    # 2. Team plan ---------------------------------------------------------
+    team_rows = [
+        ("Part 1", "Shravani Math", "Data and label lead",
+         "Build Japan and Germany recession labels with the same frozen method used for the USA.",
+         "JPN/DEU clean panels, frozen labels, chronology notes, source resolutions",
+         "Nothing; start source resolution now"),
+        ("Part 2", "Arshiya", "ML engineering lead",
+         "Build the predictor table and the fair walk-forward test splits.",
+         "dataset.parquet, folds.json, leakage tests, feature dictionary",
+         "Part 1 panels; can start now on the USA"),
+        ("Part 3", "Palchhin", "Modelling lead",
+         "Run six single models, baselines and the pre-registered ensemble on the same folds.",
+         "Model code, headline/episode/ablation tables, results note",
+         "Part 2 folds; model code can start now"),
+        ("Part 4", "Sathvik Boina", "Validation, integration and writing lead",
+         "Finish India, keep the scope honest, and combine the four parts into one reproducible project.",
+         "India coverage table, updated docs, clean-clone evidence, final package after approval",
+         "All parts; starts now with India"),
+    ]
+    sheet(wb, "Team Plan", "Four parallel work packages",
+          "One owner per package. Detailed tasks, the five-week schedule and hand-offs are in Team_Plan.xlsx.",
+          ["Package", "Suggested owner", "Role", "Job", "Main outputs", "Depends on"],
+          team_rows, [10, 20, 28, 66, 56, 44],
+          row_fills={0: LIGHT, 1: GREEN, 2: AMBER, 3: GREY})
+
+    # 3. Status ------------------------------------------------------------
     sheet(wb, "Status", "Phase status",
           "Phases 1-5 are complete for the USA. Everything after Phase 5 is unstarted.",
           ["Phase", "Name", "State", "Evidence", "Next action"],
           PHASES, [8, 28, 28, 46, 34],
           row_fills={2: AMBER, 3: AMBER})
 
-    # 3. Work log ----------------------------------------------------------
+    # 4. Work log ----------------------------------------------------------
     fills = {}
     for i, row in enumerate(WORK_LOG):
         if "Bug fix" in row[3]:
@@ -424,7 +459,7 @@ def main() -> int:
           ["Date", "Session", "Phase", "Action", "Artefact / output", "Outcome"],
           WORK_LOG, [12, 9, 14, 76, 48, 46], row_fills=fills)
 
-    # 4. Data sources ------------------------------------------------------
+    # 5. Data sources ------------------------------------------------------
     rows = []
     vmap = {r["series_key"]: r for _, r in ver.iterrows()}
     rmap = {r["series_key"]: r for _, r in res.iterrows()}
@@ -458,7 +493,7 @@ def main() -> int:
           [30, 34, 9, 8, 8, 8, 12, 12, 10, 22, 44],
           number_formats={9: "0.0%"})
 
-    # 5. Labels ------------------------------------------------------------
+    # 6. Labels ------------------------------------------------------------
     ws = wb.create_sheet("Labels")
     ws.sheet_view.showGridLines = False
     ws["A1"] = "USA BEAI label (labels-v2)"
@@ -573,7 +608,7 @@ def main() -> int:
         ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=5)
         r += 1
 
-    # 6. Robustness --------------------------------------------------------
+    # 7. Robustness --------------------------------------------------------
     sheet(wb, "Robustness", "Label robustness",
           "Dates must not move by more than one quarter when the specification changes.",
           ["Variant", "Candidates", "Kept", "Kept dates"],
@@ -581,18 +616,18 @@ def main() -> int:
           [26, 12, 10, 82],
           number_formats={2: "0", 3: "0"})
 
-    # 7. Tests -------------------------------------------------------------
+    # 8. Tests -------------------------------------------------------------
     sheet(wb, "Tests", "Test suite (32 invariants)",
           "These establish software correctness only; economic credibility comes from the NBER comparison.",
           ["Module", "Test", "What it protects"],
           TESTS, [18, 58, 70])
 
-    # 8. Repo map ----------------------------------------------------------
+    # 9. Repo map ----------------------------------------------------------
     sheet(wb, "Repo Map", "Repository contents",
           "What each path is for. Generated files are marked in their description.",
           ["Path", "Purpose", "Role"], REPO_MAP, [44, 76, 30])
 
-    # 9. Decisions ---------------------------------------------------------
+    # 10. Decisions ---------------------------------------------------------
     ws = wb.create_sheet("Decisions")
     ws.sheet_view.showGridLines = False
     ws["A1"] = "Decisions and open items"
@@ -636,7 +671,7 @@ def main() -> int:
         for c in range(1, 5):
             ws.cell(row=r, column=c).border = BORDER
 
-    # 10. Next phases ------------------------------------------------------
+    # 11. Next phases ------------------------------------------------------
     sheet(wb, "Next Phases", "Roadmap",
           "Dependency order. Two gates: per-country label validation, and the LOCO eligibility gate.",
           ["Phase", "Work", "Gate / done when", "Decisions"],
@@ -653,7 +688,7 @@ def main() -> int:
           ],
           [8, 44, 70, 18])
 
-    # 11. Run book ---------------------------------------------------------
+    # 12. Run book ---------------------------------------------------------
     sheet(wb, "Run Book", "Commands",
           "Everything runs from the project root. No FRED API key is required.",
           ["Step", "Command", "What it does"], RUNBOOK, [16, 52, 60])
