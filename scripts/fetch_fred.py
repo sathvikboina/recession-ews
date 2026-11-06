@@ -10,7 +10,7 @@ What it does per series
 1. Fetch the series page and read title / units / frequency / SA / last update.
 2. Fetch the observations as CSV (no API key needed).
 3. Save the payload unchanged under data/raw/fred/<run-date>/<id>.csv.
-4. Compute coverage of the frozen window 1990Q1-2025Q4 at native frequency,
+4. Compute coverage of the frozen window 1990Q1-2026Q3 at native frequency,
    counting a quarter only when every constituent month/week/day is present.
 5. Decide a status, append a manifest row, and record provenance.
 
@@ -46,8 +46,8 @@ VERIFY = PROJECT / "data" / "fred_verification.csv"
 SUPERSEDED = PROJECT / "data" / "superseded_series.csv"
 SUPERSEDED_COLS = ["series_key", "source", "source_id", "superseded_on", "superseded_by", "reason"]
 
-START, END = "1990-01-01", "2025-12-31"
-WINDOW_QUARTERS = 144
+START, END = "1990-01-01", "2026-09-30"
+WINDOW_QUARTERS = 147
 MIN_COVERAGE = 0.70
 
 # scope_key -> (fred_id, note). `scope_key` is the key used in data/scope.csv so
@@ -252,10 +252,17 @@ def quarter_set(rows: list[tuple[str, float]], freq: str) -> set[tuple[int, int]
 
 
 def window_quarters() -> list[tuple[int, int]]:
+    """Quarters in the frozen study window, inclusive of END's quarter."""
+    start = parse_date(START)
+    end = parse_date(END)
+    end_pair = (end.year, (end.month - 1) // 3 + 1)
     out = []
-    for y in range(1990, 2026):
-        for q in (1, 2, 3, 4):
-            out.append((y, q))
+    y, q = start.year, (start.month - 1) // 3 + 1
+    while (y, q) <= end_pair:
+        out.append((y, q))
+        q += 1
+        if q == 5:
+            y, q = y + 1, 1
     return out
 
 

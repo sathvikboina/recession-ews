@@ -6,7 +6,7 @@ Writes
 outputs/labels/USA_labels.csv      quarter-level factor, level, R, episode id
 outputs/labels/USA_episodes.csv    every candidate episode, kept or rejected
 outputs/labels/USA_turning_points.csv
-outputs/labels/labels-v2.json      frozen parameter + hash record
+outputs/labels/labels-v3.json      frozen parameter + hash record
 outputs/figures/USA_factor.png     factor/level with labelled recessions
 
 Run:
@@ -32,10 +32,11 @@ from ews.labels.ids import renumber_window_episodes  # noqa: E402
 OUT = PROJECT / "outputs" / "labels"
 FIG = PROJECT / "outputs" / "figures"
 
-# labels-v1 remains byte-identical under outputs/labels/archive/labels-v1/.
-# v2 changes two label inputs (Q-02 and Q-04), not the estimator or thresholds.
-LABEL_VERSION = "labels-v2"
-SUPERSEDES = "labels-v1"
+# labels-v1 and labels-v2 remain byte-identical under outputs/labels/archive/.
+# v3 extends the reporting window to 2026Q3; the estimator, BBQ settings,
+# diffusion gate and eight-indicator structure are unchanged from v2.
+LABEL_VERSION = "labels-v3"
+SUPERSEDES = "labels-v2"
 CORE_KEYS = {
     "ACT_GDP_REAL": "USA.ACT_GDP_REAL.Q.NA",
     "ACT_IP": "USA.ACT_IP.M.STD",
@@ -59,7 +60,7 @@ def main() -> int:
     growth = pd.read_parquet(PROJECT / "data" / "clean" / "USA_growth.parquet")
     result = build_label(growth, country="USA")
 
-    window = pd.period_range("1990Q1", "2025Q4", freq="Q")
+    window = pd.period_range("1990Q1", "2026Q3", freq="Q")
     frame = result.frame.reindex(window).copy()
     # renumber episode ids inside the reporting window (the estimation sample
     # starts in 1960 and carries earlier episodes that are not reported)
@@ -123,6 +124,7 @@ def main() -> int:
         "country": "USA",
         "created": created,
         "window": {"start": str(frame.index[0]), "end": str(frame.index[-1]), "quarters": int(len(frame))},
+        "window_note": "v3 extends the v2 reporting window by 2026Q1-2026Q3; estimator, BBQ and diffusion gates unchanged.",
         "decisions": {
             "Q-02": {
                 "choice": "constructed real non-residential business fixed investment",
@@ -174,9 +176,9 @@ def main() -> int:
             "turning_points_csv_sha256": sha256(OUT / "USA_turning_points.csv"),
         },
     }
-    v1_labels = OUT / "archive" / SUPERSEDES / "USA_labels.csv"
-    if v1_labels.exists():
-        record["hashes"]["superseded_labels_csv_sha256"] = sha256(v1_labels)
+    prior_labels = OUT / "archive" / SUPERSEDES / "USA_labels.csv"
+    if prior_labels.exists():
+        record["hashes"]["superseded_labels_csv_sha256"] = sha256(prior_labels)
     meta_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
 
     print(f"estimator        : {result.diagnostics['method']} (converged={result.diagnostics['converged']})")

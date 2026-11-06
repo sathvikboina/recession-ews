@@ -91,8 +91,8 @@ def test_frozen_labels_present_and_sane() -> None:
     if not path.exists():
         return
     df = pd.read_csv(path, index_col=0)
-    assert len(df) == 144
-    assert df.index[0] == "1990Q1" and df.index[-1] == "2025Q4"
+    assert len(df) == 147
+    assert df.index[0] == "1990Q1" and df.index[-1] == "2026Q3"
     assert set(df["R"].unique()) <= {0, 1}
     # every flagged quarter belongs to an episode id and vice versa
     assert ((df["R"] == 1) == (df["episode_id"] > 0)).all()

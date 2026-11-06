@@ -50,8 +50,8 @@ Per country, independently (never pooled):
 10. Depth is **reported**, not a gate. Flag episodes with depth < 0.10 SD for manual review.
 
 **Estimation sample vs reporting window.** The factor is estimated on the longest
-common sample available (US: 1960Q1–2025Q4) and dated turning points are reported for
-1990Q1–2025Q4 only. Estimating on the reporting window alone censors the 1990Q3 peak at
+common sample available (US: 1960Q1–2026Q3) and dated turning points are reported for
+1990Q1–2026Q3 only. Estimating on the reporting window alone censors the 1990Q3 peak at
 the left endpoint. This changes the estimation sample, not the study window (D-R22).
 
 Frozen parameters:
@@ -65,7 +65,7 @@ Frozen parameters:
 | factor count | 1 | §12 |
 | factor estimator | DynamicFactorMQ, factor_orders=1, idiosyncratic_ar1=True | §12 |
 | factor smoother | smoothed (ex-post label) | C-05 |
-| estimation sample | 1960Q1–2025Q4 (USA) | D-R22 |
+| estimation sample | 1960Q1–2026Q3 (USA) | D-R22 |
 | minimum data to date a quarter | 4 of 8 core indicators | §18 |
 | diffusion gate | 0.50 | §15 |
 | robustness diffusion | 0.60 (Tier-1 only, one re-run) | §15, §58 |
@@ -73,7 +73,7 @@ Frozen parameters:
 
 ## C-03 — Coverage and eligibility ✅
 
-Target window `1990Q1–2025Q4` = **144 quarters**. 70% = 100.8 → **≥101 quarters**.
+Target window `1990Q1–2026Q3` = **147 quarters**. 70% = 102.9 → **≥103 quarters**.
 
 - A quarter is dated only if **≥4** core indicators are available (§18).
 - A country is BEAI-eligible only with **≥6 of 8** core indicators, each covering **≥70%**
@@ -218,7 +218,7 @@ scaffolding currently assumes.
 | config | `make check` passes with 0 failures |
 | collection | manifest rows = scope rows, raw files hashed |
 | harmonisation | one row per series×quarter, coverage table produced |
-| labels | USA matches all 4 NBER episodes in 1990Q1–2025Q4 (including 2019Q4–2020Q2); `labels-v2` hash frozen; `labels-v1` archived byte-identical; JPN/DEU match their own chronology when built |
+| labels | USA matches all 4 NBER episodes in 1990Q1–2026Q3 (including 2019Q4–2020Q2); `labels-v3` hash frozen; `labels-v2` and `labels-v1` archived byte-identical; JPN/DEU match their own chronology when built |
 | features | leakage test passes; `dataset.parquet` + `folds.json` written |
 | harness | one country × one horizon × six models reproducible from a seed |
 | experiments | headline table + episode table reproducible via `make run` |

@@ -171,6 +171,10 @@ WORK_LOG = [
     ("2026-11-06", "7", "Workbook", "Built Team_Plan.xlsx (12 sheets) and scripts/make_team_plan.py: plain-English plan, task detail, parallel schedule, hand-offs, combination rules, risks, final review and glossary", "Team_Plan.xlsx, scripts/make_team_plan.py", "One simple plan for four teammates; regenerated from a script, not hand-edited"),
     ("2026-11-06", "7", "Work log", "Added the Team Plan summary and the 2026-11-05/06 plan rows to this workbook", "EWS_Work_Log.xlsx, scripts/make_worklog.py", "The detailed log and the simple plan agree"),
     ("2026-11-06", "7", "Verify", "Re-ran pytest and make check; confirmed v1/v2 label hashes and docs consistency after the plan changes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; frozen hashes unchanged"),
+    ("2026-11-06", "8", "Data extension", "Fetched FRED through 2026-09, extended the USA clean panel and reporting window from 2025Q4 to 2026Q3 (147 quarters), archived labels-v2 byte-identically and froze labels-v3", "data/raw/fred/2026-11-06/*, data/manifest.csv, data/clean/*, outputs/labels/labels-v3.json, outputs/labels/archive/labels-v2/*", "2025-2026 data added; 4/4 NBER episodes still match; no false episodes; v2 hashes unchanged"),
+    ("2026-11-06", "8", "One-week plan", "Replaced the five-week plan with a seven-day sprint: Days 1-5 individual work in four lanes, Days 6-7 merge, cross-review and go/no-go", "docs/TEAM_PLAN.md, scripts/make_team_plan.py", "Four balanced lanes, day-level tasks, fixed hand-offs and one review gate"),
+    ("2026-11-06", "8", "Workbook", "Rebuilt Team_Plan.xlsx for the 7-day sprint and refreshed this work log with the v3 extension", "Team_Plan.xlsx, EWS_Work_Log.xlsx", "The simple plan and the detailed log agree; no pipeline artefact was changed by the plan work"),
+    ("2026-11-06", "8", "Verify", "Ran the full suite and config gate on the extended window; checked v1 and v2 archive hashes and the v3 active hashes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; all frozen hashes match"),
 ]
 
 DATA_NOTES = {
@@ -225,16 +229,16 @@ TESTS = [
     ("test_labels.py", "test_recession_flag_is_peak_plus_one_through_trough", "R=1 only from peak+1 to trough"),
     ("test_labels.py", "test_diffusion_share_ignores_missing", "Diffusion uses available indicators only"),
     ("test_labels.py", "test_diffusion_gate_drops_weak_episode", "A 1/8 diffusion episode would be rejected"),
-    ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 144 rows, contiguous episodes"),
+    ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 147 rows, contiguous episodes"),
     ("test_labels.py", "test_label_pipeline_does_not_use_nber", "No external chronology reaches the label"),
     ("test_labels.py", "test_episode_peak_is_before_trough", "Every episode has duration >= 2"),
-    ("test_freeze.py", "test_v1_archive_is_byte_identical", "labels-v1 and its metadata stay byte-identical"),
-    ("test_freeze.py", "test_active_label_hash_is_v2", "active labels-v2 CSV stays byte-identical"),
-    ("test_freeze.py", "test_v2_label_dates_and_factor_values", "D-R25 factor/level values and v2 episode dates"),
+    ("test_freeze.py", "test_v1_and_v2_archives_are_byte_identical", "labels-v1, labels-v2 and their metadata stay byte-identical"),
+    ("test_freeze.py", "test_active_label_hash_is_v3", "active labels-v3 CSV stays byte-identical"),
+    ("test_freeze.py", "test_v3_label_dates_and_factor_values", "D-R25 factor/level values and v3 episode dates"),
     ("test_freeze.py", "test_episode_ids_join_across_frozen_artefacts", "label and episode ids share one window numbering"),
     ("test_freeze.py", "test_turning_points_carry_in_window_flag", "pre-1990 points are flagged, not hidden"),
     ("test_freeze.py", "test_one_active_source_per_scope_key", "one active provenance row per scope key"),
-    ("test_freeze.py", "test_v2_metadata_records_the_input_decisions", "labels-v2 records Q-02/Q-04/Q-05 and source ids"),
+    ("test_freeze.py", "test_v3_metadata_records_the_input_decisions", "labels-v3 records Q-02/Q-04/Q-05 and the 2026Q3 window"),
     ("test_freeze.py", "test_created_date_is_preserved", "re-running the builder does not rewrite the freeze date"),
     ("test_freeze.py", "test_canonical_digest_tracks_values_not_parquet_bytes", "freeze digest is environment-independent"),
     ("test_review_invariants.py", "test_spec_matches_active_decision_log", "spec.py and decisions_log.csv cannot drift; Q-02/Q-04/Q-05 sign-offs and the India finding are present"),
@@ -283,14 +287,15 @@ REPO_MAP = [
     ("EWS_Work_Log.xlsx", "Generated work log (this file)", "deliverable"),
     ("tests/", "32 invariants (config, scope, labels, freeze, review)", "software checks"),
     ("outputs/labels/USA_labels.csv", "Frozen label: factor, level, diffusion, R", "deliverable"),
-    ("outputs/labels/labels-v2.json", "Parameters, loadings, decisions, hashes", "freeze record"),
+    ("outputs/labels/labels-v3.json", "Parameters, loadings, decisions, hashes", "freeze record"),
+    ("outputs/labels/archive/labels-v2/", "Byte-identical v2 label, metadata and SHA-256 sums", "archive"),
     ("outputs/labels/archive/labels-v1/", "Byte-identical v1 label, metadata and SHA-256 sums", "archive"),
     ("outputs/results/USA_vs_NBER.md", "Episode matching, confusion matrix, robustness", "validation report"),
 ]
 
 DECISIONS = [
     ("D-R01", "Unemployment is predictor-only; BEAI is exactly the eight §11 indicators", "FROZEN"),
-    ("D-R02", "Window 1990Q1-2025Q4 (144 quarters); 70% = 101 quarters", "FROZEN"),
+    ("D-R02", "Study window 1990Q1-2026Q3 (147 quarters); 70% = 103 quarters", "FROZEN"),
     ("D-R03", "Horizons 1Q/2Q/4Q, 2Q primary", "FROZEN"),
     ("D-R04", "Coverage gate: 6/8 core at >=70%; >=4 indicators to date a quarter", "FROZEN"),
     ("D-R05", "Availability lags by data class", "FROZEN"),
@@ -303,7 +308,7 @@ DECISIONS = [
     ("D-R19", "Threshold objective: max F1 vs recall-at-precision", "OPEN"),
     ("D-R20", "P0-P1 first (68 rows); widen to P0-P2 after the label gate", "CONFIRM"),
     ("D-R21", "COVID kept; document BBQ treatment; with/without evaluation", "CONFIRM"),
-    ("D-R22", "Estimate the factor on 1960Q1-2025Q4; report labels 1990-2025", "FROZEN"),
+    ("D-R22", "Estimate the factor on 1960Q1-2026Q3; report labels 1990Q1-2026Q3", "FROZEN"),
     ("D-R23", "US income uses W875RX1 (excluding transfers), not DPIC96", "FROZEN"),
     ("D-R24", "Label uses the smoothed factor (ex-post, no availability lag)", "FROZEN"),
     ("D-R25", "Convert factor with scale = mean(sigma*|lambda|)", "FROZEN"),
@@ -312,10 +317,11 @@ DECISIONS = [
     ("D-R28", "Q-05 A: keep HOANBS; document nonfarm-business coverage", "FROZEN"),
     ("D-R29", "Ensemble pre-registered: equal-weight top-3 by inner-fold PR-AUC; must beat best single by >=0.01 pooled PR-AUC with bootstrap CI excluding 0 and no recall loss", "FROZEN"),
     ("D-R30", "India best case 4/8 under §19; Label-B-only case study under O-2; no relaxation", "CONFIRM"),
+    ("D-R31", "2026 data extension: reporting window 1990Q1-2026Q3 (147 quarters); estimator, BBQ, diffusion gate and eight-indicator structure unchanged; labels-v2 archived; labels-v3 active", "FROZEN"),
 ]
 
 OPEN_ITEMS = [
-    ("O-1", "Report pre-1990 labels now that estimation runs from 1960?", "No, 1990-2025", "Next labels"),
+    ("O-1", "Report pre-1990 labels now that estimation runs from 1960?", "No, 1990-2026Q3", "Next labels"),
     ("O-2", "If India/Japan fail §19, Label-B-only or drop?", "Label B only, reported (India pre-audit 4/8)", "JPN/DEU/IND"),
     ("O-3", "Threshold rule: max F1 or recall at a precision floor?", "Max F1", "Harness"),
     ("O-4", "Widen P0-P1 to P0-P2 (68 -> 140 rows)?", "After the label gate", "Collection"),
@@ -326,8 +332,8 @@ PHASES = [
     ("1", "Literature matrix", "Done", "literature_matrix.xlsx v4", ""),
     ("2", "Data dictionary", "Done", "16-sheet workbook, 1,883-row catalogue", ""),
     ("3", "Scoped verification", "USA done; JPN/DEU pending", "21 verified, 1 low coverage, 3 derived", "JPN 21 + DEU 21 rows"),
-    ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "264-quarter panel, 8 core indicators", "BOJ/OECD access"),
-    ("5", "BEAI label", "USA done, frozen, signed off", "4/4 NBER, accuracy 0.993, F1 0.963", "JPN/DEU labels"),
+    ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "267-quarter panel (1960Q1-2026Q3), 8 core indicators", "BOJ/OECD access"),
+    ("5", "BEAI label", "USA done, extended to 2026Q3, frozen, signed off", "4/4 NBER, accuracy 0.993, F1 0.963; labels-v3", "JPN/DEU labels"),
     ("6", "JPN + DEU labels", "Not started", "-", "Phase 3/4 for those countries"),
     ("7", "Feature table", "Not started", "-", "O-4, firewall tests"),
     ("8", "Walk-forward harness", "Not started", "-", "O-3, folds"),
@@ -343,7 +349,7 @@ RUNBOOK = [
     ("Scope", "make scope", "rebuild the 68-row shortlist"),
     ("Fetch", "make fetch", "verify + download FRED, write manifest"),
     ("Harmonise", "make harmonize", "quarterly panel + growth matrix"),
-    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v2"),
+    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v3"),
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
     ("Checks", "make check && make test", "26 config checks + 32 tests"),
@@ -363,7 +369,7 @@ def main() -> int:
     eps = pd.read_csv(PROJECT / "outputs" / "labels" / "USA_episodes.csv")
     rob = pd.read_csv(PROJECT / "outputs" / "results" / "USA_robustness.csv")
     false_eps = pd.read_csv(PROJECT / "outputs" / "results" / "USA_false_episodes.csv")
-    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v2.json").read_text())
+    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v3.json").read_text())
     vs_nber = pd.read_csv(PROJECT / "outputs" / "results" / "USA_vs_NBER.csv")
     match = pd.read_csv(PROJECT / "outputs" / "results" / "USA_episode_match.csv")
     cm = compute_confusion(vs_nber)
@@ -375,8 +381,8 @@ def main() -> int:
     ws["A1"] = "Recession Early-Warning - Work Log"
     ws["A1"].font = Font(bold=True, size=18, color=NAVY)
     ws["A2"] = (f"Generated {date.today().isoformat()} from the repository state at "
-                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS: USA milestone, "
-                f"2026-11-05 review and 2026-11-06 four-part team plan.")
+                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS: USA label extended "
+                f"to 2026Q3, 2026-11-06 data freeze and the one-week four-lane sprint.")
     ws["A2"].font = SUB_FONT
     ws.column_dimensions["A"].width = 34
     ws.column_dimensions["B"].width = 92
@@ -387,20 +393,20 @@ def main() -> int:
         ("Commits covered", f"{len(commits)}  ({', '.join(c['commit'] for c in commits)})"),
         ("", ""),
         ("Scope", "68 series rows: USA 25, JPN 21, DEU 21, GLOBAL 1; 30 BEAI-eligible"),
-        ("Window", "1990Q1-2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
-        ("USA data", "30 FRED registry entries = 27 downloads + 3 derived (26 verified + 1 low coverage); 4 Q-02 components, 1 auxiliary chronology"),
-        ("USA label", f"labels-v2 frozen: {int(eps['kept'].sum())} episodes, "
-                      f"{len(false_eps)} false positives; labels-v1 archived"),
+        ("Window", "1990Q1-2026Q3 (147 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
+        ("USA data", "30 FRED registry entries = 27 downloads + 3 derived (26 verified + 1 low coverage); 4 Q-02 components, 1 auxiliary chronology; observations through 2026-09"),
+        ("USA label", f"labels-v3 frozen: {int(eps['kept'].sum())} episodes, "
+                      f"{len(false_eps)} false positives; labels-v2 and labels-v1 archived byte-identically"),
         ("NBER agreement", f"{episodes_matched}/{len(match)} episodes, accuracy {cm['accuracy']:.3f}, "
                            f"recall {cm['recall']:.3f}, precision {cm['precision']:.3f}, F1 {cm['f1']:.3f}"),
         ("Tests", "32 passing (config 6, scope 6, labels 9, freeze 9, review invariants 2)"),
         ("Config gate", "26 ok, 3 warnings (optional model packages), 0 failures"),
-        ("Not started", "JPN/DEU labels (next), feature table, harness, experiments, dashboard"),
+        ("Not started", "JPN/DEU labels (Days 1-5), feature table, harness, experiments, dashboard"),
         ("Pre-registered", "Equal-weight top-3 ensemble, C-13 (docs/PROPOSAL_ADDENDUM.md); no model result yet"),
         ("India", "Pre-audit best case 4/8; Label-B-only under O-2 pending final downloads"),
-        ("Team plan", "Four parallel packages; plain-English version in Team_Plan.xlsx (12 sheets) and docs/TEAM_PLAN.md"),
+        ("Team plan", "One-week sprint: Days 1-5 individual, Days 6-7 combine/review; Team_Plan.xlsx (12 sheets) and docs/TEAM_PLAN.md"),
         ("", ""),
-        ("How to read", "Team Plan = four packages at a glance. Status = phase state. Work Log = chronological actions. "
+        ("How to read", "Team Plan = four lanes and the 7-day shape. Status = phase state. Work Log = chronological actions. "
                         "Data Sources = verified series. Labels = result. Tests = software invariants. "
                         "Decisions = frozen/open choices. Next Phases = roadmap."),
         ("Caveat", "The label is built on revised historical data with no real-time vintages. Results are not a "
@@ -420,26 +426,34 @@ def main() -> int:
     # 2. Team plan ---------------------------------------------------------
     team_rows = [
         ("Part 1", "Shravani Math", "Data and label lead",
-         "Build Japan and Germany recession labels with the same frozen method used for the USA.",
+         "Build Japan's BEAI label and resolve Germany far enough to build it or record a complete 6/8 finding.",
+         "Day 1 sources, Day 2 Japan data, Day 3 Japan label, Day 4 Germany data, Day 5 Germany verdict",
          "JPN/DEU clean panels, frozen labels, chronology notes, source resolutions",
-         "Nothing; start source resolution now"),
+         "Nothing; start source resolution on Day 1",
+         "Day 6 label audit, Day 7 sign-off"),
         ("Part 2", "Arshiya", "ML engineering lead",
-         "Build the predictor table and the fair walk-forward test splits.",
+         "Build the predictor table and the fair walk-forward splits on the extended 2026Q3 panel.",
+         "Day 1 spec, Day 2 table, Day 3 draft folds, Day 4 final folds, Day 5 freeze hand-off",
          "dataset.parquet, folds.json, leakage tests, feature dictionary",
-         "Part 1 panels; can start now on the USA"),
+         "Can start now on the USA; no dependency on Part 1",
+         "Day 6 leakage audit, Day 7 sign-off"),
         ("Part 3", "Palchhin", "Modelling lead",
          "Run six single models, baselines and the pre-registered ensemble on the same folds.",
+         "Day 1 interfaces, Day 2 fixture run, Day 3 REWI, Day 4 ensemble/headline, Day 5 ablations",
          "Model code, headline/episode/ablation tables, results note",
-         "Part 2 folds; model code can start now"),
+         "Starts Day 1; uses draft folds from Day 3 and final folds from Day 5",
+         "Day 6 reproduce result, Day 7 audit"),
         ("Part 4", "Sathvik Boina", "Validation, integration and writing lead",
-         "Finish India, keep the scope honest, and combine the four parts into one reproducible project.",
+         "Finish India, keep the scope honest, and combine the four lanes into one reproducible project.",
+         "Day 1 India data, Day 2 India verdict, Day 3 docs, Day 4 clean clone, Day 5 rehearsal",
          "India coverage table, updated docs, clean-clone evidence, final package after approval",
-         "All parts; starts now with India"),
+         "Runs in parallel; leads the merge on Day 6",
+         "Day 6 merge lead, Day 7 review lead"),
     ]
-    sheet(wb, "Team Plan", "Four parallel work packages",
-          "One owner per package. Detailed tasks, the five-week schedule and hand-offs are in Team_Plan.xlsx.",
-          ["Package", "Suggested owner", "Role", "Job", "Main outputs", "Depends on"],
-          team_rows, [10, 20, 28, 66, 56, 44],
+    sheet(wb, "Team Plan", "Four lanes in a one-week sprint",
+          "Days 1-5 are individual work; Days 6-7 are combining, cross-review and sign-off. Detailed tasks are in Team_Plan.xlsx.",
+          ["Package", "Suggested owner", "Role", "Job", "Days 1-5", "Main outputs", "Depends on", "Days 6-7"],
+          team_rows, [10, 20, 26, 58, 48, 52, 42, 30],
           row_fills={0: LIGHT, 1: GREEN, 2: AMBER, 3: GREY})
 
     # 3. Status ------------------------------------------------------------
@@ -488,7 +502,7 @@ def main() -> int:
                                      "first", "last", "coverage", "status", "note"])
     df = df.sort_values(["BEAI", "priority", "scope key"], ascending=[False, True, True])
     sheet(wb, "Data Sources", "USA series: verification and resolution",
-          "Coverage = share of the 144 window quarters with a complete observation at native frequency.",
+          "Coverage = share of the 147 window quarters with a complete observation at native frequency.",
           list(df.columns), df.values.tolist(),
           [30, 34, 9, 8, 8, 8, 12, 12, 10, 22, 44],
           number_formats={9: "0.0%"})
@@ -496,7 +510,7 @@ def main() -> int:
     # 6. Labels ------------------------------------------------------------
     ws = wb.create_sheet("Labels")
     ws.sheet_view.showGridLines = False
-    ws["A1"] = "USA BEAI label (labels-v2)"
+    ws["A1"] = "USA BEAI label (labels-v3)"
     ws["A1"].font = TITLE_FONT
     ws["A2"] = "DFM on eight core indicators -> cumulated level -> BBQ -> diffusion gate >= 0.50"
     ws["A2"].font = SUB_FONT
@@ -577,8 +591,8 @@ def main() -> int:
     params = [
         ("Estimator", f"{meta['method']['estimator']} (converged={meta['method']['converged']})"),
         ("Factor order", "1 factor, AR(1), idio AR(1)"),
-        ("Estimation sample", "1960Q1-2025Q4"),
-        ("Reporting window", "1990Q1-2025Q4"),
+        ("Estimation sample", "1960Q1-2026Q3"),
+        ("Reporting window", "1990Q1-2026Q3 (147 quarters)"),
         ("Min phase / cycle", "2 / 5 quarters"),
         ("Endpoint censoring", "2 quarters"),
         ("Diffusion gate", "0.50"),

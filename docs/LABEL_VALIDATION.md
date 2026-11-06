@@ -3,11 +3,12 @@
 Milestone: verify FRED, harmonise the eight §11 core indicators, build the BEAI label,
 compare with NBER, freeze the result before any feature or model work.
 
-Status: **passed for `labels-v2` (2026-11-04)**. All four NBER recessions in
-1990Q1–2025Q4 are matched, with no false episodes and at most a one-quarter
-boundary shift. `labels-v1` is archived byte-for-byte under
-`outputs/labels/archive/labels-v1/`; `labels-v2` changes only the Q-02 investment
-and Q-04 employment inputs (D-R26, D-R27), while Q-05 keeps `HOANBS` (D-R28).
+Status: **passed for `labels-v3` (2026-11-06)**. All four NBER recessions in
+1990Q1–2026Q3 are matched, with no false episodes and at most a one-quarter
+boundary shift. `labels-v2` and `labels-v1` are archived byte-for-byte under
+`outputs/labels/archive/`; `labels-v3` extends the reporting window from 2025Q4 to
+2026Q3 and leaves the Q-02 investment, Q-04 employment and Q-05 hours inputs
+unchanged (D-R26, D-R27, D-R28, D-R31).
 
 **Claim scope.** This document validates a label, not a forecasting model. The label is an
 ex-post chronology built from the eight §11 activity measures; no predictor has been
@@ -17,7 +18,7 @@ described in `docs/PROPOSAL_ADDENDUM.md`.
 
 ## 1. Data
 
-Eight core indicators, all ≥93% coverage of the 144-quarter window (`data/clean/coverage.csv`):
+Eight core indicators, all ≥92.5% coverage of the 147-quarter window (`data/clean/coverage.csv`):
 
 | BEAI indicator | FRED id | native | transform |
 |---|---|---|---|
@@ -32,8 +33,8 @@ Eight core indicators, all ≥93% coverage of the 144-quarter window (`data/clea
 
 Monthly to quarterly is the mean of the three months; a quarter is missing unless all
 three months are present. No interpolation, no forward fill. `RRSFS` starts in 1992, so
-1990Q1–1991Q4 stays missing; that is 93.1% coverage, above the 70% gate. `CE16OV`
-covers 143/144 quarters (99.3%).
+1990Q1–1991Q4 stays missing; that is 136/147 (92.5%) coverage, above the 70% gate.
+`CE16OV` covers 145/147 quarters (98.6%).
 
 `ACT_INV` is constructed as
 `(equipment + structures + intellectual property products) / (deflator/100)`,
@@ -60,7 +61,7 @@ and `data/manifest.csv`; retired rows are in `data/superseded_series.csv`.
 ## 2. Method
 
 1. z-score each growth series (full sample; the label is an ex-post chronology).
-2. one-factor `DynamicFactorMQ` on 1960Q1–2025Q4, `factor_orders=1`,
+2. one-factor `DynamicFactorMQ` on 1960Q1–2026Q3, `factor_orders=1`,
    `idiosyncratic_ar1=True`, Kalman handling of missing cells.
 3. take the **smoothed** factor, convert to growth units with
    `scale = mean(σⱼ·|λⱼ|)`, and cumulate to a level `Fₜ`.
@@ -72,7 +73,7 @@ and `data/manifest.csv`; retired rows are in `data/superseded_series.csv`.
 6. `Rₜ = 1` from the quarter after the peak through the trough.
 
 `Fₜ` is estimated from 1960 so the left endpoint does not censor the 1990Q3 peak.
-Labels are reported for 1990Q1–2025Q4 only.
+Labels are reported for 1990Q1–2026Q3 only.
 
 ## 3. Result
 
@@ -93,6 +94,13 @@ precision 0.867, F1 0.929. v2 removes the extra 2009Q3 quarter and matches every
 NBER trough exactly. The factor correlation between v1 and v2 over the window is
 0.9966; the level correlation is 0.9982.
 
+The v3 extension (2026-11-06) adds 2026Q1–2026Q3 to the reporting window and uses FRED
+observations through 2026-09. No new recession episode appears: the 2025–2026 quarters
+are expansions in the label. Because the extra observations enter the DFM estimation
+sample, the factor and level values shift slightly at every date (for example, 1990Q1
+factor 0.816971 in v2 → 0.820064 in v3). The episode dates, durations, diffusion values
+and NBER agreement in the table above are unchanged.
+
 ## 4. Discrepancies, and why they are acceptable
 
 - **1990Q2 vs 1990Q3 peak.** The factor peaks in 1990Q2 and turns negative in 1990Q3,
@@ -109,7 +117,7 @@ NBER trough exactly. The factor correlation between v1 and v2 over the window is
 
 | variant | kept episodes |
 |---|---|
-| baseline (`labels-v2`) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 |
+| baseline (`labels-v3`) | 1990Q2–1991Q1; 2001Q1–2001Q4; 2007Q4–2009Q2; 2019Q4–2020Q2 |
 | min phase 3 | same minus 2020 (its duration is 2) |
 | diffusion gate 0.60 | all four (every episode ≥ 0.708) |
 | sample ends 2019Q4 (no COVID) | 1990Q2–1991Q1; 2000Q4–2002Q1; 2007Q4–2009Q3 |
@@ -128,14 +136,16 @@ label is not an artefact of the 2020 outlier.
 
 | file | content |
 |---|---|
-| `outputs/labels/USA_labels.csv` | quarter, factor, level, diffusion, R, episode id (`labels-v2`) |
+| `outputs/labels/USA_labels.csv` | quarter, factor, level, diffusion, R, episode id (`labels-v3`) |
 | `outputs/labels/USA_episodes.csv` | every candidate episode with gate outcome; window ids match the label |
 | `outputs/labels/USA_turning_points.csv` | dated peaks and troughs, with an `in_window` flag |
-| `outputs/labels/labels-v2.json` | parameters, loadings, decisions, input hashes, output hashes |
+| `outputs/labels/labels-v3.json` | parameters, loadings, decisions, input hashes, output hashes |
+| `outputs/labels/archive/labels-v2/` | byte-identical v2 artefacts and SHA-256 sums |
 | `outputs/labels/archive/labels-v1/` | byte-identical v1 artefacts and SHA-256 sums |
 | `outputs/results/USA_vs_NBER.md` | this comparison, regenerated by script |
 
-Regenerate with `make pipeline`. Hashes are in `labels-v2.json` and `docs/STATE.md`.
+Regenerate with `make pipeline`. Hashes are in `labels-v3.json` and `docs/STATE.md`.
 The active label CSV hash is
-`f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e`; v1 remains
+`2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa`; v2 remains
+`f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e` and v1 remains
 `1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a`.

@@ -1,0 +1,130 @@
+{
+  "label_version": "labels-v2",
+  "supersedes": "labels-v1",
+  "country": "USA",
+  "created": "2026-11-04",
+  "window": {
+    "start": "1990Q1",
+    "end": "2025Q4",
+    "quarters": 144
+  },
+  "decisions": {
+    "Q-02": {
+      "choice": "constructed real non-residential business fixed investment",
+      "components": [
+        "Y033RC1Q027SBEA",
+        "B009RC1Q027SBEA",
+        "Y001RC1Q027SBEA",
+        "A008RD3Q086SBEA"
+      ],
+      "method": "(equipment + structures + intellectual property products) / (deflator/100)",
+      "supersedes": "GPDIC1 (broad private investment, included residential and inventories)"
+    },
+    "Q-04": {
+      "choice": "CE16OV LFS fallback, quarterly mean",
+      "reason": "US national-accounts quarterly employment is not available in OECD QNA; PAYEMS is an establishment survey, not the Q-04 fallback.",
+      "supersedes": "PAYEMS (establishment payrolls)"
+    },
+    "Q-05": {
+      "choice": "keep HOANBS",
+      "reason": "Only full-coverage quarterly total-hours series on FRED; nonfarm-business sector coverage is documented. No re-freeze driver."
+    }
+  },
+  "inputs": {
+    "series": [
+      "ACT_GDP_REAL",
+      "ACT_IP",
+      "ACT_EMP",
+      "ACT_HOURS",
+      "ACT_RINC",
+      "ACT_CONS",
+      "ACT_RETAIL",
+      "ACT_INV"
+    ],
+    "source_ids": {
+      "ACT_GDP_REAL": "GDPC1",
+      "ACT_IP": "INDPRO",
+      "ACT_EMP": "CE16OV",
+      "ACT_HOURS": "HOANBS",
+      "ACT_RINC": "W875RX1",
+      "ACT_CONS": "PCECC96",
+      "ACT_RETAIL": "RRSFS",
+      "ACT_INV": "USA.ACT_INV_EQ.Q.STD+USA.ACT_INV_STRUCT.Q.STD+USA.ACT_INV_IPP.Q.STD+USA.ACT_INV_DEFL.Q.STD"
+    },
+    "coverage_window": {
+      "ACT_GDP_REAL": 144,
+      "ACT_IP": 144,
+      "ACT_EMP": 143,
+      "ACT_HOURS": 144,
+      "ACT_RINC": 144,
+      "ACT_CONS": 144,
+      "ACT_RETAIL": 134,
+      "ACT_INV": 144
+    },
+    "source": "FRED, revised historical data (not real-time vintages)",
+    "growth_file_sha256": "124d2b26f8919a1cf9fec9d899b324c2419be6fa1f66ec206808615d05ffd3c1",
+    "growth_values_sha256": "c3d980b8f9331df037b947741d3550513e7f5b52eef0aa87f35034ace41f1bb6"
+  },
+  "method": {
+    "estimator": "dfm",
+    "converged": true,
+    "loglik": -1876.8078700439428,
+    "factor_notes": "factor sign flipped to align with activity",
+    "params": {
+      "min_phase": 2,
+      "min_cycle": 5,
+      "censor": 2,
+      "diffusion_gate": 0.5
+    },
+    "loadings": {
+      "ACT_GDP_REAL": 0.3824,
+      "ACT_IP": 0.3795,
+      "ACT_EMP": 0.3683,
+      "ACT_HOURS": 0.3968,
+      "ACT_RINC": 0.321,
+      "ACT_CONS": 0.3714,
+      "ACT_RETAIL": 0.2691,
+      "ACT_INV": 0.3144
+    }
+  },
+  "episodes": {
+    "candidates_in_window": 4,
+    "kept": 4,
+    "dates": [
+      {
+        "peak": "1990Q2",
+        "trough": "1991Q1",
+        "duration": 3,
+        "depth_sd": 1.447376,
+        "diffusion": 0.809524
+      },
+      {
+        "peak": "2001Q1",
+        "trough": "2001Q4",
+        "duration": 3,
+        "depth_sd": 0.679018,
+        "diffusion": 0.708333
+      },
+      {
+        "peak": "2007Q4",
+        "trough": "2009Q2",
+        "duration": 6,
+        "depth_sd": 6.210759,
+        "diffusion": 0.875
+      },
+      {
+        "peak": "2019Q4",
+        "trough": "2020Q2",
+        "duration": 2,
+        "depth_sd": 10.919197,
+        "diffusion": 0.9375
+      }
+    ]
+  },
+  "hashes": {
+    "labels_csv_sha256": "f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e",
+    "episodes_csv_sha256": "45aca14077868d95639a69ac8d1c0666b059258635c05a70bf90bf5815a2d4f9",
+    "turning_points_csv_sha256": "26883399153f6bddb9a8ce6808faaedda96fe2bf35fc08f8d36d7371a45efecf",
+    "superseded_labels_csv_sha256": "1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a"
+  }
+}

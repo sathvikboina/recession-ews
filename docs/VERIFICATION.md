@@ -25,9 +25,9 @@ Phase 2 left every series ID, date, unit, SA status and coverage figure as
 | DERIVED | 3 | n/a | 3 built in `harmonize.py`: `ACT_INV` (Q-02 components), `FIN_CREDIT_GAP`, `FIN_SLOPE` |
 | **Total** | **68** | **21** | USA complete except one rejected variant |
 
-Run date: **2026-11-05** (full provenance repair; the original series checks were
-2026-10-29 and the Q-02/Q-04 checks 2026-11-04). Downloads:
-`data/raw/fred/2026-11-05/`. A failed retry on 2026-11-04 left empty files in
+Run date: **2026-11-06** (2026Q3 extension; the full provenance repair was 2026-11-05,
+the original series checks were 2026-10-29 and the Q-02/Q-04 checks 2026-11-04).
+Downloads: `data/raw/fred/2026-11-06/`. A failed retry on 2026-11-04 left empty files in
 that date folder; it does not supply any active row and is superseded by the
 2026-11-05 run. Verification facts: `data/fred_verification.csv`. Resolution
 table: `data/series_resolution.csv`. Hashes: `data/manifest.csv`.
@@ -39,7 +39,7 @@ not separate scope rows.
 
 ## FRED verification (USA)
 
-Coverage is the share of the 144 quarters in 1990Q1–2025Q4 for which the series has
+Coverage is the share of the 147 quarters in 1990Q1–2026Q3 for which the series has
 a complete observation at native frequency (a monthly quarter needs all three months).
 
 | scope key | FRED id | freq | SA | first | last | window | status |
@@ -81,12 +81,12 @@ a complete observation at native frequency (a monthly quarter needs all three mo
 |---|---|---|
 | `PCEC96` (`ACT_CONS.M.US`) | rejected: 52.8% coverage | FRED monthly real PCE starts 2007. The quarterly variant `PCECC96` covers the label; the monthly predictor copy is dropped. |
 | `DPIC96` for `ACT_RINC.Q.STD` | replaced by `W875RX1` | `DPIC96` is monthly (frequency mismatch) and real DPI including transfers is counter-cyclical (COVID stimulus). Coincident indices use income excluding transfers. See D-R23; the retired row is retained in `data/superseded_series.csv`. |
-| `PNFIC1` for `ACT_INV.Q.STD` | v1: replaced by `GPDIC1`; v2: replaced by a constructed series | `PNFIC1` (real nonresidential fixed investment) only starts 2007 in the current FRED vintage; `PNFIC96` ends 2017. `GPDIC1` was a broad proxy (residential + inventories) and is retired. `labels-v2` constructs the strict concept from the three BEA asset components and the non-residential deflator (D-R26). |
+| `PNFIC1` for `ACT_INV.Q.STD` | v1: replaced by `GPDIC1`; v2: replaced by a constructed series | `PNFIC1` (real nonresidential fixed investment) only starts 2007 in the current FRED vintage; `PNFIC96` ends 2017. `GPDIC1` was a broad proxy (residential + inventories) and is retired. `labels-v2` constructs the strict concept from the three BEA asset components and the non-residential deflator (D-R26); `labels-v3` retains it unchanged. |
 | `PAYEMS` for `ACT_EMP.Q.NA` | replaced by `CE16OV` | Q-04 prefers national-accounts employment, with LFS quarterly mean as fallback. The checked OECD QNA employment dataflow returns no US observations; `PAYEMS` is an establishment survey and is not the fallback. `CE16OV` is the household-survey level (D-R27). |
 | `WILL5000IND` for `FIN_EQUITY` | replaced by `NASDAQCOM` | `WILL5000IND` returns 301/404 (moved). `SP500` has only 10 years. `NASDAQCOM` starts 1971. |
 | OECD/BIS house price for `FIN_HOUSEPRICE.Q.OECD_BIS` | substituted `USSTHPI` | No OECD/BIS series resolved in the FRED chain; FHFA all-transactions HPI is the official US quarterly index from 1975. |
-| `HOANBS` for `ACT_HOURS.Q.STD` | accepted, sector limitation documented | Nonfarm business hours, index 2017=100, SA, quarterly from 1947; 144/144 window coverage. Q-05 bars annual-only data, not narrower sector coverage (D-R28). |
-| `RRSFS` for `ACT_RETAIL.M.STD` | accepted with caveat | Real retail and food services sales from 1992 → 93.8% of the window, above the 70% gate but the first eight quarters are missing and stay missing. |
+| `HOANBS` for `ACT_HOURS.Q.STD` | accepted, sector limitation documented | Nonfarm business hours, index 2017=100, SA, quarterly from 1947; 147/147 window coverage. Q-05 bars annual-only data, not narrower sector coverage (D-R28). |
+| `RRSFS` for `ACT_RETAIL.M.STD` | accepted with caveat | Real retail and food services sales from 1992 → 93.8% of the window, above the 70% gate but the first nine quarters are missing and stay missing. |
 | `BSCICP03USM665S` for `SEN_BCI` | accepted with caveat | OECD business confidence ends 2024-01 in FRED; 94.4% coverage, last year stale. Acceptable as a predictor; refresh from OECD direct later. |
 
 ## OECD QNA employment check (2026-11-04)
@@ -101,13 +101,13 @@ use QNA employment during its collection; Japan needs its own audit.
 ## USA data sign-offs (2026-11-05)
 
 The two v1 data defects are explicitly closed for the USA. They are fixed in
-`labels-v2`; `labels-v1` remains archived and unamended.
+`labels-v2` and retained in `labels-v3`; `labels-v1` remains archived and unamended.
 
 | Concern | v1 defect | v2 resolution | Evidence | Status |
 |---|---|---|---|---|
-| Q-02 investment (`ACT_INV`) | `GPDIC1` = real gross private domestic investment, which includes residential investment and inventories; this contradicts §11/Q-02 "business (non-residential) fixed investment only". | Constructed real non-residential business fixed investment = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` retired. | Reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3; 144/144 window coverage; four component rows in the manifest; `GPDIC1` in `data/superseded_series.csv`. | **Closed for USA** |
-| Q-04 employment (`ACT_EMP`) | `PAYEMS` = establishment-survey payrolls; this is not the Q-04 fallback. | `CE16OV` household/LFS employment, quarterly mean. `PAYEMS` retired from the label. | OECD QNA employment returned no USA observations in the checked dataflow; 143/144 window coverage; `PAYEMS` in `data/superseded_series.csv`. | **Closed for USA** |
-| Q-05 hours (`ACT_HOURS`) | `HOANBS` was rule-compliant but the sector limitation was under-documented. | `HOANBS` retained; nonfarm-business coverage documented. | 144/144 window coverage; Q-05 bars annual-only data, not narrower sector coverage. | **Closed for USA** |
+| Q-02 investment (`ACT_INV`) | `GPDIC1` = real gross private domestic investment, which includes residential investment and inventories; this contradicts §11/Q-02 "business (non-residential) fixed investment only". | Constructed real non-residential business fixed investment = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` retired. | Reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3; 147/147 window coverage; four component rows in the manifest; `GPDIC1` in `data/superseded_series.csv`. | **Closed for USA** |
+| Q-04 employment (`ACT_EMP`) | `PAYEMS` = establishment-survey payrolls; this is not the Q-04 fallback. | `CE16OV` household/LFS employment, quarterly mean. `PAYEMS` retired from the label. | OECD QNA employment returned no USA observations in the checked dataflow; 145/147 usable growth quarters (98.6%); `PAYEMS` in `data/superseded_series.csv`. | **Closed for USA** |
+| Q-05 hours (`ACT_HOURS`) | `HOANBS` was rule-compliant but the sector limitation was under-documented. | `HOANBS` retained; nonfarm-business coverage documented. | 147/147 window coverage; Q-05 bars annual-only data, not narrower sector coverage. | **Closed for USA** |
 
 JPN/DEU remain `DECIDED_PENDING_VERIFICATION` for Q-02/Q-05 availability. That is
 a country-level source check during collection, not a reopening of the US decision.
@@ -130,7 +130,8 @@ under O-2 pending the final downloaded-data count in Part 4.
 | 2026-11-04 | FRED | Q-02 components + Q-04 source | 5 additions, `GPDIC1`/`PAYEMS` retired from the label, `labels-v2` built | automated + decision note |
 | 2026-11-05 | FRED | 30 registry entries = 27 downloads + 3 derived | 26 verified, 1 low coverage, 3 derived; v2 hashes reproduced | automated |
 | 2026-11-05 | IND | documentary pre-audit | best case 4/8; Label-B-only under O-2; final count pending downloads | review |
-| 2026-11-05 | — | JPN, DEU, OECD, BOJ | still not started; Part 1 of the team plan begins with source resolution | — |
+| 2026-11-06 | FRED | 30 registry entries = 27 downloads + 3 derived | full re-fetch through 2026-09; 26 verified, 1 low coverage, 3 derived; `labels-v3` frozen; v2 archived | automated |
+| 2026-11-06 | — | JPN, DEU, OECD, BOJ | still not started; Part 1 of the one-week sprint begins with source resolution | — |
 
 ## Commands
 

@@ -127,8 +127,9 @@ These are deliberately retained from the current build:
   any predictor or model work. Predictors stay in a separate pipeline.
 - **Leakage discipline.** Expanding-window walk-forward, choices inside each
   fold, threshold locked before the test block, held-out-country rule.
-- **Frozen artefacts.** `labels-v1` is archived byte-identically; `labels-v2` has
-  recorded hashes; the test suite protects both.
+- **Frozen artefacts.** `labels-v1` and `labels-v2` are archived byte-identically;
+  `labels-v3` is the active 1990Q1–2026Q3 label with recorded hashes; the test suite
+  protects all three versions.
 - **Honest caveats.** Revised historical data, four US episodes, no claim of
   methodological novelty, and no country result before its label is audited.
 - **Pre-committed decision log.** Decisions are recorded when made

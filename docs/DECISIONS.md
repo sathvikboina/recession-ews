@@ -10,7 +10,7 @@ named step · **OPEN** = not decided yet.
 | ID | Decision | Source | Status | Needed by |
 |---|---|---|---|---|
 | D-R01 | Unemployment is predictor-only; BEAI is exactly the eight §11 indicators. | Q-01, §11, §19 | FROZEN | now |
-| D-R02 | Study window 1990Q1–2025Q4 (144 quarters); 70% = 101 quarters. | §6, §19 | FROZEN | now |
+| D-R02 | Study window 1990Q1–2026Q3 (147 quarters); 70% = 103 quarters. | §6, §19 | FROZEN | now |
 | D-R03 | Horizons 1Q/2Q/4Q, 2Q primary. | §22 | FROZEN | now |
 | D-R04 | Coverage gate: ≥6 of 8 core indicators at ≥70%; ≥4 indicators to date a quarter. | Q-06, §18, §19 | FROZEN | now |
 | D-R05 | Availability lags by data class (1Q / 6w / 0 / 4w / 1y). | Q-20, §30 | FROZEN | now |
@@ -30,15 +30,16 @@ named step · **OPEN** = not decided yet.
 | D-R19 | Threshold objective: max F1 vs recall-at-precision. | recommendation | OPEN (O-3) | Step 10 |
 | D-R20 | Scope P0–P1 (68 rows) first, widen to P0–P2 (140 rows) after the label gate. | recommendation | CONFIRM (O-4) | Step 4 |
 | D-R21 | COVID 2020 kept in the sample; BBQ treatment documented; with/without-2020 evaluation for Tier-1. | §6, §58 | CONFIRM (O-5) | Step 11 |
-| D-R22 | The DFM is estimated on 1960Q1–2025Q4; labels are reported for 1990Q1–2025Q4. Extending the estimation sample prevents the left endpoint from censoring the 1990Q3 peak. Study window unchanged. | implementation finding | FROZEN | labels |
+| D-R22 | The DFM is estimated on 1960Q1–2026Q3; labels are reported for 1990Q1–2026Q3. Extending the estimation sample prevents the left endpoint from censoring the 1990Q3 peak. Study window extended by D-R31. | implementation finding | FROZEN | labels |
 | D-R23 | US real household income in the label is `W875RX1` (real personal income excluding transfers), not `DPIC96`. Transfer receipts make disposable income counter-cyclical and distort a coincident factor. | §11 + Stock–Watson practice | FROZEN | labels |
 | D-R24 | The label uses the **smoothed** factor. Pipeline A is an ex-post chronology and applies no availability lag (C-05); the smoothed factor avoids revision noise in the dates. | §13, C-05 | FROZEN | labels |
 | D-R25 | The factor is converted to growth units with `scale = mean(σⱼ·|λⱼ|)`, using the estimated loadings. Not a tuning choice: without it the common component is overstated ~3× and BBQ dates long pseudo-recessions. | implementation finding | FROZEN | labels |
-| D-R26 | Q-02 Option B. USA business investment is **constructed real non-residential fixed investment** = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` (residential + inventories) is retired. The construction reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3 and has 144/144 window coverage. Implemented in `labels-v2`. | Q-02, §11 | FROZEN | labels |
-| D-R27 | Q-04 Option B. USA employment is `CE16OV`, household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA (checked 2026-11-04); `PAYEMS` is an establishment survey, not the Q-04 fallback. `PAYEMS` is retired from the label. Implemented in `labels-v2`. | Q-04, §8, §11 | FROZEN | labels |
-| D-R28 | Q-05 Option A. USA hours stay on `HOANBS` (quarterly total hours, nonfarm business). Q-05 bars annual-only data, not narrower sector coverage; the nonfarm-business limitation is recorded. No FRED whole-economy quarterly total-hours series exists. Implemented unchanged in `labels-v2`. | Q-05, §11 | FROZEN | labels |
+| D-R26 | Q-02 Option B. USA business investment is **constructed real non-residential fixed investment** = (`Y033RC1Q027SBEA` + `B009RC1Q027SBEA` + `Y001RC1Q027SBEA`) / (`A008RD3Q086SBEA`/100). `GPDIC1` (residential + inventories) is retired. The construction reproduces `PNFIC1` to <0.02bn over 2007Q1–2026Q3 and has 147/147 window coverage. Implemented in `labels-v2` and retained unchanged in `labels-v3`. | Q-02, §11 | FROZEN | labels |
+| D-R27 | Q-04 Option B. USA employment is `CE16OV`, household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA (checked 2026-11-04); `PAYEMS` is an establishment survey, not the Q-04 fallback. `PAYEMS` is retired from the label. Implemented in `labels-v2` and retained in `labels-v3`. | Q-04, §8, §11 | FROZEN | labels |
+| D-R28 | Q-05 Option A. USA hours stay on `HOANBS` (quarterly total hours, nonfarm business). Q-05 bars annual-only data, not narrower sector coverage; the nonfarm-business limitation is recorded. No FRED whole-economy quarterly total-hours series exists. Implemented unchanged in `labels-v2` and `labels-v3`. | Q-05, §11 | FROZEN | labels |
 | D-R29 | Ensemble pre-registered before any model result: equal-weight top-3 by inner-fold pooled PR-AUC, same folds and feature matrix as the singles, all fitting inside the outer training block. It must beat the inner-fold-selected best single model by ≥0.01 pooled PR-AUC, with a paired-bootstrap 95% CI excluding zero and no loss of episode recall; otherwise the single model is primary and the ensemble is a reported negative result. A logistic stack is exploratory only. | proposal addendum, C-13 | FROZEN | models |
 | D-R30 | India pre-audit: best case 4/8 under §19 because employment, hours, household income and retail are structurally missing. No relaxation; India is Label-B-only under O-2, reported as a coverage case study. The final count from downloaded MoSPI/RBI data is still required, but it cannot make 6/8 reachable. | Q-06, §19, O-2 | CONFIRM (O-2) | India / report |
+| D-R31 | **2026 data extension.** The reporting window moves from 1990Q1–2025Q4 (144 quarters) to **1990Q1–2026Q3 (147 quarters)** using FRED observations through 2026-09. `labels-v2` is archived byte-identically; `labels-v3` is active. The estimator, BBQ parameters, diffusion gate and eight-indicator structure are unchanged. The extension adds no new recession episode and keeps 4/4 NBER agreement. | 2026 data request, D-R22 | FROZEN | labels / features / report |
 
 ## Consequences to keep in mind
 
@@ -57,7 +58,7 @@ named step · **OPEN** = not decided yet.
   record the substitution; the retired quarterly `DPIC96` duplicate is recorded in
   `data/superseded_series.csv`. The monthly predictor copy is the separate `DSPIC96` row.
 - **O-1** is now half-answered: the *estimation* sample extends to 1960, but the *study*
-  window is still 1990–2025. Whether to report pre-1990 labels remains open.
+  window is still 1990–2026Q3. Whether to report pre-1990 labels remains open.
 - **D-R29** is deliberately fixed before any score exists. Changing the member count,
   weighting, margin, bootstrap rule or recall guardrail after seeing results invalidates
   the confirmatory claim; it becomes a new, exploratory experiment.
@@ -84,7 +85,8 @@ Q-16, Q-17, Q-23, Q-27, Q-28. These are closed by the scoped verification pass
 (`docs/VERIFICATION.md`), not by a judgement call.
 
 Q-02, Q-04 and Q-05 are **closed for the USA** by D-R26–D-R28, implemented in
-`labels-v2` (2026-11-04) and explicitly signed off 2026-11-05. Q-02 and Q-05 still
+`labels-v2` (2026-11-04), retained unchanged in `labels-v3` (2026-11-06) and explicitly
+signed off 2026-11-05. Q-02 and Q-05 still
 need a country-level availability check when JPN/DEU are collected: non-residential
 GFCF components and quarterly total hours may be missing there, in which case the
 component counts as missing under the same decisions. Q-04 for JPN/DEU uses their
@@ -95,6 +97,7 @@ Q-06 remains `DECIDED_PENDING_VERIFICATION` until the India downloads are counte
 but the pre-audit already fixes the conclusion at **best case 4/8**, so India is
 Label-B-only under O-2 (D-R30).
 
-`labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/`.
-The active chronology is `labels-v2`; see `docs/DECISION_NOTE_Q02_Q04_Q05.md`
+`labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/` and
+`labels-v2` under `outputs/labels/archive/labels-v2/`. The active chronology is
+`labels-v3` (2026Q3 window extension); see `docs/DECISION_NOTE_Q02_Q04_Q05.md`
 for the comparison, selected options and joint re-validation.

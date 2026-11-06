@@ -1,6 +1,6 @@
 # USA BEAI label vs NBER chronology
 
-Window 1990Q1–2025Q4 (144 quarters).
+Window 1990Q1–2026Q3 (147 quarters).
 NBER = `USRECQ` (period after peak through trough). Label = DFM factor -> BBQ -> diffusion >= 0.50.
 
 ## Quarter-level agreement
@@ -8,7 +8,7 @@ NBER = `USRECQ` (period after peak through trough). Label = DFM factor -> BBQ ->
 | | NBER 1 | NBER 0 |
 |---|---:|---:|
 | label 1 | 13 | 1 |
-| label 0 | 0 | 130 |
+| label 0 | 0 | 133 |
 
 - accuracy 0.993 · precision 0.929 · recall 1.000 · F1 0.963
 - USRECQ quarters: NBER 13, label 14
@@ -28,10 +28,10 @@ Matched 4/4 NBER episodes; 0 label episode(s) with no NBER counterpart.
 
 | peak | trough | duration | depth (SD) | diffusion | review flag |
 |---|---|---:|---:|---:|---|
-| 1990Q2 | 1991Q1 | 3 | 1.447 | 0.810 | no |
-| 2001Q1 | 2001Q4 | 3 | 0.679 | 0.708 | no |
-| 2007Q4 | 2009Q2 | 6 | 6.211 | 0.875 | no |
-| 2019Q4 | 2020Q2 | 2 | 10.919 | 0.938 | no |
+| 1990Q2 | 1991Q1 | 3 | 1.448 | 0.810 | no |
+| 2001Q1 | 2001Q4 | 3 | 0.666 | 0.708 | no |
+| 2007Q4 | 2009Q2 | 6 | 6.220 | 0.875 | no |
+| 2019Q4 | 2020Q2 | 2 | 10.969 | 0.938 | no |
 
 ## Rejected candidate episodes
 

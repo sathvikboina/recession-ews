@@ -1,11 +1,19 @@
 # Decision Note: Q-02, Q-04, Q-05
 
 Status: **decided and implemented in `labels-v2` (2026-11-04); explicitly signed off
-for the USA on 2026-11-05**. The alternative comparison below is retained as the evidence
-record. `labels-v1` is archived byte-for-byte under
-`outputs/labels/archive/labels-v1/` and is not amended.
+for the USA on 2026-11-05; retained unchanged in `labels-v3` (2026-11-06)**. The
+alternative comparison below is retained as the evidence record. `labels-v1` and
+`labels-v2` are archived byte-for-byte under `outputs/labels/archive/` and are not
+amended. `labels-v3` only extends the reporting window to 2026Q3 (D-R31); it does not
+change the Q-02, Q-04 or Q-05 inputs.
 
 The three selections are:
+
+> **Coverage note.** The tables below are the decision-time evidence record from
+> 2026-11-04 and use the then-current 144-quarter window (1990Q1–2025Q4). The active
+> window is now 147 quarters (1990Q1–2026Q3, D-R31); the selected inputs are unchanged.
+> Under the extended window the constructed investment series has 147/147 coverage and
+> `CE16OV` has 145/147 usable growth quarters (98.6%).
 
 | Question | Selected option | USA implementation |
 |---|---|---|
@@ -50,7 +58,7 @@ re-validated before freezing.
 - Metadata, native frequency, first/last observation and coverage were read from
   FRED on 2026-11-04. Coverage is the share of the 144 quarters in 1990Q1–2025Q4
   with a complete observation at native frequency (monthly series need all three
-  months).
+  months). The window was later extended to 2026Q3; the selected inputs did not change.
 - The one-at-a-time chronology sensitivity runs in §2–§4 are **read-only**.
   They replace one label input at a time, keep the frozen DFM, BBQ and diffusion
   parameters, and do not write to `data/clean` or `outputs`. The selected package
@@ -287,7 +295,8 @@ Retained unchanged in `labels-v2`:
 - quarterly, SA, 144/144 window coverage, 1947Q1–2026Q2;
 - concept is total hours in the **nonfarm business** sector, not whole economy;
 - Q-05's formal rule only excludes annual-only data, so `HOANBS` passes;
-- the sector limitation is recorded in `labels-v2.json` and
+- the sector limitation is recorded in `labels-v2.json` (retained in
+  `labels-v3.json`) and
   `data/series_resolution.csv`. JPN/DEU will use OECD total hours where it is
   quarterly; annual-only data remain missing.
 
@@ -344,8 +353,11 @@ than the optimisation target (C-04, FW-06).
 | Q-05 | **A — keep `HOANBS`** | Only full-coverage quarterly total-hours series; Q-05 bars annual-only data, not narrower sector coverage |
 
 Decisions are recorded in `decisions_log.csv` (Q-02, Q-04, Q-05) and
-`docs/DECISIONS.md` (D-R26–D-R28). The active chronology is `labels-v2`
+`docs/DECISIONS.md` (D-R26–D-R28). The active chronology is `labels-v3`
 (`USA_labels.csv` SHA-256
-`f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e`).
+`2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa`), which
+retains the `labels-v2` dates and inputs over the extended 1990Q1–2026Q3 window.
+`labels-v2` remains archived with its original hash
+`f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e`;
 `labels-v1` remains archived with its original hash
 `1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a`.

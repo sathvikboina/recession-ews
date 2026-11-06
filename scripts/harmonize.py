@@ -33,12 +33,12 @@ import yaml
 PROJECT = Path(__file__).resolve().parents[1]
 RAW = PROJECT / "data" / "raw" / "fred"
 CLEAN = PROJECT / "data" / "clean"
-# Reporting window for the study (frozen, C-03).
-WINDOW = pd.period_range("1990Q1", "2025Q4", freq="Q")
+# Reporting window for the study (frozen, C-03; extended to 2026Q3 in v3).
+WINDOW = pd.period_range("1990Q1", "2026Q3", freq="Q")
 # Estimation sample. The factor is estimated with pre-1990 context so that the
 # left endpoint does not censor the 1990-91 peak (see docs/DECISIONS.md D-R22).
 # Labels are still reported for WINDOW only.
-SAMPLE = pd.period_range("1960Q1", "2025Q4", freq="Q")
+SAMPLE = pd.period_range("1960Q1", "2026Q3", freq="Q")
 
 # The eight §11 core indicators, in the variant chosen for the US label.
 CORE = {

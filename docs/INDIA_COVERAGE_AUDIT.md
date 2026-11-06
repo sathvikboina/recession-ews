@@ -4,8 +4,8 @@ Status: **provisional pre-audit, 2026-11-05.** India is a Tier-1 country in
 `config/scope.yaml`, but it is not enabled for the current build. This note checks
 whether India can pass the §19 gate before the team spends collection effort on it.
 
-Target window: 1990Q1–2025Q4 = **144 quarters**. The gate is **≥6 of the 8 BEAI
-indicators, each with ≥70% coverage** (≥101 quarters). Q-06 says the rule is not
+Target window: 1990Q1–2026Q3 = **147 quarters**. The gate is **≥6 of the 8 BEAI
+indicators, each with ≥70% coverage** (≥103 quarters). Q-06 says the rule is not
 relaxed for India or China.
 
 ## 1. What the evidence already shows
@@ -16,14 +16,14 @@ enough to bound the answer.
 
 | BEAI indicator | Candidate source | Documented quarterly history | Best-case window coverage | Verdict |
 |---|---|---|---|---|
-| `ACT_GDP_REAL` | MoSPI quarterly national accounts | Quarterly from 1996-97; new base 2022-23 | 1996Q2–2025Q4 = 119/144 = **82.6%** | **Pass** |
+| `ACT_GDP_REAL` | MoSPI quarterly national accounts | Quarterly from 1996-97; new base 2022-23 | 1996Q2–2025Q4 = at least 119/147 = **81.0%** | **Pass** |
 | `ACT_IP` | MoSPI IIP, monthly | Monthly IIP with base changes; start date to verify | Likely ≥70%; needs a source check | **Likely pass** |
-| `ACT_EMP` | PLFS / national accounts | PLFS quarterly urban-only from 2017; rural+urban only from 2025 | 2017Q3–2025Q4 ≈ 34/144 = **23.6%** | **Fail** |
+| `ACT_EMP` | PLFS / national accounts | PLFS quarterly urban-only from 2017; rural+urban only from 2025 | 2017Q3–2025Q4 ≈ 34/147 = **23.1%** | **Fail** |
 | `ACT_HOURS` | No confirmed official quarterly total-hours series | None confirmed | 0% | **Fail** |
 | `ACT_RINC` | No confirmed quarterly household disposable income | None confirmed | 0% | **Fail** |
-| `ACT_CONS` | MoSPI quarterly PFCE | Quarterly from 1996-97 | 1996Q2–2025Q4 = 119/144 = **82.6%** | **Pass** |
+| `ACT_CONS` | MoSPI quarterly PFCE | Quarterly from 1996-97 | 1996Q2–2025Q4 = at least 119/147 = **81.0%** | **Pass** |
 | `ACT_RETAIL` | No confirmed official monthly retail sales index | None confirmed for the required window | 0% | **Fail** |
-| `ACT_INV` | MoSPI quarterly GFCF | Quarterly from 1996-97, but a **business / non-residential split is not confirmed** | 82.6% only if the split exists; otherwise missing under Q-02 | **Pass only if the Q-02 split exists; otherwise fail** |
+| `ACT_INV` | MoSPI quarterly GFCF | Quarterly from 1996-97, but a **business / non-residential split is not confirmed** | 81.0% only if the split exists; otherwise missing under Q-02 | **Pass only if the Q-02 split exists; otherwise fail** |
 
 ## 2. The gate result
 
@@ -75,7 +75,7 @@ proposal addendum and the final report. It should not be hidden as a missing row
   exact current-series start date must be verified at download.
 - India's national accounts publish PFCE and GFCF quarterly from 1996-97, but a
   business/non-residential investment split is not confirmed in the catalogue.
-- No official monthly retail sales index covering 1990–2025 is confirmed. The
+- No official monthly retail sales index covering 1990–2026 is confirmed. The
   Index of Services Production trial release (2026) is too recent and is not a
   substitute under Q-03.
 
@@ -103,5 +103,5 @@ depend on the download result.
 
 The biggest risk in the project is discovering after the model work that a
 Tier-1 country cannot produce a label. The pre-audit removes that risk early. It
-also stops the team from spending weeks on a country that cannot pass a rule the
+also stops the team from spending a week on a country that cannot pass a rule the
 project has already decided not to relax.

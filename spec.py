@@ -11,7 +11,7 @@ model code; load config/*.yaml instead so the modelling pipeline has one validat
 PEND = "PENDING_VERIFICATION"
 NAV = "NOT_APPLICABLE"
 TODAY = "2026-10-24"
-WIN_START, WIN_END = "1990Q1", "2025Q4"
+WIN_START, WIN_END = "1990Q1", "2026Q3"
 
 # ---------------------------------------------------------------- countries
 TIER1 = [("USA", "United States"), ("JPN", "Japan"), ("IND", "India")]
@@ -421,7 +421,7 @@ FIREWALL = [
  ("FW-10", "Raw 2020 observations are kept unmodified (no winsorising or exclusion at collection). The COVID treatment is a labelling-audit decision fixed before model results (§6, §17).", "§6, §58", "No collection-stage COVID handling."),
  ("FW-12", "Predictors need >=70% coverage of the target window to enter a country's feature set (extension of §19, decision Q-25); macro series are never interpolated or forward-filled.", "§18, §19, §28", "coverage_target_window_pct; inclusion_status after audit."),
  ("FW-13", "Access-source rule (decisions Q-15, Q-17, Q-30): a series is in scope only if a §7 source hosts it; FRED copies of OECD/BIS data are not used for non-US countries; IMF/World Bank only after OECD and BIS fail.", "§7", "preferred_source / alt_source columns; exclusion_reason."),
- ("FW-11", "A quarter needs >=4 core indicators to be dated; a country is BEAI-eligible with >=6/8 core indicators each covering >=70% of the target window (>=101 of 144 quarters, 1990Q1-2025Q4). Failed series stay documented.", "§8, §18, §19", "coverage_target_window_pct column; inclusion_status EXCLUDED_AFTER_AUDIT."),
+ ("FW-11", "A quarter needs >=4 core indicators to be dated; a country is BEAI-eligible with >=6/8 core indicators each covering >=70% of the target window (>=103 of 147 quarters, 1990Q1-2026Q3). Failed series stay documented.", "§8, §18, §19", "coverage_target_window_pct column; inclusion_status EXCLUDED_AFTER_AUDIT."),
 ]
 
 # decision log ---------------------------------------------------------------
