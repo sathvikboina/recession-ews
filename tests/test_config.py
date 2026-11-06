@@ -13,6 +13,16 @@ import yaml
 
 PROJECT = Path(__file__).resolve().parents[1]
 CFG = PROJECT / "config"
+sys.path.insert(0, str(PROJECT))
+sys.path.insert(0, str(PROJECT / "src"))
+
+import spec  # noqa: E402
+from ews.runtime import (  # noqa: E402
+    estimation_start,
+    quarter_count,
+    study_window,
+    window_bounds,
+)
 
 CORE = {
     "ACT_GDP_REAL", "ACT_IP", "ACT_EMP", "ACT_HOURS",
@@ -70,6 +80,17 @@ def test_scope_priorities_are_valid() -> None:
     scope = _yaml("scope.yaml")
     assert set(scope["indicators"]["priorities"]) <= {"P0", "P1", "P2", "P3"}
     assert set(scope["indicators"]["core"]) == CORE
+
+
+def test_window_has_one_source_of_truth() -> None:
+    scope = _yaml("scope.yaml")
+    start, end = study_window(scope)
+    assert (start, end) == (spec.WIN_START, spec.WIN_END)
+    assert estimation_start(scope) == "1960Q1"
+    assert quarter_count(start, end) == 147
+    assert window_bounds(start, end) == ("1990-01-01", "2026-09-30")
+    assert scope["coverage"]["min_quarters_pct"] == 70
+    assert scope["coverage"]["min_core_indicators"] == 6
 
 
 if __name__ == "__main__":

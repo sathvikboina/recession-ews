@@ -13,9 +13,10 @@ Rules implemented here are the frozen ones in docs/BUILD_CONTRACT.md:
 
 Outputs
 -------
-data/clean/USA_levels.parquet    one column per scope key, levels, quarterly
+data/clean/USA_levels.parquet    predictor/non-label levels, quarterly
+data/clean/USA_validation.parquet  external validation series (NBER), kept out of the feature panel
 data/clean/USA_growth.parquet    label-ready activity growth (BEAI core only)
-data/clean/USA_panel.csv         same panel as CSV for eyeballing / git diff
+data/clean/USA_panel.csv         same predictor panel as CSV for eyeballing / git diff
 data/clean/coverage.csv          quarters present per series in the window
 
 Run:
@@ -24,6 +25,8 @@ Run:
 from __future__ import annotations
 
 import csv
+import hashlib
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -31,14 +34,19 @@ import pandas as pd
 import yaml
 
 PROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT / "src"))
+
+from ews.runtime import estimation_start, study_window  # noqa: E402
+
 RAW = PROJECT / "data" / "raw" / "fred"
 CLEAN = PROJECT / "data" / "clean"
-# Reporting window for the study (frozen, C-03; extended to 2026Q3 in v3).
-WINDOW = pd.period_range("1990Q1", "2026Q3", freq="Q")
-# Estimation sample. The factor is estimated with pre-1990 context so that the
-# left endpoint does not censor the 1990-91 peak (see docs/DECISIONS.md D-R22).
-# Labels are still reported for WINDOW only.
-SAMPLE = pd.period_range("1960Q1", "2026Q3", freq="Q")
+MANIFEST = PROJECT / "data" / "manifest.csv"
+# Reporting and estimation windows come from config/scope.yaml. The factor is
+# estimated with pre-1990 context so the left endpoint does not censor the
+# 1990-91 peak (D-R22); labels are still reported for WINDOW only.
+WIN_START, WIN_END = study_window()
+WINDOW = pd.period_range(WIN_START, WIN_END, freq="Q")
+SAMPLE = pd.period_range(estimation_start(), WIN_END, freq="Q")
 
 # The eight §11 core indicators, in the variant chosen for the US label.
 CORE = {
@@ -60,14 +68,35 @@ def load_registry() -> dict:
 
 
 def latest_raw(source_id: str) -> Path:
+    """Fallback for a raw tree without a manifest (legacy checkouts only)."""
     hits = sorted(RAW.glob(f"*/{source_id}.csv"))
     if not hits:
         raise FileNotFoundError(f"no raw download for {source_id}")
     return hits[-1]
 
 
+def manifest_raw(source_id: str) -> Path:
+    """Resolve the exact raw file recorded in the manifest and verify its hash."""
+    if not MANIFEST.exists():
+        return latest_raw(source_id)
+    rows = pd.read_csv(MANIFEST)
+    rows = rows[rows["source_id"].astype(str) == str(source_id)]
+    if rows.empty:
+        raise FileNotFoundError(f"{source_id} is not in {MANIFEST}")
+    row = rows.iloc[-1]
+    path = RAW / str(row["retrieved_at"]) / f"{source_id}.csv"
+    if not path.exists():
+        raise FileNotFoundError(f"manifest points to a missing raw file: {path}")
+    expected = str(row.get("sha256", ""))
+    if expected:
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            raise RuntimeError(f"raw SHA-256 mismatch for {source_id}: {path}")
+    return path
+
+
 def read_series(source_id: str) -> pd.Series:
-    path = latest_raw(source_id)
+    path = manifest_raw(source_id)
     df = pd.read_csv(path, parse_dates=["observation_date"])
     df = df.dropna(subset=["value"])
     if df.empty:
@@ -84,9 +113,18 @@ def to_quarterly(s: pd.Series, freq: str) -> pd.Series:
         out.index = s.index.to_period("Q")
         return out.groupby(level=0).last()
     if freq == "A":
-        out = s.copy()
-        out.index = s.index.to_period("Y")
-        return out.groupby(level=0).last()
+        annual = s.copy()
+        annual.index = s.index.to_period("Y")
+        annual = annual.groupby(level=0).last()
+        # C-06: the annual value for year Y is carried forward to the four
+        # quarters of Y+1 (one-year publication lag); no disaggregation.
+        carried: dict[pd.Period, float] = {}
+        for year, value in annual.items():
+            if pd.isna(value):
+                continue
+            for quarter in pd.period_range(f"{year + 1}Q1", f"{year + 1}Q4", freq="Q"):
+                carried[quarter] = float(value)
+        return pd.Series(carried, dtype=float).sort_index()
     if freq == "M":
         m = s.copy()
         m.index = s.index.to_period("M")
@@ -125,6 +163,7 @@ def main() -> int:
         res = [r for r in csv.DictReader(fh) if r["series_key"].startswith("USA.")]
 
     levels: dict[str, pd.Series] = {}
+    validation: dict[str, pd.Series] = {}
     used = []
     for r in res:
         if r["source"] != "FRED" or r["status"] != "VERIFIED":
@@ -136,11 +175,18 @@ def main() -> int:
         q = to_quarterly(s, r["native_freq"])
         q = q[~q.index.duplicated(keep="last")].sort_index()
         q = q.reindex(SAMPLE)
-        levels[r["series_key"]] = q
+        # External chronologies are validation-only. They must never enter the
+        # panel that feature construction reads (C-01, C-11, FW-06).
+        if r["series_key"] == "USA.NBER.Q":
+            validation[r["series_key"]] = q
+        else:
+            levels[r["series_key"]] = q
         used.append(r)
 
     panel = pd.DataFrame(levels).sort_index()
     panel.index.name = "quarter"
+    validation_panel = pd.DataFrame(validation).sort_index()
+    validation_panel.index.name = "quarter"
 
     # ---- Q-02: real non-residential business fixed investment -----------
     # The current FRED vintage has no full-history single series for this
@@ -180,6 +226,7 @@ def main() -> int:
     growth.index.name = "quarter"
 
     panel.to_parquet(CLEAN / "USA_levels.parquet")
+    validation_panel.to_parquet(CLEAN / "USA_validation.parquet")
     growth.to_parquet(CLEAN / "USA_growth.parquet")
     panel.to_csv(CLEAN / "USA_panel.csv", float_format="%.6f")
     growth.to_csv(CLEAN / "USA_growth.csv", float_format="%.6f")

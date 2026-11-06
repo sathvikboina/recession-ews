@@ -205,7 +205,7 @@ scaffolding currently assumes.
 
 | ID | Question | Current default | Needed by |
 |---|---|---|---|
-| O-1 | Use pre-1990 history for long-series countries? | no (1990–2025 only) | Step 6 |
+| O-1 | Use pre-1990 history for long-series countries? | no for the reporting window (1990Q1–2026Q3); the USA estimation sample already starts in 1960Q1 | Step 6 |
 | O-2 | If India fails §19, is it Label-B-only or dropped from case studies? | Label-B-only, reported | Step 8 |
 | O-3 | Threshold objective: max F1, or max recall subject to precision ≥ p? | max F1 | Step 10 |
 | O-4 | Widen scope from P0–P1 to P0–P2 (68 → 140 rows)? | P0–P1 first | Step 4 |
@@ -216,7 +216,7 @@ scaffolding currently assumes.
 | Stage | Done when |
 |---|---|
 | config | `make check` passes with 0 failures |
-| collection | manifest rows = scope rows, raw files hashed |
+| collection | manifest rows = downloaded scope rows (pending and derived rows accounted for), raw files hashed |
 | harmonisation | one row per series×quarter, coverage table produced |
 | labels | USA matches all 4 NBER episodes in 1990Q1–2026Q3 (including 2019Q4–2020Q2); `labels-v3` hash frozen; `labels-v2` and `labels-v1` archived byte-identical; JPN/DEU match their own chronology when built |
 | features | leakage test passes; `dataset.parquet` + `folds.json` written |

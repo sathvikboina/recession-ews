@@ -9,14 +9,17 @@ What it does per series
 -----------------------
 1. Fetch the series page and read title / units / frequency / SA / last update.
 2. Fetch the observations as CSV (no API key needed).
-3. Save the payload unchanged under data/raw/fred/<run-date>/<id>.csv.
-4. Compute coverage of the frozen window 1990Q1-2026Q3 at native frequency,
-   counting a quarter only when every constituent month/week/day is present.
+3. Save the normalized observations under data/raw/fred/<run-id>/<id>.csv.
+   Each invocation gets its own run id, so a rerun never overwrites an older
+   download. The manifest records the run id and the SHA-256 of the file.
+4. Compute coverage of the frozen window 1990Q1-2026Q3 at native frequency.
+   Monthly quarters require all three months; daily/weekly data use the same
+   month-completeness rule (see the C-06 note in docs/BUILD_CONTRACT.md).
 5. Decide a status, append a manifest row, and record provenance.
 
 Outputs
 -------
-data/raw/fred/<run-date>/<id>.csv   immutable downloads
+data/raw/fred/<run-id>/<id>.csv     immutable normalized downloads
 data/manifest.csv                   one row per downloaded series
 data/fred_verification.csv          verification facts + status per series
 docs/VERIFICATION.md                progress table refreshed in place
@@ -40,14 +43,18 @@ import sys
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT / "src"))
+
+from ews.runtime import quarter_count, window_bounds  # noqa: E402
+
 RAW = PROJECT / "data" / "raw" / "fred"
 MANIFEST = PROJECT / "data" / "manifest.csv"
 VERIFY = PROJECT / "data" / "fred_verification.csv"
 SUPERSEDED = PROJECT / "data" / "superseded_series.csv"
 SUPERSEDED_COLS = ["series_key", "source", "source_id", "superseded_on", "superseded_by", "reason"]
 
-START, END = "1990-01-01", "2026-09-30"
-WINDOW_QUARTERS = 147
+START, END = window_bounds()
+WINDOW_QUARTERS = quarter_count()
 MIN_COVERAGE = 0.70
 
 # scope_key -> (fred_id, note). `scope_key` is the key used in data/scope.csv so
@@ -236,7 +243,10 @@ def quarter_set(rows: list[tuple[str, float]], freq: str) -> set[tuple[int, int]
     if freq == "Q":
         return {(d.year, (d.month - 1) // 3 + 1) for d, _ in ((parse_date(s), v) for s, v in rows)}
     if freq == "A":
-        return {(d.year, q) for d, _ in ((parse_date(s), v) for s, v in rows) for q in (1, 2, 3, 4)}
+        # C-06 applies a one-year publication lag to annual predictors: the
+        # value for year Y is used in the four quarters of Y+1. Counting the
+        # same year would overstate coverage and hide the lag.
+        return {(d.year + 1, q) for d, _ in ((parse_date(s), v) for s, v in rows) for q in (1, 2, 3, 4)}
     # M / W / D: require every month in the quarter
     months: dict[tuple[int, int], set[int]] = {}
     for s, _ in rows:
@@ -305,8 +315,12 @@ def main() -> int:
         return 0
 
     run_date = dt.date.today().isoformat()
-    outdir = RAW / run_date
-    outdir.mkdir(parents=True, exist_ok=True)
+    run_id = dt.datetime.now().strftime("%Y-%m-%dT%H%M%S%f")
+    outdir = RAW / run_id
+    while outdir.exists():
+        run_id = dt.datetime.now().strftime("%Y-%m-%dT%H%M%S%f")
+        outdir = RAW / run_id
+    outdir.mkdir(parents=True, exist_ok=False)
 
     wanted = set(args.only) if args.only else None
     fetched: list[dict] = []
@@ -340,7 +354,7 @@ def main() -> int:
             "source": "FRED",
             "source_id": sid,
             "url": f"https://fred.stlouisfed.org/series/{sid}",
-            "retrieved_at": run_date,
+            "retrieved_at": run_id,
             "sha256": sha,
             "n_rows": len(rows),
             "first_obs": first,

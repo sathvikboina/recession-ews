@@ -29,6 +29,16 @@ def _cycle(n: int = 60, period: int = 20) -> pd.Series:
     return pd.Series(y, index=idx)
 
 
+def _skip(reason: str) -> None:
+    """Skip visibly under pytest; print a skip line when run standalone."""
+    try:
+        import pytest
+    except ImportError:  # pragma: no cover - pytest is a dev dependency
+        print(f"  skip  {reason}")
+        return
+    pytest.skip(reason)
+
+
 def test_bbq_finds_known_cycle() -> None:
     y = _cycle()
     tps = bbq.find_turning_points(y, min_phase=2, min_cycle=5, censor=2)
@@ -88,8 +98,7 @@ def test_diffusion_gate_drops_weak_episode() -> None:
 
 def test_frozen_labels_present_and_sane() -> None:
     path = PROJECT / "outputs" / "labels" / "USA_labels.csv"
-    if not path.exists():
-        return
+    assert path.exists(), "the frozen labels artefact is tracked and must be present"
     df = pd.read_csv(path, index_col=0)
     assert len(df) == 147
     assert df.index[0] == "1990Q1" and df.index[-1] == "2026Q3"

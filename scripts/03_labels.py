@@ -14,6 +14,7 @@ Run:
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -28,6 +29,7 @@ sys.path.insert(0, str(PROJECT / "src"))
 from ews.labels import build as build_label  # noqa: E402
 from ews.labels.freeze import canonical_frame_sha256, existing_created  # noqa: E402
 from ews.labels.ids import renumber_window_episodes  # noqa: E402
+from ews.runtime import study_window  # noqa: E402
 
 OUT = PROJECT / "outputs" / "labels"
 FIG = PROJECT / "outputs" / "figures"
@@ -53,14 +55,67 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def check_frozen_input(growth: pd.DataFrame, meta_path: Path, *, allow_overwrite: bool) -> bool:
+    """Refuse to replace an existing frozen label with different input values.
+
+    Parquet bytes can change when pyarrow changes, so compare the canonical
+    values recorded in the label metadata. A deliberate replacement must opt in
+    with ``--allow-overwrite``.
+    """
+    if not meta_path.exists():
+        return True
+    try:
+        record = json.loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"refusing to overwrite: cannot read {meta_path}: {exc}", file=sys.stderr)
+        return False
+
+    expected = record.get("inputs", {}).get("growth_values_sha256")
+    actual = canonical_frame_sha256(growth)
+    if expected == actual:
+        return True
+
+    if allow_overwrite:
+        print(
+            "WARNING: input values differ from the frozen label record; "
+            "overwriting because --allow-overwrite was supplied.",
+            file=sys.stderr,
+        )
+        return True
+
+    print(
+        "refusing to overwrite the frozen label: current input values do not "
+        f"match {meta_path}. Use --allow-overwrite only after creating a new "
+        "label version and updating the archive/tests.",
+        file=sys.stderr,
+    )
+    if expected is None:
+        print("the existing metadata has no inputs.growth_values_sha256", file=sys.stderr)
+    return False
+
+
 def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--allow-overwrite",
+        action="store_true",
+        help="replace an existing label version even if its input values differ",
+    )
+    args = ap.parse_args()
+
     OUT.mkdir(parents=True, exist_ok=True)
     FIG.mkdir(parents=True, exist_ok=True)
 
     growth = pd.read_parquet(PROJECT / "data" / "clean" / "USA_growth.parquet")
+    if not check_frozen_input(
+        growth,
+        OUT / f"{LABEL_VERSION}.json",
+        allow_overwrite=args.allow_overwrite,
+    ):
+        return 1
     result = build_label(growth, country="USA")
 
-    window = pd.period_range("1990Q1", "2026Q3", freq="Q")
+    window = pd.period_range(*study_window(), freq="Q")
     frame = result.frame.reindex(window).copy()
     # renumber episode ids inside the reporting window (the estimation sample
     # starts in 1960 and carries earlier episodes that are not reported)

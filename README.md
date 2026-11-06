@@ -119,7 +119,7 @@ checked-in deliverables. Set `EWS_OUT=/path` to choose the destination.
   case is **4/8**, below the §19 gate, so India is a Label-B-only case study under O-2
   pending the final downloaded-data count.
 - Indicators: **P0 + P1** — the eight §11 core indicators plus 13 core predictors.
-- Series: **68 rows** (30 BEAI-eligible, 4 derived, 1 global).
+- Series: **68 rows** (30 BEAI-eligible, 5 derived, 1 global).
 - Window: 1990Q1–2026Q3 (147 quarters); horizons 1Q/2Q/4Q, 2Q primary.
 - Labels: BEAI (primary), technical GDP and NBER-US (robustness).
 

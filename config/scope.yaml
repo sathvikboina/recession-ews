@@ -1,14 +1,20 @@
 # Runtime scope for the build. Edit here, not in code.
-# Frozen on 2026-10-29 (Phase 2 -> Phase 3 handover). See docs/BUILD_CONTRACT.md.
-version: 1
-frozen_on: "2026-10-29"
+# Version 2 records the D-R31 window extension to 2026Q3 (label v3); the
+# Phase 2 rules themselves are unchanged. See docs/BUILD_CONTRACT.md.
+version: 2
+frozen_on: "2026-11-06"
 
 window:
+  # Reporting window for every country and the coverage gate.
   start: "1990Q1"
   end: "2026Q3"
-  # OPEN QUESTION for the team: using pre-1990 history for long-series countries
-  # roughly doubles the US episode count. Left disabled so the current results
-  # match the Phase 2 dictionary exactly.
+  # The USA factor is estimated with pre-1990 context so the left endpoint
+  # does not censor the 1990-91 peak (D-R22). Labels are still reported for
+  # the window above only.
+  estimation_start: "1960Q1"
+  # OPEN QUESTION for the team: reporting pre-1990 labels for long-series
+  # countries. Left disabled so the current results match the documented
+  # chronology; the USA estimation already uses the 1960Q1 sample above.
   extended_history:
     enabled: false
     suggested:
