@@ -175,6 +175,7 @@ WORK_LOG = [
     ("2026-11-06", "8", "One-week plan", "Replaced the five-week plan with a seven-day sprint: Days 1-5 individual work in four lanes, Days 6-7 merge, cross-review and go/no-go", "docs/TEAM_PLAN.md, scripts/make_team_plan.py", "Four balanced lanes, day-level tasks, fixed hand-offs and one review gate"),
     ("2026-11-06", "8", "Workbook", "Rebuilt Team_Plan.xlsx for the 7-day sprint and refreshed this work log with the v3 extension", "Team_Plan.xlsx, EWS_Work_Log.xlsx", "The simple plan and the detailed log agree; no pipeline artefact was changed by the plan work"),
     ("2026-11-06", "8", "Verify", "Ran the full suite and config gate on the extended window; checked v1 and v2 archive hashes and the v3 active hashes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; all frozen hashes match"),
+    ("2026-11-06", "9", "Fix", "Committed the active labels-v3.json that .gitignore had excluded, then re-cloned and re-ran the suite against the clean tree", ".gitignore, outputs/labels/labels-v3.json", "Fresh clone passes 32 tests; v1/v2/v3 hashes match byte-for-byte"),
 ]
 
 DATA_NOTES = {
