@@ -161,7 +161,9 @@ byte-identically.
   files were removed.
 - **Tests and CI.** Silent test returns were replaced by assertions or visible skips; new
   tests cover annual carry-forward, manifest hash verification, the NBER-free panel, the
-  runtime window and a synthetic NBER-free label panel. `.github/workflows/ci.yml` runs
+  runtime window and a synthetic NBER-free label panel. A fresh clone reports **36 passed
+  and 2 explicit skips** until the git-ignored `data/clean` is rebuilt with
+  `make harmonize`; the frozen-hash tests still run. `.github/workflows/ci.yml` runs
   `python scripts/00_env.py` and `python -m pytest` on Python 3.12.
 - **Environment gate.** Required packages (PyYAML, pandas, numpy, pyarrow, openpyxl) are
   hard failures; statsmodels/Phase 3 packages are warnings with their purpose stated. The

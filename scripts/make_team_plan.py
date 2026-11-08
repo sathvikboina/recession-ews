@@ -834,7 +834,7 @@ def sheet_review(wb: Workbook) -> None:
         ("labels-v2 metadata hash", "1fb38a76...09e74", "SHA-256, archive"),
         ("labels-v1 label hash", "1a1b1f6a...b749e29a", "SHA-256, archive"),
         ("labels-v1 metadata hash", "954565d2...991834", "SHA-256, archive"),
-        ("Fresh clone", "38 tests pass; same hashes", "git clone + pytest"),
+        ("Fresh clone", "36 pass, 2 explicit skips; same hashes", "git clone + pytest (rebuild git-ignored data/clean to run all 38)"),
         ("Working tree", "Clean after the review commit; no tags; not pushed", "git status, git tag"),
     ]
     row = table(ws, row, ["Check", "Result", "How / when"], verify, [34, 14, 90], bold_first=True)
