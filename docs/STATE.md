@@ -191,18 +191,23 @@ byte-identically.
 Days 1–5 are individual; Days 6–7 are shared. The Excel workbook is the plain-English
 version; the Markdown file is the detailed reference.
 
-1. **JPN and DEU labels (Part 1, Shravani).** Resolve BOJ/OECD/BIS sources, collect 21 rows
-   per country, pass 6/8 at ≥70% of 147 quarters (≥103), run the frozen estimator, compare
-   with ESRI / the German chronology, freeze `labels-v1-JPN` and `labels-v1-DEU`.
-2. **Feature table and walk-forward harness (Part 2, Arshiya).** Predictors only,
+1. **JPN and DEU labels (Part 1, Shravani).** Generalise the country plumbing, resolve
+   BOJ/OECD/BIS sources, collect 21 rows per country, pass 6/8 at ≥70% of 147 quarters
+   (≥103), run the frozen estimator, and compare with ESRI / the German chronology. Japan
+   freezes `labels-v1-JPN`; Germany freezes a label only if the gate passes, otherwise a
+   complete coverage note is the deliverable.
+2. **Feature table and walk-forward harness (Part 2, Arshiya).** Predictors only, with raw
+   BEAI-eligible series allowed only as separate predictor copies (C-01/FW-04);
    C-05/C-06/C-07, time-ordered inner folds, leakage tests, `dataset.parquet` and
-   `folds.json` on the extended 2026Q3 panel.
+   `folds.json` on the extended 2026Q3 panel. Also owns the combined clean clone.
 3. **Models and pre-registered ensemble (Part 3, Palchhin).** Six singles plus REWI and
-   baselines, then the exact C-13 ensemble test. If it fails, report the single model as
-   primary and the ensemble as a negative result.
-4. **India, scope and integration (Part 4, Sathvik).** Finish the downloaded-data count,
-   keep O-2, keep the docs in sync, run the Day 6 merge and Day 7 review, and package only
-   after approval.
+   baselines, then the exact C-13 ensemble test. **USA first**; JPN/DEU join only if their
+   labels land. If the ensemble fails, report the single model as primary and the ensemble
+   as a negative result.
+4. **India, scope and integration (Part 4, Sathvik).** Finish the downloaded-data count or
+   record the access failure, keep O-2, keep the docs in sync, and coordinate the Day 6
+   merge and Day 7 review. Verification is shared: Arshiya owns the clean clone, Palchhin
+   the results docs, and Shravani the label docs. Package only after approval.
 
 ## Open decisions (block their step, not this one)
 

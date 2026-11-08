@@ -153,13 +153,17 @@ five items still awaiting sign-off.
 
 Work is split into four packages in `docs/TEAM_PLAN.md`:
 
-1. **JPN and DEU labels now** — resolve sources, collect, harmonise, run the frozen label
-   and compare with ESRI / the German chronology.
-2. **Feature table and walk-forward harness** — predictors only, leakage tests.
+1. **JPN and DEU labels now** — generalise the country plumbing, resolve sources, collect,
+   harmonise, run the frozen label and compare with ESRI / the German chronology. Japan is
+   the priority; a complete German coverage note is acceptable if the 6/8 gate fails.
+2. **Feature table and walk-forward harness** — predictors only (raw BEAI-eligible series
+   only as separate copies), leakage tests, and the combined clean clone.
 3. **Models and the pre-registered ensemble** — six singles, then the exact C-13 rule.
-4. **India coverage, scope and integration** — downloaded-data count, docs, pitch,
-   packaging after approval.
+   The first model result is **USA-first**; JPN/DEU join only if their labels land.
+4. **India coverage, scope and integration** — downloaded-data count or recorded access
+   failure, shared verification, docs, pitch, and packaging only after approval.
 
-Start with Part 1 source resolution. Do not widen to P0–P2 until JPN and DEU pass their
-own label checks. Until a model is run, describe the deliverable as a validated recession
-label, not a forecasting system.
+Start with Part 1 source resolution and the country-plumbing refactor. Do not widen to
+P0–P2 until JPN and DEU pass their own label checks. Until a model is run, describe the
+deliverable as a validated recession label, not a forecasting system. Each teammate has a
+one-page brief under `docs/team/`.
