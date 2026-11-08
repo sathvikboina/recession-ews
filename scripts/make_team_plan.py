@@ -239,7 +239,7 @@ def sheet_start_here(wb: Workbook) -> None:
          "USA label is built, extended to 2026Q3, checked and frozen.",
          "labels-v3 covers 1990Q1-2026Q3 (147 quarters), matches all four US recessions since 1990, and has "
          "no false episodes. labels-v2 and labels-v1 are archived byte-identical. The ensemble rule was "
-         "written before any model result. 32 software tests pass."),
+         "written before any model result. 38 software tests pass."),
         ("What is not done?",
          "Japan, Germany, features, models and the final report.",
          "There is no Japan or Germany label, no predictor table, no model and no out-of-sample result yet. "
@@ -300,7 +300,7 @@ def sheet_what_happened(wb: Workbook) -> None:
          "Turns the dictionary into a repeatable data pipeline.", "config/, data/scope.csv, scripts/"),
         ("2026-10-29", "First label", "Built the US BEAI label from eight activity measures and compared it with NBER dates.",
          "Proves the label idea works on the US before any model work.", "outputs/labels/, docs/LABEL_VALIDATION.md"),
-        ("2026-11-04", "Data fix", "Replaced broad investment GPDIC1 with non-residential construction; replaced PAYEMS with CE16OV; documented HOANBS.",
+        ("2026-11-04", "Data fix", "Replaced broad investment GPDIC1 with constructed real non-residential business fixed investment (equipment + structures + IPP, deflated); replaced PAYEMS with CE16OV; documented HOANBS.",
          "Removes two real data defects and makes the label match its own rules.", "labels-v2, docs/DECISION_NOTE_Q02_Q04_Q05.md"),
         ("2026-11-04", "Freeze v2", "Archived labels-v1 byte-identical and froze labels-v2 with recorded hashes.",
          "Old results stay reproducible; new results are locked.", "outputs/labels/archive/labels-v1/, labels-v2.json"),
@@ -318,6 +318,8 @@ def sheet_what_happened(wb: Workbook) -> None:
          "The team gets a realistic one-week delivery rhythm with clear hand-offs and a single review gate.", "docs/TEAM_PLAN.md, Team_Plan.xlsx"),
         ("2026-11-06", "This workbook", "Built Team_Plan.xlsx and refreshed EWS_Work_Log.xlsx.",
          "Gives the team one simple plan and one place to see the history.", "Team_Plan.xlsx, EWS_Work_Log.xlsx"),
+        ("2026-11-08", "Review fixes", "Reviewed the whole repository: centralised the runtime window, guarded the frozen label against silent overwrite, verified manifest hashes, split NBER into the validation artifact, fixed the annual lag, added real test assertions and CI, and cleaned stale paths, counts and lock files.",
+         "The pipeline, docs and workbooks now agree; no frozen hash moved.", "docs/STATE.md, .github/workflows/ci.yml, scripts/make_worklog.py"),
     ]
     table(ws, 4, ["Date", "Stage", "What happened", "Why it matters", "Where to look"], rows, [13, 20, 64, 60, 42])
 
@@ -526,8 +528,8 @@ def sheet_tasks(wb: Workbook) -> None:
          "Verify labels-v3, the 147-quarter window, v1/v2 archives and every hash. Update README, STATE, VERIFICATION and the claim wording. No unsupported forecast.",
          "v3 outputs, docs", "Updated docs", "Docs agree with v3; no unsupported forecast claim", "1.3, 2.2"),
         ("4.4", "Part 4", "Sathvik", "Day 4", "Clean-clone and packaging dry run",
-         "Clone the repository into a fresh directory. Run make check, make test and the label hash check. Test the bundle script without creating a release tag.",
-         "All outputs", "Clean-clone evidence, packaging checklist", "Fresh clone passes; no tag created", "4.3"),
+         "Clone the repository into a fresh directory. Run make check, make test and the label hash check. Confirm the packaging checklist; do not create a bundle, mirror, zip or release tag.",
+         "All outputs", "Clean-clone evidence, packaging checklist", "Fresh clone passes; nothing packaged or tagged", "4.3"),
         ("4.5", "Part 4", "Sathvik", "Day 5", "Integration rehearsal and plain-English pitch",
          "Do a dry-run merge in the fixed order. Write the one-page story: what was built, what the label proves, what the model result does not prove, and what is next.",
          "Outputs from Parts 1-3", "Rehearsal notes, pitch", "Merge order works; pitch is accurate and plain", "4.3, 2.5, 3.5"),
@@ -811,7 +813,7 @@ def sheet_review(wb: Workbook) -> None:
         ("India", "Watch", "Pre-audit best case is 4/8. India is Label-B-only under O-2. The final downloaded-data count is still owed by Part 4."),
         ("Ensemble rule", "Solid", "Pre-registered before any model result: equal-weight top-3, at least +0.01 pooled PR-AUC, bootstrap interval excluding zero, no episode-recall loss."),
         ("Wording", "Solid", "The README and validation note say the current deliverable is a validated label, not a forecasting system."),
-        ("Software checks", "Solid", "32 tests pass. make check gives 26 ok, 3 warnings for optional model packages, 0 failures."),
+        ("Software checks", "Solid", "38 tests pass. make check gives 33 ok, 3 warnings for optional model packages, 0 failures."),
         ("Frozen artefacts", "Solid", "labels-v1 and labels-v2 archive hashes match. labels-v3 is the active label. A fresh clone reproduces the same hashes."),
         ("Japan and Germany labels", "Gap", "Not started. Part 1 starts with Japan source resolution on Day 1; Germany is a stretch goal."),
         ("Features, folds and models", "Gap", "Not started. Parts 2 and 3 build them during Days 1-5. No out-of-sample score exists yet."),
@@ -824,16 +826,16 @@ def sheet_review(wb: Workbook) -> None:
 
     row = section(ws, row, "Verification results", 3)
     verify = [
-        ("Tests", "32 passed", "pytest, 2026-11-06"),
-        ("Config check", "26 ok, 3 warnings, 0 failures", "make check"),
+        ("Tests", "38 passed", "pytest, 2026-11-08"),
+        ("Config check", "33 ok, 3 warnings, 0 failures", "make check"),
         ("labels-v3 label hash", "2379fd53...ed19daa", "SHA-256, active"),
         ("labels-v3 metadata hash", "6f1aa665...402c0a50", "SHA-256, active"),
         ("labels-v2 label hash", "f5ed42a6...16dc8e", "SHA-256, archive"),
         ("labels-v2 metadata hash", "1fb38a76...09e74", "SHA-256, archive"),
         ("labels-v1 label hash", "1a1b1f6a...b749e29a", "SHA-256, archive"),
         ("labels-v1 metadata hash", "954565d2...991834", "SHA-256, archive"),
-        ("Fresh clone", "32 tests pass; same hashes", "git clone + pytest"),
-        ("Working tree", "Clean; no tags; not pushed", "git status, git tag"),
+        ("Fresh clone", "38 tests pass; same hashes", "git clone + pytest"),
+        ("Working tree", "Clean after the review commit; no tags; not pushed", "git status, git tag"),
     ]
     row = table(ws, row, ["Check", "Result", "How / when"], verify, [34, 14, 90], bold_first=True)
 
@@ -842,7 +844,7 @@ def sheet_review(wb: Workbook) -> None:
         ("O-1", "Use pre-1990 history for long-series countries?", "No, 1990-2026Q3 for now", "Before the next label report"),
         ("O-2", "India fallback if 6/8 fails?", "Label-B-only case study", "Already applied provisionally; final count pending"),
         ("O-3", "Threshold objective: max F1 or recall at a precision floor?", "Max F1", "Before the harness"),
-        ("O-4", "Widen scope from P0-P1 to P0-P2?", "No, until JPN/DEU pass", "After the country labels"),
+        ("O-4", "Widen scope from P0-P1 to P0-P2?", "Defer until the label gate passes", "After the country labels"),
         ("O-5", "COVID treatment and with/without evaluation?", "Keep, document, evaluate", "Before experiments"),
         ("Release", "Build the final bundle and tag?", "Not yet", "After Day 7 approval"),
     ]
@@ -885,6 +887,7 @@ def sheet_worklog(wb: Workbook) -> None:
         ("2026-11-06", "One-week plan", "Compressed the four packages into a 7-day sprint: Days 1-5 individual, Days 6-7 combine and review.", "The team has a day-level plan with hand-offs and one review gate."),
         ("2026-11-06", "This workbook", "Built Team_Plan.xlsx with the 7-day plan and the review.", "One place for the team to see what happened, what is next and how the work combines."),
         ("2026-11-06", "This workbook", "Updated EWS_Work_Log.xlsx with the v3 extension and the sprint plan.", "The detailed work log stays current."),
+        ("2026-11-08", "Review fixes", "Reviewed the whole repository and fixed the stale window text, runtime source, frozen-label guard, manifest checks, NBER split, annual lag, test skips, CI and stale paths/counts; removed old lock files and regenerated both workbooks.", "38 tests pass; labels-v3 and archive hashes are unchanged; the docs and workbooks agree."),
     ]
     table(ws, 4, ["Date", "Part / person", "What was done", "Result in plain English"], rows, [13, 24, 76, 60], bold_first=True)
     note(

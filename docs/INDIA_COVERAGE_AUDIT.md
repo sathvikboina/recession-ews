@@ -6,7 +6,8 @@ whether India can pass the §19 gate before the team spends collection effort on
 
 Target window: 1990Q1–2026Q3 = **147 quarters**. The gate is **≥6 of the 8 BEAI
 indicators, each with ≥70% coverage** (≥103 quarters). Q-06 says the rule is not
-relaxed for India or China.
+relaxed for India or China. The counts below were recomputed for this 147-quarter
+window after the 2026-11-06 extension; the best case is still 4 of 8.
 
 ## 1. What the evidence already shows
 
@@ -16,14 +17,14 @@ enough to bound the answer.
 
 | BEAI indicator | Candidate source | Documented quarterly history | Best-case window coverage | Verdict |
 |---|---|---|---|---|
-| `ACT_GDP_REAL` | MoSPI quarterly national accounts | Quarterly from 1996-97; new base 2022-23 | 1996Q2–2025Q4 = at least 119/147 = **81.0%** | **Pass** |
+| `ACT_GDP_REAL` | MoSPI quarterly national accounts | Quarterly from 1996-97; new base 2022-23 | 1996Q2–2026Q3 = at least 122/147 = **83.0%** | **Pass** |
 | `ACT_IP` | MoSPI IIP, monthly | Monthly IIP with base changes; start date to verify | Likely ≥70%; needs a source check | **Likely pass** |
-| `ACT_EMP` | PLFS / national accounts | PLFS quarterly urban-only from 2017; rural+urban only from 2025 | 2017Q3–2025Q4 ≈ 34/147 = **23.1%** | **Fail** |
+| `ACT_EMP` | PLFS / national accounts | PLFS quarterly urban-only from 2017; rural+urban only from 2025 | 2017Q3–2026Q3 ≈ 37/147 = **25.2%** | **Fail** |
 | `ACT_HOURS` | No confirmed official quarterly total-hours series | None confirmed | 0% | **Fail** |
 | `ACT_RINC` | No confirmed quarterly household disposable income | None confirmed | 0% | **Fail** |
-| `ACT_CONS` | MoSPI quarterly PFCE | Quarterly from 1996-97 | 1996Q2–2025Q4 = at least 119/147 = **81.0%** | **Pass** |
+| `ACT_CONS` | MoSPI quarterly PFCE | Quarterly from 1996-97 | 1996Q2–2026Q3 = at least 122/147 = **83.0%** | **Pass** |
 | `ACT_RETAIL` | No confirmed official monthly retail sales index | None confirmed for the required window | 0% | **Fail** |
-| `ACT_INV` | MoSPI quarterly GFCF | Quarterly from 1996-97, but a **business / non-residential split is not confirmed** | 81.0% only if the split exists; otherwise missing under Q-02 | **Pass only if the Q-02 split exists; otherwise fail** |
+| `ACT_INV` | MoSPI quarterly GFCF | Quarterly from 1996-97, but a **business / non-residential split is not confirmed** | 83.0% only if the split exists; otherwise missing under Q-02 | **Pass only if the Q-02 split exists; otherwise fail** |
 
 ## 2. The gate result
 

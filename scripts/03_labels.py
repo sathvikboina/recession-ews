@@ -27,7 +27,11 @@ PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT / "src"))
 
 from ews.labels import build as build_label  # noqa: E402
-from ews.labels.freeze import canonical_frame_sha256, existing_created  # noqa: E402
+from ews.labels.freeze import (  # noqa: E402
+    canonical_frame_sha256,
+    check_frozen_input,
+    existing_created,
+)
 from ews.labels.ids import renumber_window_episodes  # noqa: E402
 from ews.runtime import study_window  # noqa: E402
 
@@ -55,45 +59,6 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def check_frozen_input(growth: pd.DataFrame, meta_path: Path, *, allow_overwrite: bool) -> bool:
-    """Refuse to replace an existing frozen label with different input values.
-
-    Parquet bytes can change when pyarrow changes, so compare the canonical
-    values recorded in the label metadata. A deliberate replacement must opt in
-    with ``--allow-overwrite``.
-    """
-    if not meta_path.exists():
-        return True
-    try:
-        record = json.loads(meta_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"refusing to overwrite: cannot read {meta_path}: {exc}", file=sys.stderr)
-        return False
-
-    expected = record.get("inputs", {}).get("growth_values_sha256")
-    actual = canonical_frame_sha256(growth)
-    if expected == actual:
-        return True
-
-    if allow_overwrite:
-        print(
-            "WARNING: input values differ from the frozen label record; "
-            "overwriting because --allow-overwrite was supplied.",
-            file=sys.stderr,
-        )
-        return True
-
-    print(
-        "refusing to overwrite the frozen label: current input values do not "
-        f"match {meta_path}. Use --allow-overwrite only after creating a new "
-        "label version and updating the archive/tests.",
-        file=sys.stderr,
-    )
-    if expected is None:
-        print("the existing metadata has no inputs.growth_values_sha256", file=sys.stderr)
-    return False
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
@@ -107,11 +72,14 @@ def main() -> int:
     FIG.mkdir(parents=True, exist_ok=True)
 
     growth = pd.read_parquet(PROJECT / "data" / "clean" / "USA_growth.parquet")
-    if not check_frozen_input(
+    ok, message = check_frozen_input(
         growth,
         OUT / f"{LABEL_VERSION}.json",
         allow_overwrite=args.allow_overwrite,
-    ):
+    )
+    if message:
+        print(message, file=sys.stderr)
+    if not ok:
         return 1
     result = build_label(growth, country="USA")
 

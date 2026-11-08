@@ -176,6 +176,7 @@ WORK_LOG = [
     ("2026-11-06", "8", "Workbook", "Rebuilt Team_Plan.xlsx for the 7-day sprint and refreshed this work log with the v3 extension", "Team_Plan.xlsx, EWS_Work_Log.xlsx", "The simple plan and the detailed log agree; no pipeline artefact was changed by the plan work"),
     ("2026-11-06", "8", "Verify", "Ran the full suite and config gate on the extended window; checked v1 and v2 archive hashes and the v3 active hashes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; all frozen hashes match"),
     ("2026-11-06", "9", "Fix", "Committed the active labels-v3.json that .gitignore had excluded, then re-cloned and re-ran the suite against the clean tree", ".gitignore, outputs/labels/labels-v3.json", "Fresh clone passes 32 tests; v1/v2/v3 hashes match byte-for-byte"),
+    ("2026-11-08", "10", "Review fixes", "Removed the last stale Phase 2 window text, made config/scope.yaml the single runtime window source, added the frozen-label overwrite guard, verified manifest SHA-256 on read, split NBER into the validation artifact, applied the C-06 one-year annual lag, replaced silent test skips, added CI, and regenerated both workbooks after cleaning stale lock files and paths", "build.py, config/scope.yaml, src/ews/runtime.py, scripts/{00_env,03_labels,fetch_fred,harmonize,04_compare_nber,make_worklog,make_team_plan}.py, tests/{test_config,test_freeze,test_harmonize,test_labels,test_scope}.py, Makefile, README.md, .gitattributes, .github/workflows/ci.yml, series_catalogue.csv, schema.csv, label_firewall_rules.csv, recession_ews_data_dictionary.xlsx, docs/{STATE,REVIEW_2026-11-05,TEAM_PLAN,VERIFICATION,INDIA_COVERAGE_AUDIT,PROPOSAL_ADDENDUM}.md", "38 tests pass; 33 ok / 3 warnings / 0 failures; labels-v3 and archive hashes unchanged; Phase 2 CSVs reproduce from build.py"),
 ]
 
 DATA_NOTES = {
@@ -218,6 +219,10 @@ TESTS = [
     ("test_config.py", "test_indicator_semantics_in_vocabulary", "Form, lag class, frequency and priority are valid"),
     ("test_config.py", "test_countries_and_scope", "40 countries + GLOBAL, horizon and window consistency"),
     ("test_config.py", "test_scope_priorities_are_valid", "Priorities and core set match scope.yaml"),
+    ("test_config.py", "test_window_has_one_source_of_truth", "scope.yaml, spec.py and runtime agree on 147 quarters and the 1960Q1 estimation start"),
+    ("test_harmonize.py", "test_annual_values_carry_to_the_following_year", "C-06 one-year publication lag for annual predictors"),
+    ("test_harmonize.py", "test_manifest_raw_verifies_the_recorded_hash", "The manifest names the raw file and its SHA-256 is checked"),
+    ("test_harmonize.py", "test_clean_panel_excludes_validation_series", "NBER stays out of the predictor panel"),
     ("test_scope.py", "test_scope_exists_and_nonempty", "Shortlist exists"),
     ("test_scope.py", "test_columns_present", "Required columns present"),
     ("test_scope.py", "test_keys_unique_and_well_formed", "series_key unique and regex-valid"),
@@ -232,6 +237,7 @@ TESTS = [
     ("test_labels.py", "test_diffusion_gate_drops_weak_episode", "A 1/8 diffusion episode would be rejected"),
     ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 147 rows, contiguous episodes"),
     ("test_labels.py", "test_label_pipeline_does_not_use_nber", "No external chronology reaches the label"),
+    ("test_labels.py", "test_build_accepts_a_panel_without_validation_series", "The builder consumes activity growth only"),
     ("test_labels.py", "test_episode_peak_is_before_trough", "Every episode has duration >= 2"),
     ("test_freeze.py", "test_v1_and_v2_archives_are_byte_identical", "labels-v1, labels-v2 and their metadata stay byte-identical"),
     ("test_freeze.py", "test_active_label_hash_is_v3", "active labels-v3 CSV stays byte-identical"),
@@ -242,6 +248,7 @@ TESTS = [
     ("test_freeze.py", "test_v3_metadata_records_the_input_decisions", "labels-v3 records Q-02/Q-04/Q-05 and the 2026Q3 window"),
     ("test_freeze.py", "test_created_date_is_preserved", "re-running the builder does not rewrite the freeze date"),
     ("test_freeze.py", "test_canonical_digest_tracks_values_not_parquet_bytes", "freeze digest is environment-independent"),
+    ("test_freeze.py", "test_frozen_overwrite_guard_requires_an_explicit_opt_in", "a changed input cannot silently replace a frozen label"),
     ("test_review_invariants.py", "test_spec_matches_active_decision_log", "spec.py and decisions_log.csv cannot drift; Q-02/Q-04/Q-05 sign-offs and the India finding are present"),
     ("test_review_invariants.py", "test_ensemble_preregistration_is_present_and_specific", "the pre-registered ensemble, beat-the-best test and leakage conditions stay in the docs"),
 ]
@@ -249,7 +256,7 @@ TESTS = [
 REPO_MAP = [
     ("README.md", "Project overview, status, quickstart, USA result", "entry point"),
     ("docs/BUILD_CONTRACT.md", "Frozen runtime rules C-01..C-13", "read before writing pipeline code"),
-    ("docs/DECISIONS.md", "D-R01..D-R30 and open items O-1..O-5", "decision record"),
+    ("docs/DECISIONS.md", "D-R01..D-R31 and open items O-1..O-5", "decision record"),
     ("docs/VERIFICATION.md", "FRED verification table, substitutions, India pre-audit, sign-offs", "data provenance"),
     ("docs/LABEL_VALIDATION.md", "Method, NBER agreement, discrepancies, falsification checks, claim scope", "label evidence"),
     ("docs/STATE.md", "One-page hand-off with hashes and next actions", "start here each session"),
@@ -269,7 +276,7 @@ REPO_MAP = [
     ("data/fred_verification.csv", "Title, units, frequency, SA, first/last, coverage", "verification facts"),
     ("data/superseded_series.csv", "Retired source ids replaced by a new active source", "provenance history"),
     ("data/series_resolution.csv", "scope_key -> concrete source id / derivation", "join table"),
-    ("data/raw/fred/<date>/", "Immutable downloads (git-ignored)", "raw layer"),
+    ("data/raw/fred/<run-id>/", "Immutable downloads (git-ignored)", "raw layer"),
     ("data/clean/", "Quarterly panel and growth matrix (git-ignored)", "clean layer"),
     ("src/ews/labels/dfm.py", "One-factor DFM, loading-based scale, cumulated level", "label estimator"),
     ("src/ews/labels/bbq.py", "Turning points, episodes, recession flag", "dating"),
@@ -281,12 +288,13 @@ REPO_MAP = [
     ("scripts/export_spec.py", "spec.py -> config/*.yaml", "config build"),
     ("scripts/scope_catalog.py", "Catalogue -> 68-row shortlist + resolutions", "scope build"),
     ("scripts/fetch_fred.py", "Verify + download FRED, write manifest", "collection"),
-    ("scripts/harmonize.py", "Quarterly panel, dlog, sign alignment", "clean data"),
+    ("scripts/harmonize.py", "Manifest-verified raw files, quarterly panel, annual lag, NBER split", "clean data"),
+    ("src/ews/runtime.py", "Single runtime source for the reporting/estimation window", "config helper"),
     ("scripts/03_labels.py", "Build and freeze the label", "labels"),
     ("scripts/04_compare_nber.py", "NBER comparison + robustness", "validation"),
     ("scripts/make_worklog.py", "This workbook", "reporting"),
     ("EWS_Work_Log.xlsx", "Generated work log (this file)", "deliverable"),
-    ("tests/", "32 invariants (config, scope, labels, freeze, review)", "software checks"),
+    ("tests/", "38 invariants (config/window, harmonise, scope, labels, freeze, review)", "software checks"),
     ("outputs/labels/USA_labels.csv", "Frozen label: factor, level, diffusion, R", "deliverable"),
     ("outputs/labels/labels-v3.json", "Parameters, loadings, decisions, hashes", "freeze record"),
     ("outputs/labels/archive/labels-v2/", "Byte-identical v2 label, metadata and SHA-256 sums", "archive"),
@@ -303,9 +311,16 @@ DECISIONS = [
     ("D-R06", "Monthly -> quarterly mean, no partial-quarter imputation", "FROZEN"),
     ("D-R07", "SA: official SA preferred; NSA BEAI inputs X-13 up to the cutoff", "FROZEN"),
     ("D-R08", "Annual series: carry last value with 1-year lag", "FROZEN"),
+    ("D-R09", "India: fiscal -> calendar quarters, chain base years, no pre-2017 employment backcast", "FROZEN"),
+    ("D-R10", "China: level index by chaining SA q/q growth; no special treatment", "FROZEN"),
     ("D-R11", "Walk-forward only; threshold locked before test", "FROZEN"),
+    ("D-R12", "Predictors need >=70% window coverage (extension of the 6/8 rule)", "FROZEN"),
+    ("D-R13", "Global aggregates use training countries only; never the target/held-out country", "FROZEN"),
     ("D-R14", "Revised data with simulated lags, not a real-time vintage study", "FROZEN"),
+    ("D-R15", "No redistribution of restricted raw data; scripts and metadata only", "FROZEN"),
     ("D-R16", "Verify only the 68 scope rows, not the 1,883 catalogue", "FROZEN"),
+    ("D-R17", "Use pre-1990 history for long-series countries (O-1)", "CONFIRM"),
+    ("D-R18", "India fallback if 6/8 fails: Label B only, reported as a coverage finding (O-2)", "CONFIRM"),
     ("D-R19", "Threshold objective: max F1 vs recall-at-precision", "OPEN"),
     ("D-R20", "P0-P1 first (68 rows); widen to P0-P2 after the label gate", "CONFIRM"),
     ("D-R21", "COVID kept; document BBQ treatment; with/without evaluation", "CONFIRM"),
@@ -332,7 +347,7 @@ OPEN_ITEMS = [
 PHASES = [
     ("1", "Literature matrix", "Done", "literature_matrix.xlsx v4", ""),
     ("2", "Data dictionary", "Done", "16-sheet workbook, 1,883-row catalogue", ""),
-    ("3", "Scoped verification", "USA done; JPN/DEU pending", "21 verified, 1 low coverage, 3 derived", "JPN 21 + DEU 21 rows"),
+    ("3", "Scoped verification", "USA done; JPN/DEU pending", "27 manifest rows: 26 verified, 1 low coverage (plus 3 derived scope rows)", "JPN 21 + DEU 21 rows"),
     ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "267-quarter panel (1960Q1-2026Q3), 8 core indicators", "BOJ/OECD access"),
     ("5", "BEAI label", "USA done, extended to 2026Q3, frozen, signed off", "4/4 NBER, accuracy 0.993, F1 0.963; labels-v3", "JPN/DEU labels"),
     ("6", "JPN + DEU labels", "Not started", "-", "Phase 3/4 for those countries"),
@@ -350,12 +365,13 @@ RUNBOOK = [
     ("Scope", "make scope", "rebuild the 68-row shortlist"),
     ("Fetch", "make fetch", "verify + download FRED, write manifest"),
     ("Harmonise", "make harmonize", "quarterly panel + growth matrix"),
-    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v3"),
+    ("Label", "make labels", "DFM -> BBQ -> diffusion; rebuilds labels-v3 only when the guarded inputs change"),
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
-    ("Checks", "make check && make test", "26 config checks + 32 tests"),
+    ("Checks", "make check && make test", "33 config checks + 38 tests"),
     ("Team plan", "make team-plan", "rebuild Team_Plan.xlsx (12 sheets)"),
-    ("Workbook", "python scripts/make_worklog.py", "regenerate this file"),
+    ("Work log", "make worklog", "regenerate this file"),
+    ("Reports", "make reports", "rebuild both workbooks"),
 ]
 
 
@@ -383,7 +399,7 @@ def main() -> int:
     ws["A1"].font = Font(bold=True, size=18, color=NAVY)
     ws["A2"] = (f"Generated {date.today().isoformat()} from the repository state at "
                 f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS: USA label extended "
-                f"to 2026Q3, 2026-11-06 data freeze and the one-week four-lane sprint.")
+                f"to 2026Q3, 2026-11-06 data freeze, the one-week four-lane sprint and the 2026-11-08 repository review.")
     ws["A2"].font = SUB_FONT
     ws.column_dimensions["A"].width = 34
     ws.column_dimensions["B"].width = 92
@@ -400,8 +416,8 @@ def main() -> int:
                       f"{len(false_eps)} false positives; labels-v2 and labels-v1 archived byte-identically"),
         ("NBER agreement", f"{episodes_matched}/{len(match)} episodes, accuracy {cm['accuracy']:.3f}, "
                            f"recall {cm['recall']:.3f}, precision {cm['precision']:.3f}, F1 {cm['f1']:.3f}"),
-        ("Tests", "32 passing (config 6, scope 6, labels 9, freeze 9, review invariants 2)"),
-        ("Config gate", "26 ok, 3 warnings (optional model packages), 0 failures"),
+        ("Tests", "38 passing (config 7, harmonise 3, scope 6, labels 10, freeze 10, review invariants 2)"),
+        ("Config gate", "33 ok, 3 warnings (optional model packages), 0 failures"),
         ("Not started", "JPN/DEU labels (Days 1-5), feature table, harness, experiments, dashboard"),
         ("Pre-registered", "Equal-weight top-3 ensemble, C-13 (docs/PROPOSAL_ADDENDUM.md); no model result yet"),
         ("India", "Pre-audit best case 4/8; Label-B-only under O-2 pending final downloads"),
@@ -632,7 +648,7 @@ def main() -> int:
           number_formats={2: "0", 3: "0"})
 
     # 8. Tests -------------------------------------------------------------
-    sheet(wb, "Tests", "Test suite (32 invariants)",
+    sheet(wb, "Tests", "Test suite (38 invariants)",
           "These establish software correctness only; economic credibility comes from the NBER comparison.",
           ["Module", "Test", "What it protects"],
           TESTS, [18, 58, 70])

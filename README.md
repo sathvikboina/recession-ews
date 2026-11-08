@@ -19,9 +19,12 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 | Phase 6–8 — features / harness / models | not started |
 | Phase 9+ — experiments, interpretation, dashboard | not started |
 
-Review state (2026-11-06): the USA panel and label now run to **2026Q3** (147 quarters,
+Review state (2026-11-08): the USA panel and label run to **2026Q3** (147 quarters,
 1990Q1–2026Q3); `labels-v2` is archived byte-identically and `labels-v3` is active. The
-ensemble is pre-registered before results in `docs/PROPOSAL_ADDENDUM.md`; the India
+whole-repository review fixed the runtime window source, frozen-label overwrite guard,
+manifest hash checking, annual publication lag and NBER/panel separation without changing
+the label hashes. The ensemble is pre-registered before results in
+`docs/PROPOSAL_ADDENDUM.md`; the India
 pre-audit finds a best case of 4/8 under §19, so India is a Label-B case study
 (`docs/INDIA_COVERAGE_AUDIT.md`); the two v1 data defects (`GPDIC1`, `PAYEMS`) are signed
 off in `docs/REVIEW_2026-11-05.md`. The four lanes are now a **one-week sprint** in
@@ -40,10 +43,12 @@ pip install -e ".[dev]"
 make config      # regenerate config/*.yaml from spec.py
 make scope       # build the 68-row collection shortlist
 make fetch       # verify + download the FRED series (no API key needed)
-make pipeline    # harmonise -> label -> NBER validation
+make pipeline    # fetch -> harmonise -> label -> NBER validation
 make check       # environment + configuration gate
 make test        # test suite
 make team-plan   # rebuild the plain-English Team_Plan.xlsx
+make worklog     # rebuild the detailed EWS_Work_Log.xlsx
+make reports     # rebuild both generated workbooks
 ```
 
 `make bootstrap` runs config, scope, check and test. The pipeline scripts need pandas,
@@ -80,7 +85,7 @@ data/
 src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
 scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
                    04_compare_nber, make_worklog, make_team_plan
-tests/             config, scope, label invariants, frozen artefacts, review invariants
+tests/             config/window, scope, harmonise, label, frozen artefacts, review invariants
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md,
                    DECISION_NOTE_Q02_Q04_Q05.md, PROPOSAL_ADDENDUM.md,
                    INDIA_COVERAGE_AUDIT.md, TEAM_PLAN.md, REVIEW_2026-11-05.md
@@ -136,8 +141,9 @@ five items still awaiting sign-off.
 
 ## Data policy
 
-- Raw downloads are immutable and stored under `data/raw/<source>/<date>/` with a SHA-256
-  in the manifest.
+- Raw downloads are immutable and stored under `data/raw/<source>/<run-id>/` with a SHA-256
+  in the manifest. Each fetch run gets a unique id; the harmoniser reads the file named in
+  the manifest and verifies its hash.
 - No restricted raw data is redistributed; the repository keeps scripts and metadata.
 - Missing values stay missing: no interpolation or forward-fill of macro series.
 - Revised historical data with simulated publication lags — results are **not** equivalent

@@ -41,11 +41,11 @@ units_verified,Series properties,string,free text,Verified unit.,NOT_APPLICABLE
 sa_status_expected,Series properties,string,free text,Expected seasonal-adjustment status.,SA preferred
 sa_status_verified,Series properties,enum,SA|NSA|NOT_APPLICABLE|PENDING_VERIFICATION,Verified status.,NOT_APPLICABLE
 target_window_start,Series properties,period,YYYYQn,Target window start (§6).,1990Q1
-target_window_end,Series properties,period,YYYYQn,Target window end (§6).,2025Q4
+target_window_end,Series properties,period,YYYYQn,Target window end (§6).,2026Q3
 collect_from,Series properties,string,free text,Collect earliest available history (§6).,NOT_APPLICABLE
 available_start_date,Series properties,date,YYYY-MM or PENDING_VERIFICATION,First observation.,NOT_APPLICABLE
 available_end_date,Series properties,date,YYYY-MM or PENDING_VERIFICATION,Last observation.,NOT_APPLICABLE
-coverage_target_window_pct,Series properties,float,0-100 or PENDING_VERIFICATION,Share of the 144 quarters in 1990Q1-2025Q4 with data; the §19 threshold is 70% (>=101 quarters).,NOT_APPLICABLE
+coverage_target_window_pct,Series properties,float,0-100 or PENDING_VERIFICATION,Share of the 147 quarters in 1990Q1-2026Q3 with data; the §19 threshold is 70% (>=103 quarters).,NOT_APPLICABLE
 missingness_pct,Series properties,float,0-100 or PENDING_VERIFICATION,Missing share within the available span.,NOT_APPLICABLE
 missingness_pattern,Series properties,string,free text,Where gaps occur.,NOT_APPLICABLE
 availability_risk,Series properties,string,UNKNOWN|ELEVATED (verified fact)|ELEVATED (hypothesis)|...,Risk the series is unavailable; hypotheses are labelled.,UNKNOWN

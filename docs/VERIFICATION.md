@@ -12,7 +12,8 @@ Phase 2 left every series ID, date, unit, SA status and coverage figure as
 3. Prefer the country's §7 chain order. A fact from a secondary source is recorded as
    secondary and does not close the item.
 4. Record the retrieval date and the exact query used (URL or API call) for every fact.
-5. Raw payloads go to `data/raw/<source>/<retrieved_at>/` and are never edited.
+5. Raw payloads go to `data/raw/<source>/<run-id>/` and are never edited; the harmoniser
+   opens the exact file recorded in `data/manifest.csv` and verifies its SHA-256.
 6. The manifest (`data/manifest.csv`) records provenance; the source CSV is not edited.
 
 ## Progress

@@ -115,8 +115,7 @@ def test_frozen_labels_present_and_sane() -> None:
 def test_label_pipeline_does_not_use_nber() -> None:
     path = PROJECT / "data" / "clean" / "USA_growth.parquet"
     if not path.exists():
-        # data/clean is git-ignored; a clean clone must pass before
-        # `make fetch && make harmonize` has been run.
+        _skip("data/clean is git-ignored; run `make fetch && make harmonize` first")
         return
     growth = pd.read_parquet(path)
     assert "USA.NBER.Q" not in growth.columns
@@ -126,10 +125,28 @@ def test_label_pipeline_does_not_use_nber() -> None:
     assert set(result.frame["R"].unique()) <= {0, 1}
 
 
+def test_build_accepts_a_panel_without_validation_series() -> None:
+    """The label builder consumes activity growth only, never a chronology."""
+    base = _cycle(n=120, period=24)
+    growth = pd.DataFrame(
+        {
+            f"ACT_{i}": base * (1.0 + 0.02 * i) + np.sin(np.arange(120) / (3 + i))
+            for i in range(8)
+        },
+        index=base.index,
+    )
+    assert "NBER" not in "".join(growth.columns)
+    result = build(growth, method="pca_em", country="USA")
+    assert result.diagnostics["method"] == "pca_em"
+    assert result.frame["R"].isin([0, 1]).all()
+    assert result.frame.columns.is_unique
+
+
 def test_episode_peak_is_before_trough() -> None:
-    eps = pd.read_csv(PROJECT / "outputs" / "labels" / "USA_episodes.csv")
-    if eps.empty:
-        return
+    path = PROJECT / "outputs" / "labels" / "USA_episodes.csv"
+    assert path.exists(), "the frozen episode artefact is tracked and must be present"
+    eps = pd.read_csv(path)
+    assert not eps.empty
     for _, r in eps.iterrows():
         assert r["duration"] >= 2
         assert r["trough_index"] > r["peak_index"]

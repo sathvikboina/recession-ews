@@ -134,7 +134,7 @@ These are deliberately retained from the current build:
   methodological novelty, and no country result before its label is audited.
 - **Pre-committed decision log.** Decisions are recorded when made
   (`decisions_log.csv`, `docs/DECISIONS.md`). The review noted "D-R01 to D-R25";
-  the log has since grown to D-R30, which is the intended behaviour.
+  the log has since grown to D-R31, which is the intended behaviour.
 
 ## 4. Sign-off
 

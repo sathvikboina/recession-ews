@@ -26,7 +26,11 @@ import pandas as pd
 PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT / "src"))
 
-from ews.labels.freeze import canonical_frame_sha256, existing_created  # noqa: E402
+from ews.labels.freeze import (  # noqa: E402
+    canonical_frame_sha256,
+    check_frozen_input,
+    existing_created,
+)
 
 LABELS = PROJECT / "outputs" / "labels" / "USA_labels.csv"
 EPISODES = PROJECT / "outputs" / "labels" / "USA_episodes.csv"
@@ -216,3 +220,22 @@ def test_canonical_digest_tracks_values_not_parquet_bytes() -> None:
     assert canonical_frame_sha256(first) == canonical_frame_sha256(second)
     second.loc[0, "a"] = 1.5
     assert canonical_frame_sha256(first) != canonical_frame_sha256(second)
+
+
+def test_frozen_overwrite_guard_requires_an_explicit_opt_in(tmp_path: Path) -> None:
+    growth = pd.DataFrame({"a": [1.0, 2.0]})
+    meta = tmp_path / "labels-v3.json"
+    meta.write_text(
+        json.dumps({"inputs": {"growth_values_sha256": canonical_frame_sha256(growth)}}),
+        encoding="utf-8",
+    )
+    ok, message = check_frozen_input(growth, meta)
+    assert ok and not message
+
+    changed = growth.copy()
+    changed.loc[0, "a"] = 99.0
+    ok, message = check_frozen_input(changed, meta)
+    assert not ok and "refusing" in message
+
+    ok, message = check_frozen_input(changed, meta, allow_overwrite=True)
+    assert ok and "WARNING" in message
