@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports bootstrap clean
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -18,6 +18,7 @@ help:
 	@echo "make team-plan  rebuild Team_Plan.xlsx (plain-English team plan)"
 	@echo "make worklog    rebuild EWS_Work_Log.xlsx (detailed work log)"
 	@echo "make reports    rebuild both generated workbooks"
+	@echo "make dashboard  build the static USA dashboard (dashboard/index.html)"
 
 env:
 	python3 -m venv $(VENV)
@@ -57,6 +58,9 @@ worklog:
 	"$(PY)" scripts/make_worklog.py
 
 reports: team-plan worklog
+
+dashboard:
+	"$(PY)" scripts/05_dashboard.py
 
 bootstrap: config scope check test
 

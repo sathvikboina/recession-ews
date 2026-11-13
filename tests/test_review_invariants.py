@@ -57,7 +57,7 @@ def test_spec_matches_active_decision_log() -> None:
         assert "signed off 2026-11-05" in row["deviation_detail"] + row["remaining_action"], (
             f"{qid} is missing the explicit 2026-11-05 USA sign-off"
         )
-    assert "best case is 4/8" in rows["Q-06"]["decision"], "Q-06 is missing the India pre-audit finding"
+    assert "1 of 8" in rows["Q-06"]["decision"], "Q-06 is missing the India downloaded-data finding"
 
 
 def test_ensemble_preregistration_is_present_and_specific() -> None:

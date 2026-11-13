@@ -181,6 +181,12 @@ Palchhin owns the results docs, and Shravani owns the label docs.
 | 4 | Clean-clone and packaging **dry run**, owned by Arshiya with Sathvik reviewing. Clone current `main`; run checks; confirm the packaging checklist without creating a bundle, mirror, zip or tag. This does not prove the combined tree. | dry-run clean-clone evidence, packaging checklist | Current `main` passes; nothing packaged or tagged; combined clean clone is Day 7 |
 | 5 | Integration rehearsal and plain-English pitch. All four join; Sathvik facilitates. Dry-run the merge order; write the one-page story. | rehearsal notes, pitch | Merge order works; pitch is accurate and plain |
 
+**Status 2026-11-13:** Days 1–2 are closed. `data/india_core_coverage.csv` records India at
+**1 of 8** (`ACT_IP` only); quarterly NAS starts 2011Q2, quarterly PLFS 2018Q2, no GFCF
+business split and no official monthly retail series. O-2 stays Label-B-only. Day 4's
+clean-clone dry run remains with Arshiya; Day 5–7 integration artefacts are in
+`docs/team/04a`–`04d`.
+
 **Acceptance:** India has a downloaded-data count or a recorded access failure, not a guess;
 the scope decision is recorded; all docs agree on the current state, test count and label
 version; a clean clone of the **combined tree** passes `make check test` on Day 7; the pitch

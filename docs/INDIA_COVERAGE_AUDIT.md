@@ -1,108 +1,121 @@
-# India Coverage Audit (Pre-Collection)
+# India Coverage Audit (Downloaded Data)
 
-Status: **provisional pre-audit, 2026-11-05.** India is a Tier-1 country in
-`config/scope.yaml`, but it is not enabled for the current build. This note checks
-whether India can pass the §19 gate before the team spends collection effort on it.
+Status: **final downloaded-data audit, 2026-11-13.** India is a Tier-1 country in
+`config/scope.yaml`, but it is not enabled for the current build. This note replaces
+the 2026-11-05 pre-audit and records what the official machine-readable sources
+actually return.
 
-Target window: 1990Q1–2026Q3 = **147 quarters**. The gate is **≥6 of the 8 BEAI
-indicators, each with ≥70% coverage** (≥103 quarters). Q-06 says the rule is not
-relaxed for India or China. The counts below were recomputed for this 147-quarter
-window after the 2026-11-06 extension; the best case is still 4 of 8.
+Target window: 1990Q1–2026Q3 = **147 quarters**. The §19 gate is **at least 6 of the
+8 BEAI indicators, each with at least 70% coverage** (at least 103 quarters). Q-06
+says the rule is not relaxed for India or China.
 
-## 1. What the evidence already shows
+## 1. Result
 
-The catalogue has nine India core rows (two employment variants), but every
-coverage field is still `PENDING_VERIFICATION`. The source documentation is
-enough to bound the answer.
+**India passes 1 of 8 indicators (industrial production only).** The 6-of-8 gate is
+not met, so India remains Label-B-only under O-2. No proxy, carry-forward or
+relaxation is used.
 
-| BEAI indicator | Candidate source | Documented quarterly history | Best-case window coverage | Verdict |
-|---|---|---|---|---|
-| `ACT_GDP_REAL` | MoSPI quarterly national accounts | Quarterly from 1996-97; new base 2022-23 | 1996Q2–2026Q3 = at least 122/147 = **83.0%** | **Pass** |
-| `ACT_IP` | MoSPI IIP, monthly | Monthly IIP with base changes; start date to verify | Likely ≥70%; needs a source check | **Likely pass** |
-| `ACT_EMP` | PLFS / national accounts | PLFS quarterly urban-only from 2017; rural+urban only from 2025 | 2017Q3–2026Q3 ≈ 37/147 = **25.2%** | **Fail** |
-| `ACT_HOURS` | No confirmed official quarterly total-hours series | None confirmed | 0% | **Fail** |
-| `ACT_RINC` | No confirmed quarterly household disposable income | None confirmed | 0% | **Fail** |
-| `ACT_CONS` | MoSPI quarterly PFCE | Quarterly from 1996-97 | 1996Q2–2026Q3 = at least 122/147 = **83.0%** | **Pass** |
-| `ACT_RETAIL` | No confirmed official monthly retail sales index | None confirmed for the required window | 0% | **Fail** |
-| `ACT_INV` | MoSPI quarterly GFCF | Quarterly from 1996-97, but a **business / non-residential split is not confirmed** | 83.0% only if the split exists; otherwise missing under Q-02 | **Pass only if the Q-02 split exists; otherwise fail** |
+| BEAI indicator | Downloaded source | Native freq. | First–last | Quarters | Share of 147 | Verdict |
+|---|---|---|---:|---|---:|---:|---|
+| `ACT_GDP_REAL` | MoSPI NAS, GDP (`indicator_code=5`) | Q | 2011Q2–2026Q2 | 61 | 41.5% | **Fail** — below 70% |
+| `ACT_IP` | MoSPI IIP, General (`category_code=4`) | M | 1994Q2–2026Q3 | 130 | 88.4% | **Pass** |
+| `ACT_EMP` (monthly) | MoSPI PLFS monthly, UR (`indicator_code=3`) | M | 2025Q2–2026Q3 | 6 | 4.1% | **Fail** — below 70% |
+| `ACT_EMP` (quarterly) | MoSPI PLFS quarterly, UR (`indicator_code=3`) | Q | 2018Q2–2026Q3 | 33 | 22.4% | **Fail** — below 70% |
+| `ACT_HOURS` | No official quarterly total-hours series found | — | — | 0 | 0.0% | **Fail** — no series |
+| `ACT_RINC` | No official quarterly household income series found | — | — | 0 | 0.0% | **Fail** — no series |
+| `ACT_CONS` | MoSPI NAS, PFCE (`indicator_code=10`) | Q | 2011Q2–2026Q2 | 61 | 41.5% | **Fail** — below 70% |
+| `ACT_RETAIL` | No official monthly retail sales index found | — | — | 0 | 0.0% | **Fail** — no series |
+| `ACT_INV` | MoSPI NAS, GFCF (`indicator_code=9`) | Q | 2011Q2–2026Q2 | 61 | 41.5% | **Fail** — below 70% and no business split |
 
-## 2. The gate result
+Count by indicator, not by catalogue row: **1 of 8** (`ACT_IP`). The two employment
+variants are one indicator and both fail.
 
-Even under the most generous reading:
+The full row-level evidence is in `data/india_core_coverage.csv`, with the exact
+query URL and the access note for every row.
 
-- confirmed passes: GDP, consumption (2);
-- likely passes: industrial production, investment (2);
-- structural failures: employment, hours, income, retail (4).
+## 2. What changed from the pre-audit
 
-**Best case = 4 of 8, which is below the required 6 of 8.** If the business
-investment split is unavailable, the best case is 3 of 8. India therefore cannot
-build a BEAI-based Label A in this project, regardless of how well GDP, IIP,
-consumption or investment are downloaded.
+The 2026-11-05 pre-audit assumed quarterly national accounts from 1996-97 and put
+the best case at 4/8. The downloaded data does not support that assumption:
 
-The result is structural, not a temporary data gap:
+- The MoSPI NAS API publishes quarterly data only for base years **2011-12** and
+  **2022-23**. The 2011-12 *Back* series is **annual only** (1950-51 to 2011-12), and
+  an annual series cannot be disaggregated into quarters under C-06.
+- Quarterly GDP, PFCE and GFCF therefore cover 2011Q2–2026Q2 = **61 quarters
+  (41.5%)**, not 83%.
+- The RBI API catalogue exposed by eSankhyiki contains trade, balance-of-payments,
+  exchange-rate, debt and reserve series only. It has no GDP, consumption, investment,
+  employment or retail series.
+- The RBI DBIE portal is reachable, but its modern interface is an interactive
+  Angular application. No documented bulk time-series endpoint was found in the
+  sprint, so it is recorded as an access limitation, not as downloaded evidence.
+- The pre-audit's employment, hours, income and retail failures are confirmed:
+  quarterly PLFS starts in 2018Q2, monthly PLFS in April 2025, PLFS wage indicators
+  are annual, and no official monthly retail sales index exists.
 
-- PLFS quarterly history starts in 2017 and is urban-only until the 2025 revamp;
-- there is no continuous pre-2017 all-India quarterly employment series;
-- no official quarterly total-hours series is confirmed;
-- no quarterly household disposable-income series is confirmed;
-- no official monthly retail sales index covering the window is confirmed.
+Even if a legacy quarterly NAS back series were retrieved from RBI DBIE later, the
+maximum would be 5 of 8 (GDP, IIP, consumption, investment) minus investment unless
+a quarterly business/non-residential split exists. That is still below 6 of 8, so the
+decision does not depend on the unresolved legacy path. The current downloaded-data
+count is the conservative, reproducible figure.
 
-## 3. Decision
+## 3. Two specific Q-02 / Q-03 checks
 
-This is a coverage finding, not a bug and not a reason to relax §19.
+- **Q-02 investment split.** Adding `institutional_code=1` (public non-financial
+  corporations), `2` (private non-financial corporations), `6` (households) or `9`
+  (total GFCF) to the quarterly GFCF query all return `No Data Found`. There is no
+  quarterly business/non-residential split. Total GFCF is not an acceptable proxy.
+- **Q-03 retail.** The MoSPI product list (NAS, CPI, IIP, PLFS, ASI, HCES, NSS rounds)
+  and the RBI API catalogue contain no monthly retail sales index. CPI is a price
+  index, not a retail volume. Cards, GST e-way bills and auto sales are barred
+  proxies. The 2026 Index of Services Production trial is too recent and is not a
+  retail series.
+
+## 4. Decision
+
+This is a coverage finding, not a bug, and not a reason to relax §19.
 
 | Item | Decision |
 |---|---|
 | Q-06 / §19 | Do not relax the 6-of-8 gate for India. |
+| Final count | **1 of 8** from downloaded evidence (`ACT_IP` only). |
 | Label A (BEAI) | India is **not eligible**; do not build a BEAI label for India. |
-| O-2 default | India remains a **Label-B-only case study**, reported as a coverage finding. |
-| Cross-country story | The label countries for the first build are **USA, JPN and DEU**. India is a case study, not a fourth label. |
-| Scope | India stays in the dictionary and coverage reporting. It does not enter the label pipeline. |
+| O-2 | India remains a **Label-B-only case study**, reported as a coverage finding. |
+| Cross-country story | Label countries for the first build are **USA, JPN and DEU**. India is a case study, not a fourth label. |
+| Scope | India stays in the dictionary and coverage reporting; it does not enter the label pipeline. |
 
-This changes the narrative from "four-country labels" to "three-country labels plus
-an India coverage case study." The change must be stated in the README, the
-proposal addendum and the final report. It should not be hidden as a missing row.
+The narrative is "three label countries plus an India coverage case study." That
+wording must appear in the README, the proposal addendum and the final report. It
+should not be hidden as a missing row.
 
-## 4. Evidence and source notes
+## 5. Evidence and retrieval
 
-- MoSPI quarterly national accounts methodology: quarterly GDP/GVA starts with
-  1996-97; the new national-accounts series has base 2022-23 and new-series
-  quarterly estimates from Q1 FY2022-23. The full back series was reported as due
-  by December 2026.
-- PLFS: quarterly urban-only from 2017; monthly bulletins from April 2025;
-  quarterly rural+urban from April–June 2025. No continuous pre-2017 all-India
-  quarterly series is confirmed.
-- MoSPI IIP is monthly with base changes (2011-12, then 2022-23 reported). The
-  exact current-series start date must be verified at download.
-- India's national accounts publish PFCE and GFCF quarterly from 1996-97, but a
-  business/non-residential investment split is not confirmed in the catalogue.
-- No official monthly retail sales index covering 1990–2026 is confirmed. The
-  Index of Services Production trial release (2026) is too recent and is not a
-  substitute under Q-03.
+All queries were made on 2026-11-13 against `https://api.mospi.gov.in/api`. Raw
+responses are in `/tmp/opencode/india/raw/` for this session; the checked-in
+evidence is `data/india_core_coverage.csv`.
 
-These facts are consistent with `verification_log.csv` V-03, V-04 and V-06 and
-with the India notes in `build.py`/`spec.py`. They are provisional until the
-actual series are downloaded, but the four structural failures above do not
-depend on the download result.
+| Query | Result |
+|---|---|
+| NAS `indicator_code=5&frequency_code=2&base_year=2011-12` | 58 rows, 2011-12 Q1 to 2025-26 Q2 |
+| NAS `indicator_code=5&frequency_code=2&base_year=2022-23` | 17 rows, 2022-23 Q1 to 2026-27 Q1 |
+| NAS `indicator_code=5&frequency_code=1&series=Back` | 62 annual rows, 1950-51 to 2011-12 |
+| NAS `indicator_code=9` / `10`, quarterly | Same 2011Q2–2026Q2 span |
+| NAS GFCF with `institutional_code=1,2,6,9` | `No Data Found` |
+| IIP monthly, `category_code=4`, four base years | 390 months, 1994-04 to 2026-09, no internal gaps |
+| PLFS quarterly, `indicator_code=3` | 33 quarters, 2018Q2–2026Q3, 2025Q1 absent |
+| PLFS monthly, `indicator_code=3` | Starts April 2025 |
+| RBI `getRbiIndicatorList` | No core macro series (trade, BoP, FX, debt, reserves only) |
 
-## 5. What Part 4 of the team plan must still do
+Access failures and absences are recorded exactly as observed. No series ID was
+invented, and no value was interpolated.
 
-1. Download the candidate MoSPI/RBI series and fill
-   `data/india_core_coverage.csv` with actual first/last dates, native frequency,
-   coverage and status.
-2. Confirm whether a quarterly business/non-residential GFCF split exists. If it
-   does not, mark `ACT_INV` missing under Q-02, not as total GFCF.
-3. Confirm whether any official monthly retail series covers the window. If not,
-   leave `ACT_RETAIL` missing.
-4. Recompute the 6-of-8 count from the downloaded data, not from this note.
-5. Record the final result in `decisions_log.csv`, `unresolved_questions.csv` and
-   `docs/VERIFICATION.md`. Keep O-2 as Label-B-only unless the evidence changes.
-6. Report India in the final write-up as a coverage case study, with the four
+## 6. What Part 4 closes
+
+1. `data/india_core_coverage.csv` is filled from downloaded responses.
+2. The quarterly business/non-residential GFCF split is confirmed absent.
+3. No official monthly retail series covering the window is confirmed.
+4. The 6-of-8 count is recomputed from downloaded data: **1 of 8**.
+5. Q-06, Q-07, Q-08 and Q-09 are closed in `decisions_log.csv` and
+   `unresolved_questions.csv`; `docs/VERIFICATION.md` carries the evidence.
+6. India is reported in the final write-up as a coverage case study with the seven
    missing indicators named.
-
-## 6. Why this is worth doing now
-
-The biggest risk in the project is discovering after the model work that a
-Tier-1 country cannot produce a label. The pre-audit removes that risk early. It
-also stops the team from spending a week on a country that cannot pass a rule the
-project has already decided not to relax.
