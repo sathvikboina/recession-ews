@@ -15,9 +15,9 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 |---|---|
 | Phase 1 — literature matrix | done (`literature_matrix.xlsx`, v4) |
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
-| Phase 3 — scoped verification | USA 25/25 resolved; JPN/DEU 42 rows, 40 pending + 2 derived |
-| Phase 4 — collect + harmonise | USA done; JPN/DEU not started |
-| Phase 5 — BEAI label | **USA validated and frozen (`labels-v3`; `labels-v2` and `labels-v1` archived)**; JPN/DEU next |
+| Phase 3 — scoped verification | USA 25/25 resolved; JPN 21/21 resolved; DEU 21/21 mapped (Q-02 blocks the investment row) |
+| Phase 4 — collect + harmonise | USA and JPN done; DEU collected, delivered as a coverage finding |
+| Phase 5 — BEAI label | **USA `labels-v3` and JPN `labels-v1-JPN` frozen** (`labels-v2`/`labels-v1` archived); DEU below the 6/8 gate |
 | Phase 6–8 — features / harness / models | not started officially; exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |
 | Phase 9+ — experiments, interpretation, dashboard | static dashboard built (`dashboard/index.html`); official experiments not started |
 
@@ -34,6 +34,12 @@ off in `docs/REVIEW_2026-11-05.md`. The four lanes are now a **one-week sprint**
 `make team-plan`): Days 1–5 are individual work, Days 6–7 combine, cross-review and decide.
 The workbook records what happened, what happens next, the day-level schedule, hand-offs,
 risks and the final review.
+
+Lane 1 update (2026-11-13): Japan is frozen as **`labels-v1-JPN`** (6/8 indicators,
+5/5 post-1994 ESRI episodes at episode level, quarter-level recall 88.0%, precision 62.9%).
+Germany is delivered as a coverage finding: strict Q-02 leaves 5/8, so no German label is
+claimed. The country plumbing is parameterised, and the USA `labels-v3` hash is unchanged.
+Details: `docs/LABEL_VALIDATION_JPN.md`, `docs/COVERAGE_DEU.md`.
 
 ## Quickstart
 
