@@ -1,7 +1,8 @@
 # One-Week Sprint — Lane Briefs
 
-Status: **active; last reviewed 2026-11-08.** Four people, four lanes, one shared merge.
-Days 1–5 are individual work; Days 6–7 are shared combining, cross-review and sign-off.
+Status: **active; Part 4 content complete 2026-11-13.** Four people, four lanes, one shared
+merge. Days 1–5 are individual work; Days 6–7 are shared combining, cross-review and
+sign-off.
 
 These briefs are the short, self-contained version of `docs/TEAM_PLAN.md`. Read your own
 brief first, then the plan. They describe what you own, what already exists, what is
@@ -15,6 +16,17 @@ expected, what to do, what not to do, where you have creative freedom, and the s
 | 2. Feature table and walk-forward harness | Arshiya | [02_arshiya_features_harness.md](02_arshiya_features_harness.md) | `feat/features-harness` | `dataset.parquet`, `folds.json`, leakage tests |
 | 3. Models, ensemble and experiments | Palchhin | [03_palchhin_models_ensemble.md](03_palchhin_models_ensemble.md) | `feat/models-ensemble` | USA headline, episodes, ablations, ensemble decision |
 | 4. India, scope, integration and pitch | Sathvik | [04_sathvik_india_integration.md](04_sathvik_india_integration.md) | `feat/india-scope-docs` | India verdict, consistent docs, merge and review |
+
+**Supporting specification:** [03a_palchhin_model_spec.md](03a_palchhin_model_spec.md) covers the six-model
+implementation, REWI, feature stability and the pre-registered ensemble in detail, including
+what is frozen and what Palchhin must freeze on Day 1. PDF:
+[03a_palchhin_model_spec.pdf](03a_palchhin_model_spec.pdf).
+
+**Part 4 artefacts:** [04a_docs_audit.md](04a_docs_audit.md) (Day 3),
+[04b_clean_clone_review.md](04b_clean_clone_review.md) (Day 4 checklist; Arshiya's evidence
+pending), [04c_integration_rehearsal.md](04c_integration_rehearsal.md) (merge checklist;
+rehearsal pending), [04d_pitch.md](04d_pitch.md) (one-page pitch) and
+[04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps).
 
 ## Schedule at a glance
 
@@ -85,7 +97,7 @@ reproduces the label hashes.
 | Current state and hashes | `docs/STATE.md` |
 | Frozen rules | `docs/BUILD_CONTRACT.md` |
 | Ensemble and claim wording | `docs/PROPOSAL_ADDENDUM.md` |
-| India pre-audit | `docs/INDIA_COVERAGE_AUDIT.md` |
+| India coverage audit | `docs/INDIA_COVERAGE_AUDIT.md` |
 | Decisions | `docs/DECISIONS.md`, `decisions_log.csv` |
 | Verification evidence | `docs/VERIFICATION.md` |
 | Weekly log | `EWS_Work_Log.xlsx` |

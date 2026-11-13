@@ -113,14 +113,17 @@ The two v1 data defects are explicitly closed for the USA. They are fixed in
 JPN/DEU remain `DECIDED_PENDING_VERIFICATION` for Q-02/Q-05 availability. That is
 a country-level source check during collection, not a reopening of the US decision.
 
-## India pre-audit (2026-11-05)
+## India downloaded-data audit (2026-11-13)
 
-`docs/INDIA_COVERAGE_AUDIT.md` checks India against the §19 gate before collection.
-Confirmed passes: GDP and consumption (quarterly from 1996-97, 82.6% of the window).
-Likely passes: industrial production and investment. Structural failures: employment
-(PLFS quarterly only from 2017, urban-only until 2025), hours, household income and
-retail. **Best case 4/8**, below the required 6/8. No relaxation; India is Label-B-only
-under O-2 pending the final downloaded-data count in Part 4.
+`docs/INDIA_COVERAGE_AUDIT.md` now records the final downloaded-data count. India passes
+**1 of 8** indicators: industrial production only. Quarterly NAS (GDP 61/147 = 41.5%,
+PFCE 61/147, GFCF 61/147) starts in 2011Q2, not 1996-97; the NAS Back series is annual
+only. Quarterly PLFS starts in 2018Q2 (33/147 = 22.4%) and monthly PLFS in April 2025
+(6/147). No official quarterly hours or household-income series and no official monthly
+retail series were found. The quarterly GFCF `institutional_code` query returns
+`No Data Found`, so there is no business/non-residential split. The 6-of-8 gate is not
+met; India remains Label-B-only under O-2. Row-level evidence is in
+`data/india_core_coverage.csv`.
 
 ## Log
 
@@ -132,6 +135,7 @@ under O-2 pending the final downloaded-data count in Part 4.
 | 2026-11-05 | FRED | 30 registry entries = 27 downloads + 3 derived | 26 verified, 1 low coverage, 3 derived; v2 hashes reproduced | automated |
 | 2026-11-05 | IND | documentary pre-audit | best case 4/8; Label-B-only under O-2; final count pending downloads | review |
 | 2026-11-06 | FRED | 30 registry entries = 27 downloads + 3 derived | full re-fetch through 2026-09; 26 verified, 1 low coverage, 3 derived; `labels-v3` frozen; v2 archived | automated |
+| 2026-11-13 | IND | MoSPI NAS, IIP, PLFS; RBI catalogue | downloaded-data count 1/8 (`ACT_IP` only); GDP/PFCE/GFCF 61/147; PLFS-Q 33/147; no GFCF split; no retail series; Label-B-only under O-2 | automated + review |
 | 2026-11-06 | — | JPN, DEU, OECD, BOJ | still not started; Part 1 of the one-week sprint begins with source resolution | — |
 
 ## Commands

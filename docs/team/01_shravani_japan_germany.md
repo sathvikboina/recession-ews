@@ -35,7 +35,7 @@ another country without forking the label math.
   Generalising the scripts — or adding thin JPN/DEU wrappers — is your Day 1 task.
 - **Japan and Germany data are not collected yet.** The scope has 21 JPN and 21 DEU rows.
   The source IDs for JPN/DEU still need verification; do not guess them.
-- **India is not your lane.** The India pre-audit finds a best case of 4/8, so India is a
+- **India is not your lane.** The India downloaded-data audit records 1/8, so India is a
   Label-B case study under O-2. Do not spend your week on India.
 
 **Read first:** `docs/BUILD_CONTRACT.md` (C-01–C-13), `docs/DECISIONS.md`

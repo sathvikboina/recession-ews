@@ -38,8 +38,9 @@ named step · **OPEN** = not decided yet.
 | D-R27 | Q-04 Option B. USA employment is `CE16OV`, household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA (checked 2026-11-04); `PAYEMS` is an establishment survey, not the Q-04 fallback. `PAYEMS` is retired from the label. Implemented in `labels-v2` and retained in `labels-v3`. | Q-04, §8, §11 | FROZEN | labels |
 | D-R28 | Q-05 Option A. USA hours stay on `HOANBS` (quarterly total hours, nonfarm business). Q-05 bars annual-only data, not narrower sector coverage; the nonfarm-business limitation is recorded. No FRED whole-economy quarterly total-hours series exists. Implemented unchanged in `labels-v2` and `labels-v3`. | Q-05, §11 | FROZEN | labels |
 | D-R29 | Ensemble pre-registered before any model result: equal-weight top-3 by inner-fold pooled PR-AUC, same folds and feature matrix as the singles, all fitting inside the outer training block. It must beat the inner-fold-selected best single model by ≥0.01 pooled PR-AUC, with a paired-bootstrap 95% CI excluding zero and no loss of episode recall; otherwise the single model is primary and the ensemble is a reported negative result. A logistic stack is exploratory only. | proposal addendum, C-13 | FROZEN | models |
-| D-R30 | India pre-audit: best case 4/8 under §19 because employment, hours, household income and retail are structurally missing. No relaxation; India is Label-B-only under O-2, reported as a coverage case study. The final count from downloaded MoSPI/RBI data is still required, but it cannot make 6/8 reachable. | Q-06, §19, O-2 | CONFIRM (O-2) | India / report |
+| D-R30 | India pre-audit: best case 4/8 under §19 because employment, hours, household income and retail are structurally missing. No relaxation; India is Label-B-only under O-2, reported as a coverage case study. The final count from downloaded MoSPI/RBI data is recorded in D-R33. | Q-06, §19, O-2 | CONFIRM (O-2) | India / report |
 | D-R31 | **2026 data extension.** The reporting window moves from 1990Q1–2025Q4 (144 quarters) to **1990Q1–2026Q3 (147 quarters)** using FRED observations through 2026-09. `labels-v2` is archived byte-identically; `labels-v3` is active. The estimator, BBQ parameters, diffusion gate and eight-indicator structure are unchanged. The extension adds no new recession episode and keeps 4/4 NBER agreement. | 2026 data request, D-R22 | FROZEN | labels / features / report |
+| D-R33 | **India downloaded-data audit.** Official MoSPI series give India **1 of 8** BEAI indicators: `ACT_IP` 130/147 (88.4%). NAS GDP, PFCE and GFCF cover 2011Q2–2026Q2, 61/147 (41.5%), because quarterly NAS exists only for the 2011-12 and 2022-23 bases and the Back series is annual. Quarterly PLFS covers 2018Q2–2026Q3, 33/147 (22.4%); monthly PLFS starts April 2025. No quarterly hours or household-income series and no official monthly retail series were found. The quarterly GFCF institutional split returns `No Data Found`. India stays Label-B-only under O-2; no proxy or relaxation. Evidence: `data/india_core_coverage.csv`. (D-R32 is reserved for Palchhin's model tuning freeze.) | Q-06 to Q-09, §19 | FROZEN | India / report |
 
 ## Consequences to keep in mind
 
@@ -93,9 +94,10 @@ component counts as missing under the same decisions. Q-04 for JPN/DEU uses thei
 own audit; German QNA employment is available (1991Q1–2022Q4), while the USA and
 Japan returned no employment observations in the checked OECD QNA dataflow.
 
-Q-06 remains `DECIDED_PENDING_VERIFICATION` until the India downloads are counted,
-but the pre-audit already fixes the conclusion at **best case 4/8**, so India is
-Label-B-only under O-2 (D-R30).
+Q-06 closed on 2026-11-13. The downloaded-data audit records **1 of 8** indicators
+(`ACT_IP` only), so India is Label-B-only under O-2 (D-R30, D-R33). The earlier
+documentary pre-audit's 4/8 assumed a 1996-97 quarterly NAS start that the official
+API does not provide.
 
 `labels-v1` remains byte-identical under `outputs/labels/archive/labels-v1/` and
 `labels-v2` under `outputs/labels/archive/labels-v2/`. The active chronology is

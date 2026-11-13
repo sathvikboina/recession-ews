@@ -6,6 +6,12 @@
 **Dates:** Days 1–5 individual; Days 6–7 shared merge and review
 **Branch:** `feat/india-scope-docs`
 
+> **Status 2026-11-13:** this lane has been executed as far as the available data allows.
+> India's downloaded-data count is **1 of 8** (`ACT_IP` only), so O-2 stays Label-B-only.
+> The Day 3 audit, Day 4 checklist, Day 5 pitch and integration checklist are in
+> `04a_docs_audit.md` to `04e_part4_handoff.md`. Arshiya's clean-clone evidence, the other
+> three lane branches and all model results remain pending.
+
 ---
 
 ## 1. Your mission in one paragraph
