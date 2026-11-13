@@ -262,12 +262,4 @@ def test_jpn_frozen_labels_invariants() -> None:
 
 def test_deu_frozen_labels_invariants() -> None:
     path = PROJECT / "outputs" / "labels" / "DEU" / "DEU_labels.csv"
-    if not path.exists():
-        pytest.skip("DEU_labels.csv not yet generated")
-    df = pd.read_csv(path, index_col=0)
-    assert len(df) == 144
-    assert df.index[0] == "1990Q1" and df.index[-1] == "2025Q4"
-    assert set(df["R"].unique()) <= {0, 1}
-    assert ((df["R"] == 1) == (df["episode_id"] > 0)).all()
-    ids = sorted(int(x) for x in df.loc[df["R"] == 1, "episode_id"].unique())
-    assert ids == list(range(1, len(ids) + 1))
+    assert not path.exists(), "DEU label must not be frozen while Q-02 non-compliant"

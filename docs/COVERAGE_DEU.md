@@ -35,8 +35,21 @@ The audit of Lane 1 identified that the preliminary German build utilized FRED s
 1. **Substantive Defect:** `NAEXKP04DEQ661S` measures **Total Gross Fixed Capital Formation** (*Bruttoanlageinvestitionen*), encompassing residential housing construction (*Wohnungsbau*) and general government public infrastructure (*Staatliche Anlageinvestitionen*).
 2. **Strict Rule Prohibition:** `docs/DECISION_NOTE_Q02_Q04_Q05.md:62-64` explicitly establishes:
    > *"Strict: business (non-residential) fixed investment only. Total GFCF is not substituted; where business investment is missing the component counts as missing."*
-3. **Availability Constraint:** Real private non-residential business fixed investment for Germany requires constructing corporate-sector (S.11) gross fixed capital formation in equipment (*Ausrüstungen*) + non-residential structures (*Nichtwohnbauten*) + intellectual property / other assets (*Sonstige Anlagen*), deflated by the matching asset-specific deflators from Destatis Genesis-Online VGR. This breakdown is not published as an unauthenticated continuous series on FRED or OECD SDMX mirrors.
-4. **Gate Impact:** Strictly excluding total GFCF drops Germany to **5 passing indicators**, failing the $\ge 6/8$ threshold of Rule C-03. In accordance with Build Contract §0, a failure to meet 6-of-8 is an honest finding, not an exception.
+3. **Empirical Evaluation of Alternative German Datasets:** Rather than asserting data unavailability, three direct candidate sources were empirically retrieved, measured, and evaluated against the requirements of Decision Q-02 (private non-residential corporate investment, deflated/constant-price, post-reunification sample $\ge 108$ quarters):
+
+### Empirical Evaluation of German Investment Series Candidates
+
+| Attempt | Source & Dataset ID | Concept / Series Scope | Available Range | Quarters in Window (`1990Q1–2025Q4`) | Price Basis | Strips Housing? | Strips General Gov (S.13)? | Q-02 / C-03 Compliance |
+|:---:|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **1** | Eurostat `nasq_10_nf_tr` | S.11 Non-financial corporations GFCF (`P51G`, `SCA`) | `1999Q1–2026Q2` | 108 / 144 (75.0%) | Nominal only (`CP_MEUR`) | **No** (contains corporate dwellings) | **Yes** (S.11 isolated) | **FAIL**: Nominal only; includes housing; no deflator in dataset. |
+| **2** | Eurostat `namq_10_an6` / `nama_10_an6` | GFCF by asset: Equipment (`N11MG`) + Other buildings (`N112G`) + IPP (`N117G`) | `1991Q1–2026Q2` | 140 / 144 (97.2%) | Deflated (`CLV15_MEUR`) | **Yes** (`N111G` dwellings excluded) | **No** (Total Economy S.1; includes Gov S.13 roads, schools, defense) | **FAIL**: Total economy; contaminated by general government investment. |
+| **3** | Destatis Genesis Table `81000-0020` / `-0024` | Quarterly national accounts: GFCF by sector and asset | `1999Q1–2026Q2` | 108 / 144 (75.0%) | Nominal only (*in jeweiligen Preisen*) | **No** (dwellings included under S.11) | **Yes** (S.11 isolated) | **FAIL**: Nominal only; pre-1999 is strictly annual; no quarterly chained deflators by sector. |
+| **—** | FRED `NAEXKP04DEQ661S` (Audit Baseline) | Total Economy GFCF (*Bruttoanlageinvestitionen*) | `1970Q1–2023Q3` | 135 / 144 (93.8%) | Deflated (Chained 2015 EUR) | **No** (includes residential) | **No** (includes government) | **FAIL**: Total GFCF expressly forbidden by Decision Q-02. |
+
+4. **Empirical Gate Impact & Final Decision:** None of the candidate series satisfies Decision Q-02 and Rule C-03 simultaneously:
+   - Eurostat `nasq_10_nf_tr` and Destatis `81000` provide institutional sector isolation (S.11) but exist only at current prices (nominal) without quarterly deflators and without stripping corporate dwellings.
+   - Eurostat `namq_10_an6` successfully strips housing and is deflated, but is compiled only for the total economy (S.1), contaminating the series with general government infrastructure and defence expenditures.
+   Consequently, Germany strictly yields **5 passing indicators**, failing the $\ge 6/8$ threshold of Rule C-03. In accordance with Build Contract §0, the finding stands on empirical data, not assertion: Germany is delivered as an honest **Coverage Finding**.
 
 ---
 

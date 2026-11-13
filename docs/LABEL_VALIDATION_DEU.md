@@ -37,7 +37,7 @@ In the initial exploratory run, FRED series `NAEXKP04DEQ661S` was examined for `
 1. `NAEXKP04DEQ661S` is **Total Gross Fixed Capital Formation** (*Bruttoanlageinvestitionen*), encompassing residential construction (*Wohnungsbau*) and general government public investment.
 2. `docs/DECISION_NOTE_Q02_Q04_Q05.md:62-64` explicitly establishes:
    > *"Strict: business (non-residential) fixed investment only. Total GFCF is not substituted; where business investment is missing the component counts as missing."*
-3. Compliant corporate sector (S.11) private non-residential investment requires authenticated Destatis GENESIS VGR tables and is unavailable on open unauthenticated mirrors.
+3. Empirical evaluation of alternative data sources (Eurostat `nasq_10_nf_tr`, Eurostat `namq_10_an6`, and Destatis Genesis Table `81000`) confirms that no compliant private non-residential deflated series covering $\ge 108$ quarters exists without government or housing contamination (see details in docs/COVERAGE_DEU.md).
 4. Dropping total GFCF leaves Germany with **5 passing indicators**, failing Rule C-03. Consequently, Germany does not qualify for a frozen label.
 
 ---

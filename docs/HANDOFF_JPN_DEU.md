@@ -27,7 +27,7 @@ Lane 1 deliverables under `docs/BUILD_CONTRACT.md` Rules C-01–C-12 and the Lan
 - **Dual Coverage Reporting (`scripts/harmonize.py`):** Computes and writes both `raw_window_coverage` (quarters in 1990Q1–2025Q4; C-03 gate input) and `estimator_sample_coverage` (quarters available in the estimation sample) into `coverage_<ISO3>.csv`.
 - **Parameterised Label Builder (`scripts/03_labels.py`):** Accepts `--country`, `--label-version`, namespaced outputs (`outputs/labels/<ISO3>/`), and freeze guards. Records exact downloaded series IDs and raw file SHA-256 digests in JSON metadata.
 - **Coverage Gate Helper (`src/ews/labels/coverage.py`):** Extracted reusable C-03 logic enforcing 6/8 indicators, $\ge 70\%$ coverage, and $\ge 4$ indicators per quarter.
-- **Tests (`tests/test_country_plumbing.py`):** 14 passing tests (1 skipped for revoked DEU label) enforcing C-01, C-02, C-03, C-06, C-12, raw hash verification, and country isolation.
+- **Tests (`tests/test_country_plumbing.py`):** 15 passing tests (0 skipped; DEU absence asserted) enforcing C-01, C-02, C-03, C-06, C-12, raw hash verification, and country isolation.
 
 ---
 
@@ -43,13 +43,13 @@ Lane 1 deliverables under `docs/BUILD_CONTRACT.md` Rules C-01–C-12 and the Lan
 | `ACT_GDP_REAL` | Real Gross Domestic Product | `ESRI:tables/gaku-jk2622.csv (Col 1)` | 128 / 144 (88.9%) | 127 / 144 (88.2%) | **PASS** |
 | `ACT_IP` | Industrial Production Index | `FRED:JPNPROINDMISMEI` | 137 / 144 (95.1%) | 120 / 144 (83.3%) | **PASS** |
 | `ACT_EMP` | Total Employment | `FRED:LFEMTTTTJPM647S` | 144 / 144 (100.0%) | 127 / 144 (88.2%) | **PASS** |
-| `ACT_RINC` | Real Compensation of Employees | `ESRI:tables/kshotoku-q2622.csv (Col 3)` | 128 / 144 (88.9%) | 127 / 144 (88.2%) | **PASS** |
+| `ACT_RINC` | Real Compensation of Employees | `ESRI:tables/kshotoku-q2622.csv (Col 11)` | 128 / 144 (88.9%) | 127 / 144 (88.2%) | **PASS** |
 | `ACT_CONS` | Real Private Consumption | `ESRI:tables/gaku-jk2622.csv (Col 2)` | 128 / 144 (88.9%) | 127 / 144 (88.2%) | **PASS** |
 | `ACT_INV` | Real Business Fixed Investment | `ESRI:tables/gaku-jk2622.csv (Col 6)` | 128 / 144 (88.9%) | 127 / 144 (88.2%) | **PASS** |
 | `ACT_HOURS` | Total Hours Worked | `MHLW Table 0003058864` | 0 / 144 (0.0%) | 0 / 144 (0.0%) | **FAIL** |
 | `ACT_RETAIL` | Real Retail Sales Volume | `METI Table 0003195026` | 0 / 144 (0.0%) | 0 / 144 (0.0%) | **FAIL** |
 
-*Note on 1990–1994 data:* Prior to 1994Q1, only 2 indicators exist for Japan (`ACT_IP` and `ACT_EMP`). Under Rule C-03, a quarter cannot be dated with fewer than 4 indicators. Therefore, starting the estimation sample before 1994Q2 is mathematically prohibited by C-03, discards zero datable cycles, and changes no episode outcomes.
+*Note on 1990–1994 data:* Prior to 1994Q1, only 2 indicators exist for Japan (`ACT_IP` and `ACT_EMP`). 1990Q1–1994Q1 is undatable (only 2 core indicators available); the 1991Q1–1993Q4 ESRI cycle is outside the label's scope; dating coverage is 127/144 (88.2%).
 
 ### Germany (`data/clean/coverage_DEU.csv`) — GATE FAIL (5 of 8)
 
@@ -118,7 +118,7 @@ Lane 1 deliverables under `docs/BUILD_CONTRACT.md` Rules C-01–C-12 and the Lan
 | `outputs/labels/JPN/JPN_labels.csv` | `b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5` | **FROZEN** |
 | `outputs/labels/JPN/JPN_episodes.csv` | `ec84ea45db65da606af7504f4fd7d066c846b9f55d729233eebae401ba82c849` | **FROZEN** |
 | `outputs/labels/JPN/JPN_turning_points.csv` | `0465c16f88d352eec3803b1b067e7d6ddefe04807782e98a8ce64f3d6e6ea709` | **FROZEN** |
-| `outputs/labels/JPN/labels-v1-JPN.json` | `835aff6e9dc3fa526175c20153e8ca714a1d4d9eb00dd1a5cdfdf73c65b715c5` | **FROZEN (Provenance verified)** |
+| `outputs/labels/JPN/labels-v1-JPN.json` | `877b2b152b5f1d27760e2f1974f0c3f2ae12ece5803ddab914ae842d75c5c1bd` | **FROZEN (Provenance verified)** |
 
 ### Germany Artefacts
 - **Status:** **REVOKED (Finding Delivered)**.

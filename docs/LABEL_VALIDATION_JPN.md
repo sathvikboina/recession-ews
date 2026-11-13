@@ -16,14 +16,14 @@ Coverage evaluation of the 144-quarter reporting window (`1990Q1–2025Q4`) foll
 | `ACT_IP` | METI / OECD MEI (FRED) | `FRED:JPNPROINDMISMEI` | M $\to$ Q mean | 137/144 (95.1%) | 120/144 (83.3%) | **Yes** | $\Delta\log$ |
 | `ACT_EMP` | MIC Labour Force Survey (FRED) | `FRED:LFEMTTTTJPM647S` | M $\to$ Q mean | 144/144 (100.0%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
 | `ACT_HOURS` | MHLW (Monthly Labour Survey) | `MHLW Table 0003058864` | Q | 0/144 (0.0%) | 0/144 (0.0%) | No | N/A |
-| `ACT_RINC` | Cabinet Office (ESRI) SNA | `ESRI:tables/kshotoku-q2622.csv` (Col 3) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| `ACT_RINC` | Cabinet Office (ESRI) SNA | `ESRI:tables/kshotoku-q2622.csv` (Col 11) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
 | `ACT_CONS` | Cabinet Office (ESRI) SNA | `ESRI:tables/gaku-jk2622.csv` (Col 2) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
 | `ACT_RETAIL` | METI (Current Survey of Commerce) | `00550030 / Table 0003195026` | M | 0/144 (0.0%) | 0/144 (0.0%) | No | N/A |
 | `ACT_INV` | Cabinet Office (ESRI) SNA | `ESRI:tables/gaku-jk2622.csv` (Col 6) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
 
 ### Data Notes, Metric Reconciliation & Sample Start Choices
 - **Two Coverage Metrics Reconciled (Audit A5 / Step 3):** The metrics differ because `raw_window_coverage` evaluates complete quarters of the underlying raw series across the entire 144-quarter reporting window (`1990Q1–2025Q4`; C-03 gate input), whereas `estimator_sample_coverage` measures quarters available after dynamic sample start truncation (`1994Q2`, when $\ge 4$ core indicators first become simultaneously available) and growth first-differencing.
-- **Handling of 1990–1994 Data (Step 3):** Prior to 1994Q1, only 2 indicators (`ACT_IP` and `ACT_EMP`) exist for Japan; national accounts from ESRI begin in 1994Q1. Under Rule C-03, dating a quarter requires $\ge 4$ indicators. Therefore, starting the estimation sample before 1994Q2 is mathematically prohibited by C-03, discards zero datable cycles, and changes no episode outcomes.
+- **Handling of 1990–1994 Data (Step 3):** Prior to 1994Q1, only 2 indicators (`ACT_IP` and `ACT_EMP`) exist for Japan; national accounts from ESRI begin in 1994Q1. 1990Q1–1994Q1 is undatable (only 2 core indicators available); the 1991Q1–1993Q4 ESRI cycle is outside the label's scope; dating coverage is 127/144 (88.2%).
 - **Aggregation (Rule C-06):** Monthly indicators (`ACT_IP`, `ACT_EMP`) are aggregated to quarterly mean only when all 3 constituent months are present. No interpolation and no forward-fill are permitted (Rule C-03).
 - **ESRI SNA Chained 2020 Tables:** Real GDP (expenditure approach), Private Final Consumption Expenditure, and Private Non-Residential Business Fixed Investment (`民間企業設備`, Col 6) are sourced from the official Cabinet Office quarterly national accounts (`gaku-jk2622.csv`). Real Compensation of Employees (`実質雇用者報酬`) is sourced from SNA quarterly income estimates (`kshotoku-q2622.csv`), deflated by the household final consumption deflator.
 - **Coverage Gate Result (Rule C-03):** Exactly 6 of 8 indicators cover $\ge 70\%$ of the window ($\ge 101$ quarters). Indicators `ACT_HOURS` and `ACT_RETAIL` remain `PENDING_VERIFICATION` due to conceptual gaps (hours per employee vs aggregate hours; retail sales nominal value vs retail volume deflator). Under Build Contract C-03, a 6/8 pass qualifies Japan for BEAI label construction without exception or dilution.
@@ -84,7 +84,7 @@ Official reference turning points published by the Cabinet Office (ESRI Committe
 | **Recent Slowdown** | *Pending committee deliberation* | 2023Q1–2024Q1 | N/A | N/A | N/A | **Technical multi-quarter contraction** |
 
 ### Quarter-Level Confusion Matrix (Dated Sample: 1994Q2–2025Q4 = 127 quarters)
-Evaluating BEAI against the 5 official ESRI reference cycles:
+Evaluating BEAI against the 5 official post-1994 ESRI reference cycles:
 - **True Positives (TP):** 22 quarters
 - **False Positives (FP):** 13 quarters
 - **False Negatives (FN):** 3 quarters (`2001Q1`, `2002Q1`, `2012Q4` — each a single-quarter boundary shift)
@@ -126,7 +126,7 @@ Robustness tests evaluated under the frozen rules (no tuning per country):
 
 ## 6. What Would Falsify This
 
-- An official ESRI reference recession post-1994 missed entirely (none missed; all 5 captured).
+- An official ESRI reference recession post-1994 missed entirely (none missed; all 5 post-1994 captured).
 - Contraction dates that move arbitrarily under frozen parameter variations (they do not; dates move by $\le 1$ quarter except when duration $< \text{min\_phase}$).
 - Evidence of predictor contamination or reliance on external chronology in the estimator (verified clean: only the six coincident core indicators are input; ESRI reference dates are strictly ex-post comparison).
 - Collateral drift in the baseline US label (verified byte-identical: SHA-256 `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0`).

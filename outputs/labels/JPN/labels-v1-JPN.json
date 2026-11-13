@@ -20,17 +20,27 @@
       "ACT_GDP_REAL": "ESRI:tables/gaku-jk2622.csv (Col 1 - \u5b9f\u8cea\uff27\uff24\uff30)",
       "ACT_CONS": "ESRI:tables/gaku-jk2622.csv (Col 2 - \u6c11\u9593\u6700\u7d42\u6d88\u8cbb\u652f\u51fa)",
       "ACT_INV": "ESRI:tables/gaku-jk2622.csv (Col 6 - \u6c11\u9593\u4f01\u696d\u8a2d\u5099)",
-      "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 3 - \u96c7\u7528\u8005\u5831\u916c\uff08\u5b9f\u8cea\uff09)",
+      "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 11 - \u96c7\u7528\u8005\u5831\u916c\uff08\u5b9f\u8cea\u30fb\u5b63\u7bc0\u8abf\u6574\u7cfb\u5217\uff09)",
       "ACT_IP": "FRED:JPNPROINDMISMEI",
       "ACT_EMP": "FRED:LFEMTTTTJPM647S"
     },
     "coverage_window": {
-      "ACT_GDP_REAL": 127,
-      "ACT_IP": 120,
-      "ACT_EMP": 127,
-      "ACT_RINC": 127,
-      "ACT_CONS": 127,
-      "ACT_INV": 127
+      "raw_window_coverage": {
+        "ACT_GDP_REAL": 128,
+        "ACT_IP": 137,
+        "ACT_EMP": 144,
+        "ACT_RINC": 128,
+        "ACT_CONS": 128,
+        "ACT_INV": 128
+      },
+      "estimator_sample_coverage": {
+        "ACT_GDP_REAL": 127,
+        "ACT_IP": 120,
+        "ACT_EMP": 127,
+        "ACT_RINC": 127,
+        "ACT_CONS": 127,
+        "ACT_INV": 127
+      }
     },
     "source": "Official statistics (JPN)",
     "growth_file_sha256": "465c5d9bdd591eade0cb67c4398661c23ad6b6d9f30e1db7232d2adcb70a3033",

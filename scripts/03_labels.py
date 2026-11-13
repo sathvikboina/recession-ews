@@ -36,6 +36,7 @@ from ews.labels.ids import renumber_window_episodes  # noqa: E402
 
 OUT = PROJECT / "outputs" / "labels"
 FIG = PROJECT / "outputs" / "figures"
+CLEAN = PROJECT / "data" / "clean"
 
 # Core keys mapping for USA
 CORE_KEYS_USA = {
@@ -66,7 +67,7 @@ def get_source_ids(country: str) -> dict[str, str]:
             "ACT_GDP_REAL": "ESRI:tables/gaku-jk2622.csv (Col 1 - 実質ＧＤＰ)",
             "ACT_CONS": "ESRI:tables/gaku-jk2622.csv (Col 2 - 民間最終消費支出)",
             "ACT_INV": "ESRI:tables/gaku-jk2622.csv (Col 6 - 民間企業設備)",
-            "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 3 - 雇用者報酬（実質）)",
+            "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 11 - 雇用者報酬（実質・季節調整系列）)",
             "ACT_IP": "FRED:JPNPROINDMISMEI",
             "ACT_EMP": "FRED:LFEMTTTTJPM647S",
         }
@@ -236,6 +237,25 @@ def main() -> int:
     else:
         sample_start_provenance = "dynamic_rule_c03_min4_indicators"
 
+    cov_window: dict = {c: int(growth[c].reindex(window).notna().sum()) for c in growth.columns}
+    if country != "USA":
+        cov_csv = CLEAN / f"coverage_{country}.csv"
+        raw_map = {}
+        sample_map = {}
+        if cov_csv.exists():
+            cdf = pd.read_csv(cov_csv)
+            for _, r in cdf.iterrows():
+                sk = str(r.get("series_key", ""))
+                if sk.startswith("LABEL:"):
+                    cname = sk[6:]
+                    raw_map[cname] = int(r.get("raw_window_coverage", 0))
+                    sample_map[cname] = int(r.get("estimator_sample_coverage", 0))
+        if raw_map:
+            cov_window = {
+                "raw_window_coverage": raw_map,
+                "estimator_sample_coverage": sample_map,
+            }
+
     record = {
         "label_version": label_version,
         "country": country,
@@ -244,7 +264,7 @@ def main() -> int:
         "inputs": {
             "series": list(growth.columns),
             "source_ids": source_ids,
-            "coverage_window": {c: int(growth[c].reindex(window).notna().sum()) for c in growth.columns},
+            "coverage_window": cov_window,
             "source": "FRED revised historical" if country == "USA" else f"Official statistics ({country})",
             "growth_file_sha256": sha256(growth_path),
             "growth_values_sha256": canonical_frame_sha256(growth),
