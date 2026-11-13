@@ -1,7 +1,7 @@
 """Episode-id renumbering for the reporting window.
 
 ``build()`` numbers episodes over the whole estimation sample (1960 onward).
-The frozen label reports 1990Q1-2025Q4, so ``USA_labels.csv`` and
+The frozen label reports 1990Q1-2026Q3, so ``USA_labels.csv`` and
 ``USA_episodes.csv`` must use the same 1..k window ids. Keeping the mapping in
 one helper prevents the two frozen artefacts from drifting apart.
 """

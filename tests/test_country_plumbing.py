@@ -30,8 +30,8 @@ from ews.labels.coverage import (  # noqa: E402
 )
 
 USA_LABELS_PATH = PROJECT / "outputs" / "labels" / "USA_labels.csv"
-FROZEN_USA_HASH_LF = "f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e"
-FROZEN_USA_HASH_CRLF = "452ba036b5d0420a0b49c493738d1e46b4dba482ef4e830df1cf1734664577b0"
+FROZEN_USA_HASH_LF = "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa"
+FROZEN_USA_HASH_CRLF = "848f27b27dda5ba57a251ecb743d71f8ea7f1658fd73134caad8bb1e68d89418"
 
 
 def test_core_indicator_list_is_eight_and_country_independent() -> None:

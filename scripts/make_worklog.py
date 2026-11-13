@@ -163,20 +163,38 @@ WORK_LOG = [
     ("2026-10-29", "2", "Repo", "Committed the USA milestone and the fetch exit-code fix", "commits 5c042e9, a117998", "Clean tree, labels reproducible byte-for-byte"),
     ("2026-11-04", "3", "Packaging", "Generated this workbook and a portable repository (bare mirror + bundle)", "EWS_Work_Log.xlsx, recession-ews.git, recession-ews.bundle", "Shareable without GitHub credentials"),
     ("2026-11-04", "4", "Maintenance", "Applied review fixes without touching the frozen label: window episode ids, in_window turning points, stale DPIC96 removal, preserved freeze date, canonical growth digest, committed result CSVs, $(PY) Makefile fix, docs corrections", "USA_episodes.csv, USA_turning_points.csv, labels-v1.json, data/superseded_series.csv, tests/test_freeze.py", "Frozen labels CSV byte-identical; clean clone matches"),
+    ("2026-11-04", "5", "Decision", "Resolved Q-02/Q-04/Q-05. Q-02 B: constructed real non-residential business fixed investment from four BEA components; Q-04 B: CE16OV LFS fallback; Q-05 A: keep HOANBS with sector limitation documented", "scripts/fetch_fred.py, scripts/harmonize.py, data/series_resolution.csv, data/superseded_series.csv, docs/DECISION_NOTE_Q02_Q04_Q05.md", "All four NBER episodes matched; 2009 trough now exact; F1 0.929 -> 0.963"),
+    ("2026-11-04", "5", "Freeze", "Archived labels-v1 byte-identical and issued labels-v2 with Q-02/Q-04 provenance and the archived v1 hash; rewrote freeze tests", "outputs/labels/archive/labels-v1/*, outputs/labels/labels-v2.json, tests/test_freeze.py", "v1 hash unchanged; v2 label hash f5ed42a6...; 30 tests"),
+    ("2026-11-05", "5", "Verify", "Repaired a failed-retry provenance overwrite with a full FRED re-fetch (30 registry entries = 27 downloads + 3 derived), re-ran harmonize/labels/validate, and confirmed the v2 hashes reproduce", "data/manifest.csv, data/fred_verification.csv, data/series_resolution.csv, data/raw/fred/2026-11-05/*", "26 verified + 1 low coverage; labels-v2 byte-identical"),
+    ("2026-11-05", "6", "Review", "Audited the labels-v2 work: fixed the stale spec.py decision source, removed the unsupported forecasting claim, added the India coverage pre-audit, pre-registered the ensemble and leakage rules, fixed the 27-download/3-derived wording, split the work into four packages, and added 2 regression tests", "spec.py, decisions_log.csv, unresolved_questions.csv, README.md, docs/{STATE,BUILD_CONTRACT,VERIFICATION,DECISIONS,DECISION_NOTE_Q02_Q04_Q05,LABEL_VALIDATION,PROPOSAL_ADDENDUM,INDIA_COVERAGE_AUDIT,TEAM_PLAN,REVIEW_2026-11-05}.md, tests/test_review_invariants.py", "32 tests pass; make check 26 ok / 3 warnings / 0 failures; v1 and v2 hashes unchanged"),
+    ("2026-11-05", "7", "Team plan", "Wrote docs/TEAM_PLAN.md: four parallel work packages with owners, outputs, dependencies and acceptance gates", "docs/TEAM_PLAN.md", "JPN/DEU labels, features/folds, models/ensemble and India/integration can run at the same time"),
+    ("2026-11-06", "7", "Workbook", "Built Team_Plan.xlsx (12 sheets) and scripts/make_team_plan.py: plain-English plan, task detail, parallel schedule, hand-offs, combination rules, risks, final review and glossary", "Team_Plan.xlsx, scripts/make_team_plan.py", "One simple plan for four teammates; regenerated from a script, not hand-edited"),
+    ("2026-11-06", "7", "Work log", "Added the Team Plan summary and the 2026-11-05/06 plan rows to this workbook", "EWS_Work_Log.xlsx, scripts/make_worklog.py", "The detailed log and the simple plan agree"),
+    ("2026-11-06", "7", "Verify", "Re-ran pytest and make check; confirmed v1/v2 label hashes and docs consistency after the plan changes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; frozen hashes unchanged"),
+    ("2026-11-06", "8", "Data extension", "Fetched FRED through 2026-09, extended the USA clean panel and reporting window from 2025Q4 to 2026Q3 (147 quarters), archived labels-v2 byte-identically and froze labels-v3", "data/raw/fred/2026-11-06/*, data/manifest.csv, data/clean/*, outputs/labels/labels-v3.json, outputs/labels/archive/labels-v2/*", "2025-2026 data added; 4/4 NBER episodes still match; no false episodes; v2 hashes unchanged"),
+    ("2026-11-06", "8", "One-week plan", "Replaced the five-week plan with a seven-day sprint: Days 1-5 individual work in four lanes, Days 6-7 merge, cross-review and go/no-go", "docs/TEAM_PLAN.md, scripts/make_team_plan.py", "Four balanced lanes, day-level tasks, fixed hand-offs and one review gate"),
+    ("2026-11-06", "8", "Workbook", "Rebuilt Team_Plan.xlsx for the 7-day sprint and refreshed this work log with the v3 extension", "Team_Plan.xlsx, EWS_Work_Log.xlsx", "The simple plan and the detailed log agree; no pipeline artefact was changed by the plan work"),
+    ("2026-11-06", "8", "Verify", "Ran the full suite and config gate on the extended window; checked v1 and v2 archive hashes and the v3 active hashes", "pytest, make check, SHA-256 checks", "32 tests pass; 26 ok / 3 warnings / 0 failures; all frozen hashes match"),
+    ("2026-11-06", "9", "Fix", "Committed the active labels-v3.json that .gitignore had excluded, then re-cloned and re-ran the suite against the clean tree", ".gitignore, outputs/labels/labels-v3.json", "Fresh clone passes 32 tests; v1/v2/v3 hashes match byte-for-byte"),
+    ("2026-11-08", "10", "Review fixes", "Removed the last stale Phase 2 window text, made config/scope.yaml the single runtime window source, added the frozen-label overwrite guard, verified manifest SHA-256 on read, split NBER into the validation artifact, applied the C-06 one-year annual lag, replaced silent test skips, added CI, and regenerated both workbooks after cleaning stale lock files and paths", "build.py, config/scope.yaml, src/ews/runtime.py, scripts/{00_env,03_labels,fetch_fred,harmonize,04_compare_nber,make_worklog,make_team_plan}.py, tests/{test_config,test_freeze,test_harmonize,test_labels,test_scope}.py, Makefile, README.md, .gitattributes, .github/workflows/ci.yml, series_catalogue.csv, schema.csv, label_firewall_rules.csv, recession_ews_data_dictionary.xlsx, docs/{STATE,REVIEW_2026-11-05,TEAM_PLAN,VERIFICATION,INDIA_COVERAGE_AUDIT,PROPOSAL_ADDENDUM}.md", "38 tests pass; 33 ok / 3 warnings / 0 failures; labels-v3 and archive hashes unchanged; Phase 2 CSVs reproduce from build.py"),
 ]
 
 DATA_NOTES = {
     "USA.ACT_GDP_REAL.Q.NA": "Core BEAI input",
     "USA.ACT_IP.M.STD": "Core BEAI input",
-    "USA.ACT_EMP.Q.NA": "Core BEAI input; quarterly mean of PAYEMS",
+    "USA.ACT_EMP.Q.NA": "Core BEAI input; CE16OV LFS fallback (Q-04)",
     "USA.ACT_EMP.M.ESTAB": "Predictor; establishment survey",
     "USA.ACT_EMP.M.LFS": "Predictor; household survey",
     "USA.ACT_RINC.M.US": "Predictor; monthly real disposable income",
-    "USA.ACT_HOURS.Q.STD": "Core BEAI input",
+    "USA.ACT_HOURS.Q.STD": "Core BEAI input; HOANBS, nonfarm business (Q-05)",
     "USA.ACT_RINC.Q.STD": "Core BEAI input; replaced DPIC96 (D-R23)",
     "USA.ACT_CONS.Q.NA": "Core BEAI input",
     "USA.ACT_RETAIL.M.STD": "Core BEAI input; starts 1992",
-    "USA.ACT_INV.Q.STD": "Core BEAI input; replaced PNFIC1",
+    "USA.ACT_INV_EQ.Q.STD": "Q-02 component; non-residential equipment (nominal)",
+    "USA.ACT_INV_STRUCT.Q.STD": "Q-02 component; non-residential structures (nominal)",
+    "USA.ACT_INV_IPP.Q.STD": "Q-02 component; intellectual property products (nominal)",
+    "USA.ACT_INV_DEFL.Q.STD": "Q-02 component; non-residential implicit price deflator",
+    "USA.ACT_INV.Q.STD": "Core BEAI input; constructed real non-residential (Q-02)",
     "USA.ACT_CONS.M.US": "Rejected: 52.8% coverage",
     "USA.FIN_EQUITY.M.STD": "Replaced WILL5000IND",
     "USA.FIN_HOUSEPRICE.M.US_CS": "Predictor; Case-Shiller national",
@@ -201,6 +219,10 @@ TESTS = [
     ("test_config.py", "test_indicator_semantics_in_vocabulary", "Form, lag class, frequency and priority are valid"),
     ("test_config.py", "test_countries_and_scope", "40 countries + GLOBAL, horizon and window consistency"),
     ("test_config.py", "test_scope_priorities_are_valid", "Priorities and core set match scope.yaml"),
+    ("test_config.py", "test_window_has_one_source_of_truth", "scope.yaml, spec.py and runtime agree on 147 quarters and the 1960Q1 estimation start"),
+    ("test_harmonize.py", "test_annual_values_carry_to_the_following_year", "C-06 one-year publication lag for annual predictors"),
+    ("test_harmonize.py", "test_manifest_raw_verifies_the_recorded_hash", "The manifest names the raw file and its SHA-256 is checked"),
+    ("test_harmonize.py", "test_clean_panel_excludes_validation_series", "NBER stays out of the predictor panel"),
     ("test_scope.py", "test_scope_exists_and_nonempty", "Shortlist exists"),
     ("test_scope.py", "test_columns_present", "Required columns present"),
     ("test_scope.py", "test_keys_unique_and_well_formed", "series_key unique and regex-valid"),
@@ -213,26 +235,38 @@ TESTS = [
     ("test_labels.py", "test_recession_flag_is_peak_plus_one_through_trough", "R=1 only from peak+1 to trough"),
     ("test_labels.py", "test_diffusion_share_ignores_missing", "Diffusion uses available indicators only"),
     ("test_labels.py", "test_diffusion_gate_drops_weak_episode", "A 1/8 diffusion episode would be rejected"),
-    ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 144 rows, contiguous episodes"),
+    ("test_labels.py", "test_frozen_labels_present_and_sane", "Frozen label has 147 rows, contiguous episodes"),
     ("test_labels.py", "test_label_pipeline_does_not_use_nber", "No external chronology reaches the label"),
+    ("test_labels.py", "test_build_accepts_a_panel_without_validation_series", "The builder consumes activity growth only"),
     ("test_labels.py", "test_episode_peak_is_before_trough", "Every episode has duration >= 2"),
-    ("test_freeze.py", "test_frozen_label_hash_is_unchanged", "Frozen label CSV stays byte-identical"),
-    ("test_freeze.py", "test_frozen_label_dates_and_factor_values", "D-R25 factor/level values and episode dates"),
+    ("test_freeze.py", "test_v1_and_v2_archives_are_byte_identical", "labels-v1, labels-v2 and their metadata stay byte-identical"),
+    ("test_freeze.py", "test_active_label_hash_is_v3", "active labels-v3 CSV stays byte-identical"),
+    ("test_freeze.py", "test_v3_label_dates_and_factor_values", "D-R25 factor/level values and v3 episode dates"),
     ("test_freeze.py", "test_episode_ids_join_across_frozen_artefacts", "label and episode ids share one window numbering"),
     ("test_freeze.py", "test_turning_points_carry_in_window_flag", "pre-1990 points are flagged, not hidden"),
     ("test_freeze.py", "test_one_active_source_per_scope_key", "one active provenance row per scope key"),
+    ("test_freeze.py", "test_v3_metadata_records_the_input_decisions", "labels-v3 records Q-02/Q-04/Q-05 and the 2026Q3 window"),
     ("test_freeze.py", "test_created_date_is_preserved", "re-running the builder does not rewrite the freeze date"),
     ("test_freeze.py", "test_canonical_digest_tracks_values_not_parquet_bytes", "freeze digest is environment-independent"),
+    ("test_freeze.py", "test_frozen_overwrite_guard_requires_an_explicit_opt_in", "a changed input cannot silently replace a frozen label"),
+    ("test_review_invariants.py", "test_spec_matches_active_decision_log", "spec.py and decisions_log.csv cannot drift; Q-02/Q-04/Q-05 sign-offs and the India finding are present"),
+    ("test_review_invariants.py", "test_ensemble_preregistration_is_present_and_specific", "the pre-registered ensemble, beat-the-best test and leakage conditions stay in the docs"),
 ]
 
 REPO_MAP = [
     ("README.md", "Project overview, status, quickstart, USA result", "entry point"),
-    ("docs/BUILD_CONTRACT.md", "Frozen runtime rules C-01..C-12", "read before writing pipeline code"),
-    ("docs/DECISIONS.md", "D-R01..D-R25 and open items O-1..O-5", "decision record"),
-    ("docs/VERIFICATION.md", "FRED verification table, substitutions, progress", "data provenance"),
-    ("docs/LABEL_VALIDATION.md", "Method, NBER agreement, discrepancies, falsification checks", "label evidence"),
+    ("docs/BUILD_CONTRACT.md", "Frozen runtime rules C-01..C-13", "read before writing pipeline code"),
+    ("docs/DECISIONS.md", "D-R01..D-R31 and open items O-1..O-5", "decision record"),
+    ("docs/VERIFICATION.md", "FRED verification table, substitutions, India pre-audit, sign-offs", "data provenance"),
+    ("docs/LABEL_VALIDATION.md", "Method, NBER agreement, discrepancies, falsification checks, claim scope", "label evidence"),
     ("docs/STATE.md", "One-page hand-off with hashes and next actions", "start here each session"),
-    ("docs/DECISION_NOTE_Q02_Q04_Q05.md", "Q-02/Q-04/Q-05 concept comparison, no selection", "decision support"),
+    ("docs/DECISION_NOTE_Q02_Q04_Q05.md", "Q-02/Q-04/Q-05 comparison, selected options and 2026-11-05 sign-off", "decision support"),
+    ("docs/PROPOSAL_ADDENDUM.md", "Pre-registered ensemble, leakage rules, beat-the-best test, claim wording", "pre-registration"),
+    ("docs/INDIA_COVERAGE_AUDIT.md", "India 4/8 best-case finding; Label-B-only under O-2", "coverage finding"),
+    ("docs/TEAM_PLAN.md", "Four work packages, owners, acceptance criteria, integration rules", "team plan"),
+    ("Team_Plan.xlsx", "Generated 12-sheet plain-English team plan (what happened, what is next, tasks, schedule, hand-offs, risks, review)", "deliverable"),
+    ("scripts/make_team_plan.py", "Builds Team_Plan.xlsx from the repository state", "reporting"),
+    ("docs/REVIEW_2026-11-05.md", "Review discrepancies, fixes, data sign-offs, remaining gaps", "review record"),
     ("config/scope.yaml", "Countries, window, horizons, coverage, firewall", "runtime config"),
     ("config/indicators.yaml", "68 indicators, roles, forms, lag classes, variants", "generated from spec.py"),
     ("config/countries.yaml", "40 countries + GLOBAL with source chains", "generated"),
@@ -242,7 +276,7 @@ REPO_MAP = [
     ("data/fred_verification.csv", "Title, units, frequency, SA, first/last, coverage", "verification facts"),
     ("data/superseded_series.csv", "Retired source ids replaced by a new active source", "provenance history"),
     ("data/series_resolution.csv", "scope_key -> concrete source id / derivation", "join table"),
-    ("data/raw/fred/<date>/", "Immutable downloads (git-ignored)", "raw layer"),
+    ("data/raw/fred/<run-id>/", "Immutable downloads (git-ignored)", "raw layer"),
     ("data/clean/", "Quarterly panel and growth matrix (git-ignored)", "clean layer"),
     ("src/ews/labels/dfm.py", "One-factor DFM, loading-based scale, cumulated level", "label estimator"),
     ("src/ews/labels/bbq.py", "Turning points, episodes, recession flag", "dating"),
@@ -254,41 +288,57 @@ REPO_MAP = [
     ("scripts/export_spec.py", "spec.py -> config/*.yaml", "config build"),
     ("scripts/scope_catalog.py", "Catalogue -> 68-row shortlist + resolutions", "scope build"),
     ("scripts/fetch_fred.py", "Verify + download FRED, write manifest", "collection"),
-    ("scripts/harmonize.py", "Quarterly panel, dlog, sign alignment", "clean data"),
+    ("scripts/harmonize.py", "Manifest-verified raw files, quarterly panel, annual lag, NBER split", "clean data"),
+    ("src/ews/runtime.py", "Single runtime source for the reporting/estimation window", "config helper"),
     ("scripts/03_labels.py", "Build and freeze the label", "labels"),
     ("scripts/04_compare_nber.py", "NBER comparison + robustness", "validation"),
     ("scripts/make_worklog.py", "This workbook", "reporting"),
     ("EWS_Work_Log.xlsx", "Generated work log (this file)", "deliverable"),
-    ("tests/", "28 invariants (config, scope, labels, freeze)", "software checks"),
+    ("tests/", "38 invariants (config/window, harmonise, scope, labels, freeze, review)", "software checks"),
     ("outputs/labels/USA_labels.csv", "Frozen label: factor, level, diffusion, R", "deliverable"),
-    ("outputs/labels/labels-v1.json", "Parameters, loadings, hashes", "freeze record"),
+    ("outputs/labels/labels-v3.json", "Parameters, loadings, decisions, hashes", "freeze record"),
+    ("outputs/labels/archive/labels-v2/", "Byte-identical v2 label, metadata and SHA-256 sums", "archive"),
+    ("outputs/labels/archive/labels-v1/", "Byte-identical v1 label, metadata and SHA-256 sums", "archive"),
     ("outputs/results/USA_vs_NBER.md", "Episode matching, confusion matrix, robustness", "validation report"),
 ]
 
 DECISIONS = [
     ("D-R01", "Unemployment is predictor-only; BEAI is exactly the eight §11 indicators", "FROZEN"),
-    ("D-R02", "Window 1990Q1-2025Q4 (144 quarters); 70% = 101 quarters", "FROZEN"),
+    ("D-R02", "Study window 1990Q1-2026Q3 (147 quarters); 70% = 103 quarters", "FROZEN"),
     ("D-R03", "Horizons 1Q/2Q/4Q, 2Q primary", "FROZEN"),
     ("D-R04", "Coverage gate: 6/8 core at >=70%; >=4 indicators to date a quarter", "FROZEN"),
     ("D-R05", "Availability lags by data class", "FROZEN"),
     ("D-R06", "Monthly -> quarterly mean, no partial-quarter imputation", "FROZEN"),
     ("D-R07", "SA: official SA preferred; NSA BEAI inputs X-13 up to the cutoff", "FROZEN"),
     ("D-R08", "Annual series: carry last value with 1-year lag", "FROZEN"),
+    ("D-R09", "India: fiscal -> calendar quarters, chain base years, no pre-2017 employment backcast", "FROZEN"),
+    ("D-R10", "China: level index by chaining SA q/q growth; no special treatment", "FROZEN"),
     ("D-R11", "Walk-forward only; threshold locked before test", "FROZEN"),
+    ("D-R12", "Predictors need >=70% window coverage (extension of the 6/8 rule)", "FROZEN"),
+    ("D-R13", "Global aggregates use training countries only; never the target/held-out country", "FROZEN"),
     ("D-R14", "Revised data with simulated lags, not a real-time vintage study", "FROZEN"),
+    ("D-R15", "No redistribution of restricted raw data; scripts and metadata only", "FROZEN"),
     ("D-R16", "Verify only the 68 scope rows, not the 1,883 catalogue", "FROZEN"),
+    ("D-R17", "Use pre-1990 history for long-series countries (O-1)", "CONFIRM"),
+    ("D-R18", "India fallback if 6/8 fails: Label B only, reported as a coverage finding (O-2)", "CONFIRM"),
     ("D-R19", "Threshold objective: max F1 vs recall-at-precision", "OPEN"),
     ("D-R20", "P0-P1 first (68 rows); widen to P0-P2 after the label gate", "CONFIRM"),
     ("D-R21", "COVID kept; document BBQ treatment; with/without evaluation", "CONFIRM"),
-    ("D-R22", "Estimate the factor on 1960Q1-2025Q4; report labels 1990-2025", "FROZEN"),
+    ("D-R22", "Estimate the factor on 1960Q1-2026Q3; report labels 1990Q1-2026Q3", "FROZEN"),
     ("D-R23", "US income uses W875RX1 (excluding transfers), not DPIC96", "FROZEN"),
     ("D-R24", "Label uses the smoothed factor (ex-post, no availability lag)", "FROZEN"),
     ("D-R25", "Convert factor with scale = mean(sigma*|lambda|)", "FROZEN"),
+    ("D-R26", "Q-02 B: constructed real non-residential business fixed investment", "FROZEN"),
+    ("D-R27", "Q-04 B: USA employment uses CE16OV (LFS fallback)", "FROZEN"),
+    ("D-R28", "Q-05 A: keep HOANBS; document nonfarm-business coverage", "FROZEN"),
+    ("D-R29", "Ensemble pre-registered: equal-weight top-3 by inner-fold PR-AUC; must beat best single by >=0.01 pooled PR-AUC with bootstrap CI excluding 0 and no recall loss", "FROZEN"),
+    ("D-R30", "India best case 4/8 under §19; Label-B-only case study under O-2; no relaxation", "CONFIRM"),
+    ("D-R31", "2026 data extension: reporting window 1990Q1-2026Q3 (147 quarters); estimator, BBQ, diffusion gate and eight-indicator structure unchanged; labels-v2 archived; labels-v3 active", "FROZEN"),
 ]
 
 OPEN_ITEMS = [
-    ("O-1", "Report pre-1990 labels now that estimation runs from 1960?", "No, 1990-2025", "Next labels"),
-    ("O-2", "If India/Japan fail §19, Label-B-only or drop?", "Label B only, reported", "JPN/DEU/IND"),
+    ("O-1", "Report pre-1990 labels now that estimation runs from 1960?", "No, 1990-2026Q3", "Next labels"),
+    ("O-2", "If India/Japan fail §19, Label-B-only or drop?", "Label B only, reported (India pre-audit 4/8)", "JPN/DEU/IND"),
     ("O-3", "Threshold rule: max F1 or recall at a precision floor?", "Max F1", "Harness"),
     ("O-4", "Widen P0-P1 to P0-P2 (68 -> 140 rows)?", "After the label gate", "Collection"),
     ("O-5", "COVID with/without evaluation?", "Keep, document, evaluate", "Experiments"),
@@ -297,13 +347,13 @@ OPEN_ITEMS = [
 PHASES = [
     ("1", "Literature matrix", "Done", "literature_matrix.xlsx v4", ""),
     ("2", "Data dictionary", "Done", "16-sheet workbook, 1,883-row catalogue", ""),
-    ("3", "Scoped verification", "USA done; JPN/DEU pending", "22 verified, 1 rejected, 2 derived", "JPN 21 + DEU 21 rows"),
-    ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "264-quarter panel, 8 core indicators", "BOJ/OECD access"),
-    ("5", "BEAI label", "USA done, frozen", "4/4 NBER, accuracy 0.986", "JPN/DEU labels"),
+    ("3", "Scoped verification", "USA done; JPN/DEU pending", "27 manifest rows: 26 verified, 1 low coverage (plus 3 derived scope rows)", "JPN 21 + DEU 21 rows"),
+    ("4", "Collect + harmonise", "USA done; JPN/DEU pending", "267-quarter panel (1960Q1-2026Q3), 8 core indicators", "BOJ/OECD access"),
+    ("5", "BEAI label", "USA done, extended to 2026Q3, frozen, signed off", "4/4 NBER, accuracy 0.993, F1 0.963; labels-v3", "JPN/DEU labels"),
     ("6", "JPN + DEU labels", "Not started", "-", "Phase 3/4 for those countries"),
     ("7", "Feature table", "Not started", "-", "O-4, firewall tests"),
     ("8", "Walk-forward harness", "Not started", "-", "O-3, folds"),
-    ("9", "Experiments + metrics", "Not started", "-", "Harness"),
+    ("9", "Experiments + metrics", "Not started", "-", "Harness; ensemble C-13 pre-registered"),
     ("10", "Cross-country (LOCO)", "Not started, conditional", "-", ">=6 countries, >=20 episodes"),
     ("11", "Interpretation", "Not started", "-", "Experiments"),
     ("12", "Dashboard + write-up", "Not started", "-", "Interpretation"),
@@ -315,11 +365,13 @@ RUNBOOK = [
     ("Scope", "make scope", "rebuild the 68-row shortlist"),
     ("Fetch", "make fetch", "verify + download FRED, write manifest"),
     ("Harmonise", "make harmonize", "quarterly panel + growth matrix"),
-    ("Label", "make labels", "DFM -> BBQ -> diffusion, freeze labels-v1"),
+    ("Label", "make labels", "DFM -> BBQ -> diffusion; rebuilds labels-v3 only when the guarded inputs change"),
     ("Validate", "make validate", "NBER comparison + robustness"),
     ("All", "make pipeline", "fetch + harmonize + labels + validate"),
-    ("Checks", "make check && make test", "26 config checks + 28 tests"),
-    ("Workbook", "python scripts/make_worklog.py", "regenerate this file"),
+    ("Checks", "make check && make test", "33 config checks + 38 tests"),
+    ("Team plan", "make team-plan", "rebuild Team_Plan.xlsx (12 sheets)"),
+    ("Work log", "make worklog", "regenerate this file"),
+    ("Reports", "make reports", "rebuild both workbooks"),
 ]
 
 
@@ -334,7 +386,7 @@ def main() -> int:
     eps = pd.read_csv(PROJECT / "outputs" / "labels" / "USA_episodes.csv")
     rob = pd.read_csv(PROJECT / "outputs" / "results" / "USA_robustness.csv")
     false_eps = pd.read_csv(PROJECT / "outputs" / "results" / "USA_false_episodes.csv")
-    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v1.json").read_text())
+    meta = json.loads((PROJECT / "outputs" / "labels" / "labels-v3.json").read_text())
     vs_nber = pd.read_csv(PROJECT / "outputs" / "results" / "USA_vs_NBER.csv")
     match = pd.read_csv(PROJECT / "outputs" / "results" / "USA_episode_match.csv")
     cm = compute_confusion(vs_nber)
@@ -346,7 +398,8 @@ def main() -> int:
     ws["A1"] = "Recession Early-Warning - Work Log"
     ws["A1"].font = Font(bold=True, size=18, color=NAVY)
     ws["A2"] = (f"Generated {date.today().isoformat()} from the repository state at "
-                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS, USA milestone.")
+                f"{commits[0]['commit'] if commits else 'unknown'}. Cross-country recession EWS: USA label extended "
+                f"to 2026Q3, 2026-11-06 data freeze, the one-week four-lane sprint and the 2026-11-08 repository review.")
     ws["A2"].font = SUB_FONT
     ws.column_dimensions["A"].width = 34
     ws.column_dimensions["B"].width = 92
@@ -357,18 +410,22 @@ def main() -> int:
         ("Commits covered", f"{len(commits)}  ({', '.join(c['commit'] for c in commits)})"),
         ("", ""),
         ("Scope", "68 series rows: USA 25, JPN 21, DEU 21, GLOBAL 1; 30 BEAI-eligible"),
-        ("Window", "1990Q1-2025Q4 (144 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
-        ("USA data", "23 scope FRED series + 1 auxiliary chronology; 22 verified, 1 insufficient, 2 derived"),
-        ("USA label", f"labels-v1 frozen: {int(eps['kept'].sum())} episodes, "
-                      f"{len(false_eps)} false positives"),
+        ("Window", "1990Q1-2026Q3 (147 quarters); horizons 1Q/2Q/4Q, 2Q primary"),
+        ("USA data", "30 FRED registry entries = 27 downloads + 3 derived (26 verified + 1 low coverage); 4 Q-02 components, 1 auxiliary chronology; observations through 2026-09"),
+        ("USA label", f"labels-v3 frozen: {int(eps['kept'].sum())} episodes, "
+                      f"{len(false_eps)} false positives; labels-v2 and labels-v1 archived byte-identically"),
         ("NBER agreement", f"{episodes_matched}/{len(match)} episodes, accuracy {cm['accuracy']:.3f}, "
                            f"recall {cm['recall']:.3f}, precision {cm['precision']:.3f}, F1 {cm['f1']:.3f}"),
-        ("Tests", "28 passing (config 6, scope 6, labels 9, freeze 7)"),
-        ("Config gate", "26 ok, 3 warnings (optional model packages), 0 failures"),
-        ("Not started", "JPN/DEU collection, feature table, harness, experiments, dashboard"),
+        ("Tests", "38 passing (config 7, harmonise 3, scope 6, labels 10, freeze 10, review invariants 2)"),
+        ("Config gate", "33 ok, 3 warnings (optional model packages), 0 failures"),
+        ("Not started", "JPN/DEU labels (Days 1-5), feature table, harness, experiments, dashboard"),
+        ("Pre-registered", "Equal-weight top-3 ensemble, C-13 (docs/PROPOSAL_ADDENDUM.md); no model result yet"),
+        ("India", "Pre-audit best case 4/8; Label-B-only under O-2 pending final downloads"),
+        ("Team plan", "One-week sprint: Days 1-5 individual, Days 6-7 combine/review; Team_Plan.xlsx (12 sheets) and docs/TEAM_PLAN.md"),
         ("", ""),
-        ("How to read", "Status = phase state. Work Log = chronological actions. Data Sources = verified series. Labels = result. "
-                        "Tests = software invariants. Decisions = frozen/open choices. Next Phases = roadmap."),
+        ("How to read", "Team Plan = four lanes and the 7-day shape. Status = phase state. Work Log = chronological actions. "
+                        "Data Sources = verified series. Labels = result. Tests = software invariants. "
+                        "Decisions = frozen/open choices. Next Phases = roadmap."),
         ("Caveat", "The label is built on revised historical data with no real-time vintages. Results are not a "
                    "real-time forecasting claim (D-R14)."),
     ])
@@ -383,14 +440,47 @@ def main() -> int:
         ws.cell(row=r, column=1, value=c["commit"]).font = MONO
         ws.cell(row=r, column=2, value=f"{c['date']}  {c['subject']}").font = BODY_FONT
 
-    # 2. Status ------------------------------------------------------------
+    # 2. Team plan ---------------------------------------------------------
+    team_rows = [
+        ("Part 1", "Shravani Math", "Data and label lead",
+         "Build Japan's BEAI label and resolve Germany far enough to build it or record a complete 6/8 finding.",
+         "Day 1 sources, Day 2 Japan data, Day 3 Japan label, Day 4 Germany data, Day 5 Germany verdict",
+         "JPN/DEU clean panels, frozen labels, chronology notes, source resolutions",
+         "Nothing; start source resolution on Day 1",
+         "Day 6 label audit, Day 7 sign-off"),
+        ("Part 2", "Arshiya", "ML engineering lead",
+         "Build the predictor table and the fair walk-forward splits on the extended 2026Q3 panel.",
+         "Day 1 spec, Day 2 table, Day 3 draft folds, Day 4 final folds, Day 5 freeze hand-off",
+         "dataset.parquet, folds.json, leakage tests, feature dictionary",
+         "Can start now on the USA; no dependency on Part 1",
+         "Day 6 leakage audit, Day 7 sign-off"),
+        ("Part 3", "Palchhin", "Modelling lead",
+         "Run six single models, baselines and the pre-registered ensemble on the same folds.",
+         "Day 1 interfaces, Day 2 fixture run, Day 3 REWI, Day 4 ensemble/headline, Day 5 ablations",
+         "Model code, headline/episode/ablation tables, results note",
+         "Starts Day 1; uses draft folds from Day 3 and final folds from Day 5",
+         "Day 6 reproduce result, Day 7 audit"),
+        ("Part 4", "Sathvik Boina", "Validation, integration and writing lead",
+         "Finish India, keep the scope honest, and combine the four lanes into one reproducible project.",
+         "Day 1 India data, Day 2 India verdict, Day 3 docs, Day 4 clean clone, Day 5 rehearsal",
+         "India coverage table, updated docs, clean-clone evidence, final package after approval",
+         "Runs in parallel; leads the merge on Day 6",
+         "Day 6 merge lead, Day 7 review lead"),
+    ]
+    sheet(wb, "Team Plan", "Four lanes in a one-week sprint",
+          "Days 1-5 are individual work; Days 6-7 are combining, cross-review and sign-off. Detailed tasks are in Team_Plan.xlsx.",
+          ["Package", "Suggested owner", "Role", "Job", "Days 1-5", "Main outputs", "Depends on", "Days 6-7"],
+          team_rows, [10, 20, 26, 58, 48, 52, 42, 30],
+          row_fills={0: LIGHT, 1: GREEN, 2: AMBER, 3: GREY})
+
+    # 3. Status ------------------------------------------------------------
     sheet(wb, "Status", "Phase status",
           "Phases 1-5 are complete for the USA. Everything after Phase 5 is unstarted.",
           ["Phase", "Name", "State", "Evidence", "Next action"],
           PHASES, [8, 28, 28, 46, 34],
           row_fills={2: AMBER, 3: AMBER})
 
-    # 3. Work log ----------------------------------------------------------
+    # 4. Work log ----------------------------------------------------------
     fills = {}
     for i, row in enumerate(WORK_LOG):
         if "Bug fix" in row[3]:
@@ -400,7 +490,7 @@ def main() -> int:
           ["Date", "Session", "Phase", "Action", "Artefact / output", "Outcome"],
           WORK_LOG, [12, 9, 14, 76, 48, 46], row_fills=fills)
 
-    # 4. Data sources ------------------------------------------------------
+    # 5. Data sources ------------------------------------------------------
     rows = []
     vmap = {r["series_key"]: r for _, r in ver.iterrows()}
     rmap = {r["series_key"]: r for _, r in res.iterrows()}
@@ -429,15 +519,15 @@ def main() -> int:
                                      "first", "last", "coverage", "status", "note"])
     df = df.sort_values(["BEAI", "priority", "scope key"], ascending=[False, True, True])
     sheet(wb, "Data Sources", "USA series: verification and resolution",
-          "Coverage = share of the 144 window quarters with a complete observation at native frequency.",
+          "Coverage = share of the 147 window quarters with a complete observation at native frequency.",
           list(df.columns), df.values.tolist(),
           [30, 34, 9, 8, 8, 8, 12, 12, 10, 22, 44],
           number_formats={9: "0.0%"})
 
-    # 5. Labels ------------------------------------------------------------
+    # 6. Labels ------------------------------------------------------------
     ws = wb.create_sheet("Labels")
     ws.sheet_view.showGridLines = False
-    ws["A1"] = "USA BEAI label (labels-v1)"
+    ws["A1"] = "USA BEAI label (labels-v3)"
     ws["A1"].font = TITLE_FONT
     ws["A2"] = "DFM on eight core indicators -> cumulated level -> BBQ -> diffusion gate >= 0.50"
     ws["A2"].font = SUB_FONT
@@ -518,8 +608,8 @@ def main() -> int:
     params = [
         ("Estimator", f"{meta['method']['estimator']} (converged={meta['method']['converged']})"),
         ("Factor order", "1 factor, AR(1), idio AR(1)"),
-        ("Estimation sample", "1960Q1-2025Q4"),
-        ("Reporting window", "1990Q1-2025Q4"),
+        ("Estimation sample", "1960Q1-2026Q3"),
+        ("Reporting window", "1990Q1-2026Q3 (147 quarters)"),
         ("Min phase / cycle", "2 / 5 quarters"),
         ("Endpoint censoring", "2 quarters"),
         ("Diffusion gate", "0.50"),
@@ -533,7 +623,23 @@ def main() -> int:
         ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=5)
         r += 1
 
-    # 6. Robustness --------------------------------------------------------
+    r += 1
+    ws.cell(row=r, column=1, value="Selected label decisions").font = Font(bold=True, size=11, color=NAVY)
+    r += 1
+    decision_rows = [
+        ("Q-02", "B: constructed real non-residential business fixed investment (4 BEA components); GPDIC1 retired"),
+        ("Q-04", "B: CE16OV household/LFS employment, quarterly mean; PAYEMS retired from the label"),
+        ("Q-05", "A: keep HOANBS; nonfarm-business sector coverage documented"),
+    ]
+    for qid, text in decision_rows:
+        ws.cell(row=r, column=1, value=qid).font = MONO
+        c = ws.cell(row=r, column=2, value=text)
+        c.font = BODY_FONT
+        c.alignment = WRAP
+        ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=5)
+        r += 1
+
+    # 7. Robustness --------------------------------------------------------
     sheet(wb, "Robustness", "Label robustness",
           "Dates must not move by more than one quarter when the specification changes.",
           ["Variant", "Candidates", "Kept", "Kept dates"],
@@ -541,18 +647,18 @@ def main() -> int:
           [26, 12, 10, 82],
           number_formats={2: "0", 3: "0"})
 
-    # 7. Tests -------------------------------------------------------------
-    sheet(wb, "Tests", "Test suite (28 invariants)",
+    # 8. Tests -------------------------------------------------------------
+    sheet(wb, "Tests", "Test suite (38 invariants)",
           "These establish software correctness only; economic credibility comes from the NBER comparison.",
           ["Module", "Test", "What it protects"],
           TESTS, [18, 58, 70])
 
-    # 8. Repo map ----------------------------------------------------------
+    # 9. Repo map ----------------------------------------------------------
     sheet(wb, "Repo Map", "Repository contents",
           "What each path is for. Generated files are marked in their description.",
           ["Path", "Purpose", "Role"], REPO_MAP, [44, 76, 30])
 
-    # 9. Decisions ---------------------------------------------------------
+    # 10. Decisions ---------------------------------------------------------
     ws = wb.create_sheet("Decisions")
     ws.sheet_view.showGridLines = False
     ws["A1"] = "Decisions and open items"
@@ -596,23 +702,24 @@ def main() -> int:
         for c in range(1, 5):
             ws.cell(row=r, column=c).border = BORDER
 
-    # 10. Next phases ------------------------------------------------------
+    # 11. Next phases ------------------------------------------------------
     sheet(wb, "Next Phases", "Roadmap",
           "Dependency order. Two gates: per-country label validation, and the LOCO eligibility gate.",
           ["Phase", "Work", "Gate / done when", "Decisions"],
           [
               ("6a", "Japan: 21 rows, BOJ + OECD", "6/8 core at >=70%; label matches ESRI within ~1 quarter", "O-1, O-2"),
               ("6b", "Germany: 21 rows, OECD/Bundesbank", "6/8 core at >=70%; label matches official chronology", "O-2"),
+              ("6c", "India coverage case study", "Downloaded-data 6/8 count; Label-B-only if it fails (best case 4/8)", "O-2"),
               ("7", "Predictor feature table", "dataset.parquet; leakage test passes; no BEAI column", "O-4"),
               ("8", "Walk-forward harness", "One country x horizon x 6 models reproducible from a seed", "O-3"),
-              ("9", "Experiments and metrics", "PR-AUC pooled, episode tables, false-warning counts", "O-5"),
+              ("9", "Experiments and metrics", "PR-AUC pooled, episode tables, false-warning counts, pre-registered ensemble result", "O-5, C-13"),
               ("10", "Cross-country LOCO", "Only headline if >=6 countries and >=20 episodes", "-"),
               ("11", "Interpretation", "REWI/SHAP stability per horizon", "-"),
               ("12", "Dashboard and write-up", "Reproducible from a clean clone", "-"),
           ],
           [8, 44, 70, 18])
 
-    # 11. Run book ---------------------------------------------------------
+    # 12. Run book ---------------------------------------------------------
     sheet(wb, "Run Book", "Commands",
           "Everything runs from the project root. No FRED API key is required.",
           ["Step", "Command", "What it does"], RUNBOOK, [16, 52, 60])

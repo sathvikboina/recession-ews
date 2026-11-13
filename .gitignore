@@ -28,6 +28,9 @@ outputs/**
 !outputs/labels/USA_episodes.csv
 !outputs/labels/USA_turning_points.csv
 !outputs/labels/labels-v1.json
+!outputs/labels/labels-v2.json
+!outputs/labels/labels-v3.json
+!outputs/labels/archive/**
 !outputs/labels/JPN/**
 !outputs/labels/DEU/**
 !outputs/results/USA_vs_NBER.md
@@ -36,8 +39,12 @@ outputs/**
 !outputs/results/USA_robustness.csv
 !outputs/results/USA_false_episodes.csv
 !outputs/results/USA_labelB.csv
+!outputs/results/archive/**
 !outputs/results/JPN_*
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Office lock files
+.~lock.*#

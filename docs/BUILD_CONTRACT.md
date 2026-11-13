@@ -4,7 +4,8 @@ Runtime rules for the implementation. This is the page the code and any AI sessi
 should read instead of the 72 KB `spec.py`. Each rule has an ID; cite the ID in code
 comments, tests and commit messages. Section references (§n) point to `plan_ML.docx`.
 
-Status: **frozen 2026-10-29** for rules marked ✅. Rules marked ⏳ still need a human
+Status: **frozen 2026-10-29** for rules marked ✅. C-13 was pre-registered
+**2026-11-05**, before any model result. Rules marked ⏳ still need a human
 decision; do not hard-code a choice for them.
 
 ---
@@ -49,8 +50,8 @@ Per country, independently (never pooled):
 10. Depth is **reported**, not a gate. Flag episodes with depth < 0.10 SD for manual review.
 
 **Estimation sample vs reporting window.** The factor is estimated on the longest
-common sample available (US: 1960Q1–2025Q4) and dated turning points are reported for
-1990Q1–2025Q4 only. Estimating on the reporting window alone censors the 1990Q3 peak at
+common sample available (US: 1960Q1–2026Q3) and dated turning points are reported for
+1990Q1–2026Q3 only. Estimating on the reporting window alone censors the 1990Q3 peak at
 the left endpoint. This changes the estimation sample, not the study window (D-R22).
 
 Frozen parameters:
@@ -64,7 +65,7 @@ Frozen parameters:
 | factor count | 1 | §12 |
 | factor estimator | DynamicFactorMQ, factor_orders=1, idiosyncratic_ar1=True | §12 |
 | factor smoother | smoothed (ex-post label) | C-05 |
-| estimation sample | 1960Q1–2025Q4 (USA) | D-R22 |
+| estimation sample | 1960Q1–2026Q3 (USA) | D-R22 |
 | minimum data to date a quarter | 4 of 8 core indicators | §18 |
 | diffusion gate | 0.50 | §15 |
 | robustness diffusion | 0.60 (Tier-1 only, one re-run) | §15, §58 |
@@ -72,7 +73,7 @@ Frozen parameters:
 
 ## C-03 — Coverage and eligibility ✅
 
-Target window `1990Q1–2025Q4` = **144 quarters**. 70% = 100.8 → **≥101 quarters**.
+Target window `1990Q1–2026Q3` = **147 quarters**. 70% = 102.9 → **≥103 quarters**.
 
 - A quarter is dated only if **≥4** core indicators are available (§18).
 - A country is BEAI-eligible only with **≥6 of 8** core indicators, each covering **≥70%**
@@ -178,6 +179,23 @@ Every run stores: data version, series IDs, transform list, feature list, fold b
 model parameters, selected features, threshold, metrics, seed, and a manifest hash (§73).
 Raw files are immutable; cleaned data is separate; no full-sample transforms are stored.
 
+## C-13 — Pre-registered ensemble ✅
+
+- The confirmatory ensemble is fixed before any result: **equal-weight probability average
+  of the top-3 single-model configurations**, ranked by pooled PR-AUC on the inner,
+  time-ordered validation folds of the current outer training block.
+- Members, weights, scalers and threshold are fitted inside the outer training block. The
+  ensemble uses the same folds and feature matrix as the single models. No BEAI output,
+  NBER chronology or held-out-country information contributes (C-01, C-08, C-11).
+- **Beat-the-best test:** the ensemble must improve pooled out-of-sample PR-AUC by at least
+  **0.01 absolute** over the inner-fold-selected best single model, a paired bootstrap
+  (1,000 resamples) must give a 95% interval excluding zero, and episode-level recall must
+  not fall. If any condition fails, the best single model is primary and the ensemble is a
+  reported **negative result**.
+- A logistic stack of the six singles is a secondary, exploratory variant only. No member,
+  weight or threshold may change after the test scores are seen.
+- Full text and sign-off: `docs/PROPOSAL_ADDENDUM.md`.
+
 ---
 
 ## Not frozen yet ⏳
@@ -187,7 +205,7 @@ scaffolding currently assumes.
 
 | ID | Question | Current default | Needed by |
 |---|---|---|---|
-| O-1 | Use pre-1990 history for long-series countries? | no (1990–2025 only) | Step 6 |
+| O-1 | Use pre-1990 history for long-series countries? | no for the reporting window (1990Q1–2026Q3); the USA estimation sample already starts in 1960Q1 | Step 6 |
 | O-2 | If India fails §19, is it Label-B-only or dropped from case studies? | Label-B-only, reported | Step 8 |
 | O-3 | Threshold objective: max F1, or max recall subject to precision ≥ p? | max F1 | Step 10 |
 | O-4 | Widen scope from P0–P1 to P0–P2 (68 → 140 rows)? | P0–P1 first | Step 4 |
@@ -198,9 +216,9 @@ scaffolding currently assumes.
 | Stage | Done when |
 |---|---|
 | config | `make check` passes with 0 failures |
-| collection | manifest rows = scope rows, raw files hashed |
+| collection | manifest rows = downloaded scope rows (pending and derived rows accounted for), raw files hashed |
 | harmonisation | one row per series×quarter, coverage table produced |
-| labels | US episodes match NBER 1990/2001/2008; `labels-v1` hash frozen |
+| labels | USA matches all 4 NBER episodes in 1990Q1–2026Q3 (including 2019Q4–2020Q2); `labels-v3` hash frozen; `labels-v2` and `labels-v1` archived byte-identical; JPN/DEU match their own chronology when built |
 | features | leakage test passes; `dataset.parquet` + `folds.json` written |
 | harness | one country × one horizon × six models reproducible from a seed |
 | experiments | headline table + episode table reproducible via `make run` |

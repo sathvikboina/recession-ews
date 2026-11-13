@@ -17,6 +17,10 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT))
+sys.path.insert(0, str(PROJECT / "src"))
+
+import spec  # noqa: E402
+from ews.runtime import quarter_count, study_window  # noqa: E402
 
 FAIL: list[str] = []
 WARN: list[str] = []
@@ -42,19 +46,33 @@ def load_yaml(name: str):
 def main() -> int:
     # --- interpreter
     check(sys.version_info >= (3, 11), f"python >= 3.11 (found {sys.version.split()[0]})")
-    for mod in ("yaml",):
+    # These are needed to read the config, build the panel and build/read the
+    # Phase 2 workbook. They are not optional warnings: `make check` must fail
+    # if the current pipeline cannot run.
+    for mod in ("yaml", "pandas", "numpy", "pyarrow", "openpyxl"):
         try:
             importlib.import_module(mod)
             check(True, f"required package: {mod}")
         except Exception:
             check(False, f"missing required package: {mod}")
 
-    for mod in ("pandas", "numpy", "scipy", "statsmodels", "sklearn", "xgboost",
-                "shap", "matplotlib", "pyarrow", "openpyxl", "pytest"):
+    # Optional/fallback packages. statsmodels is the reference label estimator;
+    # the label code falls back to EM-PCA and records that choice, so this is a
+    # warning rather than a hard failure.
+    optional = {
+        "statsmodels": "reference label estimator (EM-PCA fallback exists)",
+        "scipy": "statsmodels dependency",
+        "matplotlib": "label figures",
+        "pytest": "test suite (dev extra)",
+        "sklearn": "Phase 3 models",
+        "xgboost": "Phase 3 models",
+        "shap": "Phase 3 explanation",
+    }
+    for mod, purpose in optional.items():
         try:
             importlib.import_module(mod)
         except Exception:
-            WARN.append(f"not installed yet (needed from later steps): {mod}")
+            WARN.append(f"not installed yet ({purpose}): {mod}")
 
     # --- files
     required = {
@@ -78,6 +96,14 @@ def main() -> int:
     countries = load_yaml("countries.yaml")["countries"]
     sources = load_yaml("sources.yaml")["sources"]
 
+    # --- window invariants
+    start, end = study_window(scope)
+    check((start, end) == (spec.WIN_START, spec.WIN_END),
+          f"scope.yaml window {start}-{end} matches spec.py {spec.WIN_START}-{spec.WIN_END}")
+    check(quarter_count(start, end) == 147, "the reporting window has 147 quarters")
+    check(scope["window"].get("estimation_start", start) == "1960Q1",
+          "the USA estimation sample starts in 1960Q1 (D-R22)")
+
     # --- indicator invariants
     ids = [x["id"] for x in indicators]
     check(len(ids) == len(set(ids)), "indicator ids are unique")
@@ -100,7 +126,7 @@ def main() -> int:
     iso = {c["iso3"] for c in countries}
     enabled = set(scope["countries"]["enabled"])
     check(enabled <= iso, "enabled countries exist in countries.yaml")
-    check({"USA", "JPN"} <= enabled, "USA and JPN enabled for the first build")
+    check({"USA", "JPN", "DEU"} <= enabled, "USA, JPN and DEU enabled for the first build")
     check(len(iso) == 41, f"40 countries + GLOBAL exported (found {len(iso)})")
 
     # --- scope rows

@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-import sys, os, csv
+import sys, os, csv, math
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT))
 
 from spec import *
+
+# Derived from the single window definition in spec.py so the generated
+# workbook, CSVs and schema cannot silently drift back to an older window.
+WIN_QUARTERS = 4 * (int(WIN_END[:4]) - int(WIN_START[:4])) + (int(WIN_END[-1]) - int(WIN_START[-1])) + 1
+MIN_QUARTERS = math.ceil(WIN_QUARTERS * 0.70)
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter as L
@@ -319,11 +324,11 @@ S("units_verified", "Series properties", "string", "free text", "Verified unit."
 S("sa_status_expected", "Series properties", "string", "free text", "Expected seasonal-adjustment status.", "SA preferred")
 S("sa_status_verified", "Series properties", "enum", "SA|NSA|NOT_APPLICABLE|PENDING_VERIFICATION", "Verified status.", "")
 S("target_window_start", "Series properties", "period", "YYYYQn", "Target window start (§6).", "1990Q1")
-S("target_window_end", "Series properties", "period", "YYYYQn", "Target window end (§6).", "2025Q4")
+S("target_window_end", "Series properties", "period", "YYYYQn", "Target window end (§6).", WIN_END)
 S("collect_from", "Series properties", "string", "free text", "Collect earliest available history (§6).", "")
 S("available_start_date", "Series properties", "date", "YYYY-MM or PENDING_VERIFICATION", "First observation.", "")
 S("available_end_date", "Series properties", "date", "YYYY-MM or PENDING_VERIFICATION", "Last observation.", "")
-S("coverage_target_window_pct", "Series properties", "float", "0-100 or PENDING_VERIFICATION", "Share of the 144 quarters in 1990Q1-2025Q4 with data; the §19 threshold is 70% (>=101 quarters).", "")
+S("coverage_target_window_pct", "Series properties", "float", "0-100 or PENDING_VERIFICATION", f"Share of the {WIN_QUARTERS} quarters in {WIN_START}-{WIN_END} with data; the §19 threshold is 70% (>={MIN_QUARTERS} quarters).", "")
 S("missingness_pct", "Series properties", "float", "0-100 or PENDING_VERIFICATION", "Missing share within the available span.", "")
 S("missingness_pattern", "Series properties", "string", "free text", "Where gaps occur.", "")
 S("availability_risk", "Series properties", "string", "UNKNOWN|ELEVATED (verified fact)|ELEVATED (hypothesis)|...", "Risk the series is unavailable; hypotheses are labelled.", "UNKNOWN")
@@ -425,7 +430,7 @@ VERIF = [
  ("V-13", "BIS listing includes Consumer prices, Policy rates (monthly), US dollar exchange rates, Effective exchange rate indices (monthly), Property prices selected/long, DSR, TOTAL_CREDIT; data.bis.org/bulkdownload exists", "https://data.bis.org/bulkdownload ; https://github.com/expersso/BIS", TODAY, "Portal page plus third-party package listings (re-checked in self-review)"),
  ("V-14", "e-Stat SDDS Plus table: producing agency per Japanese series (see Source_Registry); JSDA supplies government bond yield and Nikkei supplies the stock index", "https://www.e-stat.go.jp/en/data/nsdp/", TODAY, "Official portal (re-fetched in self-review)"),
  ("V-15", "SELF-REVIEW corrections applied 2026-10-24: (a) curve-slope literature support corrected (P5 removed; P2, P4, P9, P15, P17 added); (b) GDP-per-capita sign basis downgraded to hypothesis; (c) wrong blocking-question link for the OECD CLI removed; (d) Japan government-bond-yield and stock-index producers corrected; (e) Dua & Banerji URL taken from the matrix; (f) unsupported phrase about a legacy RBI host removed; (g) BIS portal URL status upgraded to verified", "this workbook", TODAY, "Internal audit"),
- ("V-16", "plan_ML.docx is the single authoritative proposal. A duplicate upload named plan_ML_1.docx was a naming error and carried no additional information, so every ambiguity was resolved by the most plan-aligned reading and logged in Decisions_Log with its deviation type.", "plan_ML.docx", TODAY, "Naming clarification supplied by the project team 2026-10-29"),
+ ("V-16", "plan_ML.docx is the single authoritative proposal. A duplicate upload named plan_ML_1.docx was a naming error and carried no additional information, so every ambiguity was resolved by the most plan-aligned reading and logged in Decisions_Log with its deviation type.", "plan_ML.docx", "2026-10-29", "Naming clarification supplied by the project team 2026-10-29"),
  ("V-11", "NOT verified this session: every series ID other than the OECD DF_CLI dataflow; all US FRED IDs are recalled from memory; all start/end dates, missingness, units, SA status, revision facts", "n/a", TODAY, "Pending Phase 2 verification pass (Q-32)"),
 ]
 CV = [("beai_eligible", "Y", "One of the eight §11 indicators"), ("beai_eligible", "N", "Never a BEAI input"), 
@@ -516,7 +521,7 @@ lines = [
  ("VERIFICATION POLICY", "h"),
  ("PENDING_VERIFICATION = not yet verified (never a guess). Series IDs: only US FRED IDs that I recalled with high confidence are filled and flagged ID_RECALLED_NOT_VERIFIED; every non-US ID is pending. Start/end dates, missingness, units, SA status, revision facts and coverage % are ALL pending. Sheet Verification_Log lists what was actually checked on 2026-10-24 (India base-year changes, PLFS revamp, OECD/BIS/BOJ/NBS/RBI platform facts).", ""),
  ("ELIGIBILITY ARITHMETIC (from §19)", "h"),
- ("Target window 1990Q1-2025Q4 = 36 years x 4 = 144 quarters. 70% coverage = 100.8, so at least 101 quarters per core indicator; a country needs >=6 of the 8 core indicators at that level, and a quarter needs >=4 core indicators to be dated (§18).", ""),
+ (f"Target window {WIN_START}-{WIN_END} = {WIN_QUARTERS} quarters. 70% coverage = {0.70 * WIN_QUARTERS:.1f}, so at least {MIN_QUARTERS} quarters per core indicator; a country needs >=6 of the 8 core indicators at that level, and a quarter needs >=4 core indicators to be dated (§18).", ""),
  ("PRIORITY CLASSES (analyst judgement, not from the proposal)", "h"),
  ("P0 label inputs; P1 core predictors (anchor-paper support or §32 Baseline 2); P2 supplementary; P3 optional. Collection order is in Collection_Batches; the broad panel is gated by the B03 audit.", ""),
  ("SHEETS", "h"),

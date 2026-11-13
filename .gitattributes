@@ -1,0 +1,11 @@
+# Checked-in CSVs use CRLF line endings. A CR at the end of a line is the
+# platform line ending, not trailing whitespace, so `git diff --check` must
+# not flag every generated row after a rebuild. Real trailing spaces still fail.
+*.csv whitespace=trailing-space,cr-at-eol
+
+# Frozen label artefacts must preserve LF line endings across all platforms
+# so that byte-level SHA-256 digests match their frozen canonical values.
+outputs/labels/**/*.csv text eol=lf
+outputs/labels/*.csv text eol=lf
+outputs/labels/**/*.json text eol=lf
+outputs/labels/*.json text eol=lf

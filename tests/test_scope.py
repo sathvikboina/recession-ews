@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Invariants for data/scope.csv (the collection shortlist).
 
-Skips silently when the file has not been generated yet.
+``data/scope.csv`` is a tracked build artefact, so its absence is a failure,
+not a reason to skip.
 Runs under pytest or standalone:
     python tests/test_scope.py
 """
@@ -26,30 +27,25 @@ REQUIRED = {
 
 
 def _rows() -> list[dict]:
-    if not SCOPE_CSV.exists():
-        return []
+    assert SCOPE_CSV.exists(), "data/scope.csv is tracked; regenerate it with `make scope`"
     with SCOPE_CSV.open(newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
 
 
 def test_scope_exists_and_nonempty() -> None:
     rows = _rows()
-    if not rows:
-        return  # not generated yet
-    assert len(rows) > 0
+    assert rows
 
 
 def test_columns_present() -> None:
     rows = _rows()
-    if not rows:
-        return
+    assert rows
     assert REQUIRED <= set(rows[0].keys())
 
 
 def test_keys_unique_and_well_formed() -> None:
     rows = _rows()
-    if not rows:
-        return
+    assert rows
     keys = [r["series_key"] for r in rows]
     assert len(keys) == len(set(keys)), "duplicate series_key in scope"
     bad = [k for k in keys if not KEY.match(k)]
@@ -58,8 +54,8 @@ def test_keys_unique_and_well_formed() -> None:
 
 def test_every_key_is_in_the_catalogue() -> None:
     rows = _rows()
-    if not rows:
-        return
+    assert rows
+    assert CATALOGUE.exists(), "series_catalogue.csv is tracked and must be present"
     with CATALOGUE.open(newline="", encoding="utf-8") as fh:
         known = {r["series_key"] for r in csv.DictReader(fh)}
     missing = [r["series_key"] for r in rows if r["series_key"] not in known]
@@ -68,8 +64,7 @@ def test_every_key_is_in_the_catalogue() -> None:
 
 def test_scope_respects_config() -> None:
     rows = _rows()
-    if not rows:
-        return
+    assert rows
     with (PROJECT / "config" / "scope.yaml").open(encoding="utf-8") as fh:
         scope = yaml.safe_load(fh)
     with (PROJECT / "config" / "indicators.yaml").open(encoding="utf-8") as fh:
@@ -88,8 +83,7 @@ def test_scope_respects_config() -> None:
 
 def test_scope_excludes_decision_rows() -> None:
     rows = _rows()
-    if not rows:
-        return
+    assert rows
     assert not [r for r in rows if r["inclusion_status"] in {"EXCLUDED_BY_DECISION", "NOT_APPLICABLE"}]
 
 

@@ -11,7 +11,7 @@ model code; load config/*.yaml instead so the modelling pipeline has one validat
 PEND = "PENDING_VERIFICATION"
 NAV = "NOT_APPLICABLE"
 TODAY = "2026-10-24"
-WIN_START, WIN_END = "1990Q1", "2025Q4"
+WIN_START, WIN_END = "1990Q1", "2026Q3"
 
 # ---------------------------------------------------------------- countries
 TIER1 = [("USA", "United States"), ("JPN", "Japan"), ("IND", "India")]
@@ -421,7 +421,7 @@ FIREWALL = [
  ("FW-10", "Raw 2020 observations are kept unmodified (no winsorising or exclusion at collection). The COVID treatment is a labelling-audit decision fixed before model results (§6, §17).", "§6, §58", "No collection-stage COVID handling."),
  ("FW-12", "Predictors need >=70% coverage of the target window to enter a country's feature set (extension of §19, decision Q-25); macro series are never interpolated or forward-filled.", "§18, §19, §28", "coverage_target_window_pct; inclusion_status after audit."),
  ("FW-13", "Access-source rule (decisions Q-15, Q-17, Q-30): a series is in scope only if a §7 source hosts it; FRED copies of OECD/BIS data are not used for non-US countries; IMF/World Bank only after OECD and BIS fail.", "§7", "preferred_source / alt_source columns; exclusion_reason."),
- ("FW-11", "A quarter needs >=4 core indicators to be dated; a country is BEAI-eligible with >=6/8 core indicators each covering >=70% of the target window (>=101 of 144 quarters, 1990Q1-2025Q4). Failed series stay documented.", "§8, §18, §19", "coverage_target_window_pct column; inclusion_status EXCLUDED_AFTER_AUDIT."),
+ ("FW-11", "A quarter needs >=4 core indicators to be dated; a country is BEAI-eligible with >=6/8 core indicators each covering >=70% of the target window (>=103 of 147 quarters, 1990Q1-2026Q3). Failed series stay documented.", "§8, §18, §19", "coverage_target_window_pct column; inclusion_status EXCLUDED_AFTER_AUDIT."),
 ]
 
 # decision log ---------------------------------------------------------------
@@ -432,22 +432,22 @@ Q = [
   "§11's explicit list is treated as controlling over §14's illustrative example, so §14's unemployment rule is not instantiated in the primary label. To change this, amend §11/§19 (e.g. 6/9) and flip beai_eligible for LAB_UNEMP; its Pipeline-A transform (first difference, sign flipped) is already described in its notes.",
   "DECIDED", "None unless §11 is amended.", "LAB_UNEMP", "High"),
  ("Q-02", "Label scope", "§11 says 'Business investment'. Is total GFCF an acceptable substitute where a business series is missing?",
-  "Strict: business (non-residential) fixed investment only. Total GFCF is not substituted; where business investment is missing the component counts as missing.",
-  "§11, §19 (tolerates two missing of eight)", "NONE", "No deviation; the cost is possibly lower coverage.",
-  "DECIDED_PENDING_VERIFICATION", "Verify which countries publish non-residential GFCF quarterly.", "ACT_INV", "Medium"),
+  "Strict: business (non-residential) fixed investment only. Total GFCF is not substituted; where business investment is missing the component counts as missing. USA (labels-v2): constructed real non-residential business fixed investment = (Y033RC1Q027SBEA + B009RC1Q027SBEA + Y001RC1Q027SBEA) / (A008RD3Q086SBEA/100); GPDIC1 retired.",
+  "§11, §19 (tolerates two missing of eight)", "NONE", "No deviation. PNFIC1 is the correct concept but starts in 2007 and fails the 70% coverage gate; the same concept is constructed from BEA asset components and reproduces PNFIC1 to <0.02bn over 2007Q1-2026Q3. Implemented in labels-v2 on 2026-11-04; USA signed off 2026-11-05.",
+  "DECIDED_PENDING_VERIFICATION", "USA signed off 2026-11-05 (labels-v2). JPN/DEU: verify quarterly non-residential GFCF components during collection; if unavailable the component counts as missing.", "ACT_INV", "Medium"),
  ("Q-03", "Label scope", "Retail/sales: which concept, and what if no official retail series exists (India, China)?",
   "Real retail trade volume, or retail sales deflated by headline CPI from the same chain source. No unofficial proxy (cards, GST e-way bills, auto sales) substitutes; missing stays missing.",
   "§11, §18, §19", "NONE", "No deviation.", "DECIDED_PENDING_VERIFICATION", "Verify official retail series for IND and CHN.", "ACT_RETAIL", "High"),
  ("Q-04", "Label scope", "Employment and real-income concepts (national accounts vs labour-force survey vs establishment survey; disposable vs personal income less transfers).",
-  "Employment: national-accounts quarterly employment preferred, LFS monthly (quarterly mean) as fallback; one concept is locked per country at the audit and counted once toward §19. Real income: household disposable income, deflated by headline CPI if only nominal.",
-  "§8, §11", "NONE", "No deviation.", "DECIDED", "None.", "ACT_EMP, ACT_RINC", "Medium"),
+  "Employment: national-accounts quarterly employment preferred, LFS monthly (quarterly mean) as fallback; one concept is locked per country at the audit and counted once toward §19. USA (labels-v2): CE16OV household-survey employment, quarterly mean. OECD QNA quarterly employment is not published for the USA; PAYEMS is an establishment survey and is not the Q-04 fallback. Real income: household disposable income, deflated by headline CPI if only nominal.",
+  "§8, §11", "NONE", "No deviation. The checked OECD QNA employment dataflow returned no US observations; CE16OV is the permitted LFS fallback. PAYEMS retired from the label. Implemented in labels-v2 on 2026-11-04; USA signed off 2026-11-05.", "DECIDED", "USA signed off 2026-11-05. JPN/DEU: use their own audit; German QNA employment is available 1991Q1-2022Q4, Japan to be checked (LFS expected).", "ACT_EMP, ACT_RINC", "Medium"),
  ("Q-05", "Label scope", "Hours worked: what if only annual data exist?",
-  "Quarterly total hours only. Annual-only means the component is missing; no temporal disaggregation.",
-  "§11 ('where available'), §18", "NONE", "No deviation.", "DECIDED_PENDING_VERIFICATION", "Verify quarterly hours availability per country (likely missing for IND, CHN).", "ACT_HOURS", "High"),
+  "Quarterly total hours only. Annual-only means the component is missing; no temporal disaggregation. USA (labels-v2): keep HOANBS (nonfarm-business total hours), the only full-coverage quarterly total-hours series on FRED; sector coverage documented.",
+  "§11 ('where available'), §18", "NONE", "No rule deviation: HOANBS is quarterly and therefore admissible. The known limitation is sector coverage (nonfarm business, not whole economy). Implemented unchanged in labels-v2 on 2026-11-04; USA signed off 2026-11-05.", "DECIDED_PENDING_VERIFICATION", "USA signed off 2026-11-05. JPN/DEU: verify quarterly total hours; annual-only data remain missing under Q-05.", "ACT_HOURS", "High"),
  ("Q-06", "Eligibility", "India or China may fail the >=6/8 rule (employment, hours, income, retail may lack long quarterly histories). Relax §19 for them?",
-  "No. §19 is applied uniformly with no relaxation for any country. A country that fails gets no BEAI-based Label A; it stays in coverage reporting. Labels B and C remain robustness labels, not substitutes.",
-  "§5, §8, §19, §20", "NONE", "No deviation; India is a Tier-1 case study, so a failure would be a reported finding.", "DECIDED_PENDING_VERIFICATION",
-  "Outcome unknown until the B01/B03 coverage audit.", "IND, CHN BEAI components", "High"),
+  "No. §19 is applied uniformly with no relaxation for any country. A country that fails gets no BEAI-based Label A; it stays in coverage reporting. Labels B and C remain robustness labels, not substitutes. Pre-audit (2026-11-05): India's best case is 4/8 - GDP and consumption pass, industrial production and investment likely pass, and employment, hours, income and retail are structurally missing - so India is Label-B-only under O-2 pending the final download audit.",
+  "§5, §8, §19, §20", "NONE", "No deviation; India is a Tier-1 case study, so a failure would be a reported finding. The 4/8 result is structural and does not depend on the download result.", "DECIDED_PENDING_VERIFICATION",
+  "Part 4: download the MoSPI/RBI candidates, fill data/india_core_coverage.csv, and record the final 6/8 count; the structural failures already make 6/8 unreachable.", "IND, CHN BEAI components", "High"),
  ("Q-07", "India data", "India GDP: new series base 2022-23 released 2026-02-27 (verified); new-series quarterly estimates only from Q1 FY2022-23; back series reported due Dec 2026 (secondary source). How to splice?",
   "Collect legacy (2011-12 and earlier) and new (2022-23) series; splice by chaining log growth rates over the overlap quarters; no level splicing; record overlap, break dates and back-series status in base_year_changes.",
   "§8 (base-year changes recorded), §76 Phase 3 (raw data untouched)", "EXTENSION", "The plan requires base-year changes to be recorded but does not prescribe a splice method; growth-rate chaining is my choice.",

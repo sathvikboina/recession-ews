@@ -19,6 +19,7 @@ data/clean/<ISO3>_panel.csv         same panel as CSV for eyeballing / git diff
 data/clean/<ISO3>_growth.csv        activity growth CSV
 data/clean/coverage_<ISO3>.csv      quarters present per series in the window
 data/clean/coverage.csv             (for USA only: preserved for backwards compatibility)
+data/clean/USA_validation.parquet   (for USA only: external validation series)
 
 Run:
     python scripts/harmonize.py --country USA
@@ -28,6 +29,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -36,8 +39,13 @@ import pandas as pd
 import yaml
 
 PROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT / "src"))
+
+from ews.runtime import estimation_start, study_window  # noqa: E402
+
 RAW = PROJECT / "data" / "raw"
 CLEAN = PROJECT / "data" / "clean"
+MANIFEST = PROJECT / "data" / "manifest.csv"
 
 # Standard USA core indicators mapping (frozen in USA milestone)
 CORE_USA = {
@@ -93,7 +101,6 @@ def get_country_core_keys(country: str, scope_cfg: dict) -> dict[str, str]:
     for ind in core_indicators:
         matching = [c["series_key"] for c in candidates if c["indicator_id"] == ind]
         if matching:
-            # Prefer quarterly national accounts variant if available
             q_na = [m for m in matching if ".Q.NA" in m]
             q_std = [m for m in matching if ".Q." in m]
             if q_na:
@@ -103,7 +110,6 @@ def get_country_core_keys(country: str, scope_cfg: dict) -> dict[str, str]:
             else:
                 mapping[ind] = matching[0]
         else:
-            # Fallback default key structure
             mapping[ind] = f"{country}.{ind}.Q.STD"
 
     return mapping
@@ -119,8 +125,40 @@ def latest_raw(source_id: str) -> Path:
     return hits[-1]
 
 
+def manifest_raw(source_id: str) -> Path:
+    """Resolve the exact raw file recorded in the manifest and verify its hash."""
+    if not MANIFEST.exists():
+        return latest_raw(source_id)
+    rows = pd.read_csv(MANIFEST)
+    rows = rows[rows["source_id"].astype(str) == str(source_id)]
+    if rows.empty:
+        return latest_raw(source_id)
+    row = rows.iloc[-1]
+    retrieved = str(row["retrieved_at"])
+    source_name = str(row.get("source", "")).lower()
+    candidate_paths = [
+        RAW / source_name / retrieved / f"{source_id}.csv",
+        RAW / retrieved / f"{source_id}.csv",
+        RAW / f"fred/{retrieved}/{source_id}.csv",
+        RAW / f"esri/{retrieved}/{source_id}.csv",
+    ]
+    path = None
+    for p in candidate_paths:
+        if p.exists():
+            path = p
+            break
+    if path is None:
+        path = latest_raw(source_id)
+    expected = str(row.get("sha256", ""))
+    if expected and path.exists():
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            raise RuntimeError(f"raw SHA-256 mismatch for {source_id}: {path}")
+    return path
+
+
 def read_series(source_id: str) -> pd.Series:
-    path = latest_raw(source_id)
+    path = manifest_raw(source_id)
     df = pd.read_csv(path, parse_dates=["observation_date"])
     df = df.dropna(subset=["value"])
     if df.empty:
@@ -137,20 +175,27 @@ def to_quarterly(s: pd.Series, freq: str) -> pd.Series:
         out.index = s.index.to_period("Q")
         return out.groupby(level=0).last()
     if freq == "A":
-        out = s.copy()
-        out.index = s.index.to_period("Y")
-        return out.groupby(level=0).last()
+        annual = s.copy()
+        annual.index = s.index.to_period("Y")
+        annual = annual.groupby(level=0).last()
+        carried: dict[pd.Period, float] = {}
+        for year, value in annual.items():
+            if pd.isna(value):
+                continue
+            for quarter in pd.period_range(f"{year + 1}Q1", f"{year + 1}Q4", freq="Q"):
+                carried[quarter] = float(value)
+        return pd.Series(carried).sort_index()
     if freq == "M":
         m = s.copy()
-        m.index = s.index.to_period("M")
-        m = m.groupby(level=0).mean()                 # one value per month
+        m.index = m.index.to_period("M")
+        m = m.groupby(level=0).last()
         m.index = m.index.asfreq("Q")
-        g = m.groupby(level=0).agg(["mean", "count"])  # count = months in quarter
+        g = m.groupby(level=0).agg(["mean", "count"])
         return g.loc[g["count"] == 3, "mean"]
-    if freq == "W":
+    if freq == "B":
         m = s.copy()
-        m.index = s.index.to_period("M")
-        m = m.groupby(level=0).mean()
+        m.index = m.index.to_period("M")
+        m = m.groupby(level=0).last()
         m.index = m.index.asfreq("Q")
         g = m.groupby(level=0).agg(["mean", "count"])
         return g.loc[g["count"] >= 2, "mean"]
@@ -159,7 +204,7 @@ def to_quarterly(s: pd.Series, freq: str) -> pd.Series:
         d.index = d.index.to_period("D")
         m = d.groupby(level=0).mean()
         m.index = m.index.asfreq("M")
-        m = m.groupby(level=0).mean()                 # one value per month
+        m = m.groupby(level=0).mean()
         m.index = m.index.asfreq("Q")
         g = m.groupby(level=0).agg(["mean", "count"])
         return g.loc[g["count"] == 3, "mean"]
@@ -171,11 +216,9 @@ def dlog(s: pd.Series) -> pd.Series:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Harmonise country data into quarterly panel.")
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--country", default="USA", help="ISO3 country code (default: USA)")
-    parser.add_argument("--sample-start", default=None, help="Earliest estimation quarter, e.g. 1960Q1")
-    parser.add_argument("--window-start", default=None, help="Reporting window start, e.g. 1990Q1")
-    parser.add_argument("--window-end", default=None, help="Reporting window end, e.g. 2025Q4")
+    parser.add_argument("--sample-start", default=None, help="Explicit sample start (e.g. 1994Q2)")
     args = parser.parse_args()
 
     country = args.country.upper()
@@ -183,59 +226,69 @@ def main() -> int:
     ind = load_registry()
     scope_cfg = load_scope_config()
 
-    win_start_cfg = args.window_start or scope_cfg.get("window", {}).get("start", "1990Q1")
-    win_end_cfg = args.window_end or scope_cfg.get("window", {}).get("end", "2025Q4")
+    win_start_cfg, win_end_cfg = study_window()
     window = pd.period_range(win_start_cfg, win_end_cfg, freq="Q")
 
-    with (PROJECT / "data" / "series_resolution.csv").open(newline="", encoding="utf-8") as fh:
-        res = [r for r in csv.DictReader(fh) if r["series_key"].startswith(f"{country}.")]
+    res_path = PROJECT / "data" / "series_resolution.csv"
+    map_path = PROJECT / "data" / f"source_map_{country}.csv"
+    scope_rows: list[dict[str, str]] = []
 
-    # If series_resolution has no rows for this country, try source_map_<country>.csv
-    if not res:
-        source_map_path = PROJECT / "data" / f"source_map_{country}.csv"
-        if source_map_path.exists():
-            with source_map_path.open(newline="", encoding="utf-8") as fh:
-                res = [
-                    {
-                        "series_key": r.get("scope_key", ""),
-                        "source": r.get("source", ""),
-                        "source_id": r.get("series_id", ""),
-                        "status": r.get("status", ""),
-                        "native_freq": r.get("frequency", "Q"),
-                        "note": r.get("note", ""),
-                    }
-                    for r in csv.DictReader(fh)
-                    if r.get("status") in ("RESOLVED", "VERIFIED")
-                ]
-
-    core_map = get_country_core_keys(country, scope_cfg)
+    if country == "USA" and res_path.exists():
+        with res_path.open(newline="", encoding="utf-8") as fh:
+            scope_rows = [r for r in csv.DictReader(fh) if r["series_key"].startswith("USA.")]
+    elif map_path.exists():
+        with map_path.open(newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                scope_rows.append({
+                    "series_key": r.get("scope_key", ""),
+                    "source": r.get("source_domain", ""),
+                    "source_id": r.get("series_id", ""),
+                    "native_freq": r.get("native_freq", "Q"),
+                    "status": r.get("status", "VERIFIED"),
+                })
+    elif res_path.exists():
+        with res_path.open(newline="", encoding="utf-8") as fh:
+            scope_rows = [r for r in csv.DictReader(fh) if r["series_key"].startswith(f"{country}.")]
 
     levels: dict[str, pd.Series] = {}
-    used = []
-    for r in res:
-        if r["status"] not in ("VERIFIED", "RESOLVED"):
+    validation: dict[str, pd.Series] = {}
+    used: list[dict[str, str]] = []
+
+    for r in scope_rows:
+        if r.get("status") not in ("VERIFIED", "PROVISIONAL", "CANDIDATE"):
+            continue
+        sid = r.get("source_id", "")
+        if not sid:
             continue
         try:
-            s = read_series(r["source_id"])
-            q = to_quarterly(s, r["native_freq"])
-            q = q[~q.index.duplicated(keep="last")].sort_index()
-            levels[r["series_key"]] = q
-            used.append(r)
-        except FileNotFoundError:
+            s = read_series(sid)
+        except Exception as exc:
+            print(f"[{country}] warning: failed to read {sid} ({r.get('series_key')}): {exc}")
             continue
 
+        q = to_quarterly(s, r.get("native_freq", "Q"))
+        q = q[~q.index.duplicated(keep="last")].sort_index()
+
+        skey = r["series_key"]
+        if skey == "USA.NBER.Q":
+            validation[skey] = q
+        else:
+            levels[skey] = q
+        used.append(r)
+
     if not levels:
-        # Check if clean parquet already exists
-        existing_growth = CLEAN / f"{country}_growth.parquet"
-        if existing_growth.exists():
-            print(f"[{country}] using existing {existing_growth}")
-            return 0
-        raise RuntimeError(f"[{country}] no harmonisable series found in raw downloads")
+        print(f"ERROR: No series resolved for country {country}", file=sys.stderr)
+        return 1
 
     raw_panel = pd.DataFrame(levels).sort_index()
     raw_panel.index.name = "quarter"
+    validation_panel = pd.DataFrame(validation).sort_index() if validation else None
+    if validation_panel is not None:
+        validation_panel.index.name = "quarter"
 
-    # ---- Q-02: real non-residential business fixed investment (USA only) -
+    core_map = get_country_core_keys(country, scope_cfg)
+
+    # ---- Q-02 handling for USA -------------------------------------------
     if country == "USA":
         inv_inputs = [
             "USA.ACT_INV_EQ.Q.STD",
@@ -275,9 +328,8 @@ def main() -> int:
     elif sample_start_cfg:
         sample_start = sample_start_cfg
     elif country == "USA":
-        sample_start = "1960Q1"  # D-R22 implementation baseline
+        sample_start = estimation_start()
     else:
-        # Earliest quarter with >= 4 core indicators available
         n_avail = raw_growth.notna().sum(axis=1)
         eligible_qs = n_avail[n_avail >= 4].index
         if len(eligible_qs):
@@ -291,14 +343,15 @@ def main() -> int:
     growth = raw_growth.reindex(sample_range)
     growth.index.name = "quarter"
 
-    # Write files
     panel.to_parquet(CLEAN / f"{country}_levels.parquet")
     growth.to_parquet(CLEAN / f"{country}_growth.parquet")
     panel.to_csv(CLEAN / f"{country}_panel.csv", float_format="%.6f")
     growth.to_csv(CLEAN / f"{country}_growth.csv", float_format="%.6f")
 
-    # ---- coverage reporting (Audit A5 / Step 3) ---------------------------
-    # Report both raw_window_coverage and estimator_sample_coverage
+    if country == "USA" and validation_panel is not None:
+        validation_panel.reindex(sample_range).to_parquet(CLEAN / "USA_validation.parquet")
+
+    # ---- coverage reporting ----------------------------------------------
     key_to_core = {v: k for k, v in core_map.items()}
     cov = []
     for key in raw_panel.columns:

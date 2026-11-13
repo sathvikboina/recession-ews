@@ -61,7 +61,9 @@ def main() -> int:
 
     labels = pd.read_csv(PROJECT / "outputs" / "labels" / "USA_labels.csv", index_col=0)
     labels.index = pd.PeriodIndex(labels.index, freq="Q")
-    panel = pd.read_parquet(PROJECT / "data" / "clean" / "USA_levels.parquet")
+    validation_path = PROJECT / "data" / "clean" / "USA_validation.parquet"
+    legacy_panel = PROJECT / "data" / "clean" / "USA_levels.parquet"
+    panel = pd.read_parquet(validation_path if validation_path.exists() else legacy_panel)
     nber = panel["USA.NBER.Q"].reindex(labels.index).fillna(0).astype(int)
 
     joined = labels.copy()
