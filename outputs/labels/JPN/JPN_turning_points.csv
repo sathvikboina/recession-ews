@@ -1,0 +1,16 @@
+quarter,index,kind,value,in_window
+1997Q1,11,peak,6.926924,True
+1999Q1,19,trough,3.109471,True
+2001Q1,27,peak,7.349746,True
+2001Q4,30,trough,4.797632,True
+2007Q2,52,peak,13.256569,True
+2009Q1,59,trough,4.782711,True
+2010Q3,65,peak,9.859792,True
+2011Q2,68,trough,7.035826,True
+2012Q1,71,peak,10.234108,True
+2012Q3,73,trough,9.207025,True
+2018Q2,96,peak,16.609905,True
+2020Q2,104,trough,6.838958,True
+2023Q1,115,peak,15.995226,True
+2024Q1,119,trough,14.729271,True
+2025Q2,124,peak,16.279075,True
