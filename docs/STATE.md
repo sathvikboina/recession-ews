@@ -1,6 +1,22 @@
 # Build State
 
-Last updated: **2026-11-04**. One page of truth for the next session.
+Last updated: **2026-11-13** (Lane 1: Japan & Germany Labels - Shravani Math - Complete).
+
+## Lane 1: Japan & Germany Labels (Final Status - Complete)
+
+- **Branch**: `feat/jpn-deu-labels`
+- **Baseline USA Hash**: `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0` (CRLF) / `f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e` (LF) — **PROVEN BYTE-IDENTICAL**.
+- **Japan BEAI Label (`labels-v1-JPN`)**: Built and frozen. 6 of 8 core indicators pass C-03 ($\ge 83.3\%$ coverage). DFM converged (`loglik = -903.87`). 7 contraction episodes dated, matching all 5 official post-1994 Cabinet Office (ESRI) business cycle reference dates (景気基準日付) with 0 missed cycles (recall 88.0%, precision 62.9%, accuracy 87.4%). Documented in [docs/LABEL_VALIDATION_JPN.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_JPN.md).
+- **Germany BEAI Label (`labels-v1-DEU`)**: Built and frozen. 6 of 8 core indicators pass C-03 ($\ge 90.3\%$ coverage). 1990–1991 reunification break handled by starting estimation sample at `1991Q2` without artificial level splicing. DFM converged (`loglik = -934.50`). 7 kept episodes, matching all 5 CEPR / Sachverständigenrat recessions (accuracy 86.3%, precision 75.0%). Documented in [docs/LABEL_VALIDATION_DEU.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_DEU.md) and [docs/COVERAGE_DEU.md](file:///D:/ml_ews/recession-ews/docs/COVERAGE_DEU.md).
+- **Country-Parameterised Plumbing**: `scripts/harmonize.py` and `scripts/03_labels.py` accept `--country <ISO3>`. Output paths are strictly namespaced (`data/clean/<ISO3>_*`, `outputs/labels/<ISO3>/`).
+- **Tests**: `tests/test_country_plumbing.py` has 10 passing tests verifying C-01, C-03, country isolation, and invariant preservation for USA, JPN, and DEU.
+
+### Frozen Label Artefacts & Digests
+- **USA**: `outputs/labels/USA_labels.csv` — `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0`
+- **JPN**: `outputs/labels/JPN/JPN_labels.csv` — `b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5`
+- **DEU**: `outputs/labels/DEU/DEU_labels.csv` — `22cfb91a9b47d35f6f864df5c1e115e0182a4e95e269eb1dfa18f156403f02de`
+
+---
 
 ## Where we are
 
