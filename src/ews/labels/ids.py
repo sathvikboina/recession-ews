@@ -31,11 +31,11 @@ def renumber_window_episodes(
         kept = episodes[episodes["kept"]].sort_values("peak")
         mapping = {int(old): new for new, old in enumerate(kept["episode_id"].tolist(), 1)}
         episodes["episode_id"] = (
-            episodes["episode_id"].map(lambda value: mapping.get(int(value), 0)).astype(int)
+            episodes["episode_id"].map(lambda value: mapping.get(int(value), 0) if pd.notna(value) else 0).astype(int)
         )
         if "episode_id" in frame.columns:
             frame["episode_id"] = (
-                frame["episode_id"].map(lambda value: mapping.get(int(value), 0)).astype(int)
+                frame["episode_id"].map(lambda value: mapping.get(int(value), 0) if pd.notna(value) else 0).astype(int)
             )
 
     return frame, episodes
