@@ -268,9 +268,12 @@ def main() -> int:
 
     raw_growth = pd.DataFrame(core_cols)
 
-    # ---- derive SAMPLE_START from data availability ----------------------
+    # ---- derive SAMPLE_START from config or data availability ------------
+    sample_start_cfg = scope_cfg.get("window", {}).get("sample_start", {}).get(country)
     if args.sample_start:
         sample_start = args.sample_start
+    elif sample_start_cfg:
+        sample_start = sample_start_cfg
     elif country == "USA":
         sample_start = "1960Q1"  # D-R22 implementation baseline
     else:
@@ -294,13 +297,46 @@ def main() -> int:
     panel.to_csv(CLEAN / f"{country}_panel.csv", float_format="%.6f")
     growth.to_csv(CLEAN / f"{country}_growth.csv", float_format="%.6f")
 
+    # ---- coverage reporting (Audit A5 / Step 3) ---------------------------
+    # Report both raw_window_coverage and estimator_sample_coverage
+    key_to_core = {v: k for k, v in core_map.items()}
     cov = []
-    for key in panel.columns:
-        n = int(panel[key].reindex(window).notna().sum())
-        cov.append({"series_key": key, "quarters": n, "window": len(window), "coverage_pct": round(n / len(window), 4)})
+    for key in raw_panel.columns:
+        raw_cnt = int(raw_panel[key].reindex(window).notna().sum())
+        raw_pct = round(raw_cnt / len(window), 4)
+        ind_id = key_to_core.get(key)
+        if ind_id and ind_id in growth.columns:
+            sample_cnt = int(growth[ind_id].reindex(window).notna().sum())
+            sample_pct = round(sample_cnt / len(window), 4)
+        else:
+            sample_cnt = int(panel[key].reindex(window).notna().sum()) if key in panel.columns else 0
+            sample_pct = round(sample_cnt / len(window), 4)
+        cov.append({
+            "series_key": key,
+            "raw_window_coverage": raw_cnt,
+            "raw_window_coverage_pct": raw_pct,
+            "estimator_sample_coverage": sample_cnt,
+            "estimator_sample_coverage_pct": sample_pct,
+            "quarters": raw_cnt,
+            "window": len(window),
+            "coverage_pct": raw_pct,
+        })
     for ind_id in growth.columns:
-        n = int(growth[ind_id].reindex(window).notna().sum())
-        cov.append({"series_key": f"LABEL:{ind_id}", "quarters": n, "window": len(window), "coverage_pct": round(n / len(window), 4)})
+        sample_cnt = int(growth[ind_id].reindex(window).notna().sum())
+        sample_pct = round(sample_cnt / len(window), 4)
+        src_key = core_map.get(ind_id)
+        raw_cnt = int(raw_panel[src_key].reindex(window).notna().sum()) if src_key and src_key in raw_panel.columns else sample_cnt
+        raw_pct = round(raw_cnt / len(window), 4)
+        cov.append({
+            "series_key": f"LABEL:{ind_id}",
+            "raw_window_coverage": raw_cnt,
+            "raw_window_coverage_pct": raw_pct,
+            "estimator_sample_coverage": sample_cnt,
+            "estimator_sample_coverage_pct": sample_pct,
+            "quarters": raw_cnt,
+            "window": len(window),
+            "coverage_pct": raw_pct,
+        })
     cov_df = pd.DataFrame(cov)
     cov_df.to_csv(CLEAN / f"coverage_{country}.csv", index=False)
     if country == "USA":
@@ -311,7 +347,7 @@ def main() -> int:
     print(f"\n[{country}] label coverage (BEAI core):")
     for row in cov:
         if row["series_key"].startswith("LABEL:"):
-            print(f"  {row['series_key'][6:]:14s} {row['quarters']:3d}/{row['window']}  {row['coverage_pct']:6.1%}")
+            print(f"  {row['series_key'][6:]:14s} raw={row['raw_window_coverage']:3d}/{row['window']} ({row['raw_window_coverage_pct']:6.1%})  sample={row['estimator_sample_coverage']:3d}/{row['window']} ({row['estimator_sample_coverage_pct']:6.1%})")
 
     first_q_4 = growth.notna().sum(axis=1).ge(4)
     if first_q_4.any():

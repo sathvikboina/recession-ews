@@ -6,6 +6,11 @@ frozen_on: "2026-10-29"
 window:
   start: "1990Q1"
   end: "2025Q4"
+  # Sample start per country. null = dynamic derivation (earliest quarter with >= 4 indicators)
+  sample_start:
+    USA: "1960Q1"
+    JPN: null      # dynamic: resolves to 1994Q2 under >= 4 indicators rule (C-03)
+    DEU: "1991Q2"  # post-reunification structural break (Destatis ESA 2010 boundary)
   # OPEN QUESTION for the team: using pre-1990 history for long-series countries
   # roughly doubles the US episode count. Left disabled so the current results
   # match the Phase 2 dictionary exactly.
