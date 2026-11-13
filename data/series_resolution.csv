@@ -40,5 +40,5 @@ DEU.ACT_GDP_REAL.Q.NA,FRED,CLVMNACSCAB1GQDE,VERIFIED,Q,"real gross domestic prod
 DEU.ACT_IP.M.STD,FRED,DEUPROINDMISMEI,VERIFIED,M,"industrial production index, total industry ex construction (OECD MEI), SA"
 DEU.ACT_EMP.Q.NA,FRED,LFEMTTTTDEQ647S,VERIFIED,Q,"total employment, all persons (OECD QNA / Destatis), SA"
 DEU.ACT_CONS.Q.NA,FRED,NAEXKP02DEQ661S,VERIFIED,Q,"real private final consumption expenditure (Destatis / Eurostat), chained volume, SA"
-DEU.ACT_INV.Q.STD,FRED,NAEXKP04DEQ661S,VERIFIED,Q,"real gross fixed capital formation (Destatis / Eurostat), chained volume, SA"
+DEU.ACT_INV.Q.STD,FRED,NAEXKP04DEQ661S,PENDING_VERIFICATION,Q,"NON-COMPLIANT under Q-02: NAEXKP04DEQ661S is total GFCF (includes residential & government); compliant private non-residential business investment requires Destatis S.11"
 DEU.ACT_RETAIL.M.STD,FRED,DEUSARTMISMEI,VERIFIED,M,"retail trade volume index ex motor vehicles (Destatis / OECD MEI), SA"
