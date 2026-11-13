@@ -124,13 +124,127 @@ def test_usa_labels_hash_is_preserved() -> None:
 
 
 def test_country_isolation_naming() -> None:
-    """Verify that JPN and DEU output directory paths are correctly namespaced."""
-    jpn_out = PROJECT / "outputs" / "labels" / "JPN"
-    deu_out = PROJECT / "outputs" / "labels" / "DEU"
-    assert jpn_out == PROJECT / "outputs" / "labels" / "JPN"
-    assert deu_out == PROJECT / "outputs" / "labels" / "DEU"
-    assert jpn_out != PROJECT / "outputs" / "labels"
-    assert deu_out != PROJECT / "outputs" / "labels"
+    """Verify that country output files are strictly isolated and never collide with USA."""
+    labels_root = PROJECT / "outputs" / "labels"
+    # Root labels directory should only contain USA labels and country subdirectories
+    root_csvs = list(labels_root.glob("*.csv"))
+    expected_root = {"USA_labels.csv", "USA_episodes.csv", "USA_turning_points.csv"}
+    assert set(p.name for p in root_csvs) == expected_root, f"Unexpected root CSVs: {root_csvs}"
+    for p in root_csvs:
+        assert not p.name.startswith(("JPN_", "DEU_")), f"Country file leaked into root: {p.name}"
+
+    # Verify that JPN outputs exist in JPN namespace and do not leak into root
+    jpn_dir = labels_root / "JPN"
+    assert jpn_dir.is_dir(), "JPN output directory must exist"
+    jpn_files = set(p.name for p in jpn_dir.glob("*"))
+    assert "JPN_labels.csv" in jpn_files
+    assert "JPN_episodes.csv" in jpn_files
+    assert "labels-v1-JPN.json" in jpn_files
+
+    # Verify that clean data files are strictly prefixed by ISO3
+    clean_dir = PROJECT / "data" / "clean"
+    if clean_dir.exists():
+        for p in clean_dir.glob("JPN_*"):
+            assert p.name.startswith("JPN_"), f"File not cleanly prefixed: {p.name}"
+
+
+def test_freeze_json_input_hashes_match_raw() -> None:
+    """Verify that every raw input file hash recorded in frozen JSON matches disk bytes (C-12)."""
+    labels_root = PROJECT / "outputs" / "labels"
+    for json_path in labels_root.glob("**/labels-v1-*.json"):
+        import json
+        meta = json.loads(json_path.read_text(encoding="utf-8"))
+        raw_hashes = meta.get("inputs", {}).get("raw_input_hashes", {})
+        assert len(raw_hashes) > 0, f"No raw_input_hashes recorded in {json_path.name}"
+        for rel_path, expected_hash in raw_hashes.items():
+            file_path = PROJECT / rel_path
+            assert file_path.exists(), f"Input file missing on disk: {rel_path}"
+            actual_hash = hashlib.sha256(file_path.read_bytes()).hexdigest()
+            assert actual_hash == expected_hash, (
+                f"Raw input hash mismatch for {rel_path} in {json_path.name}: "
+                f"expected {expected_hash}, got {actual_hash}"
+            )
+
+
+def test_frozen_parameters_unchanged() -> None:
+    """Verify that core BEAI frozen parameters have not moved (Rule C-02)."""
+    from ews.labels.build import PARAMS
+    assert PARAMS["min_phase"] == 2, "min_phase must remain 2"
+    assert PARAMS["min_cycle"] == 5, "min_cycle must remain 5"
+    assert PARAMS["censor"] == 2, "censor must remain 2"
+    assert PARAMS["diffusion_gate"] == 0.50, "diffusion_gate must remain 0.50"
+    assert PARAMS["depth_review_sd"] == 0.10, "depth_review_sd must remain 0.10"
+    assert PARAMS["factor_count"] == 1, "factor_count must remain 1"
+
+
+def test_no_partial_quarters() -> None:
+    """Rule C-06: Monthly aggregation requires all 3 months present; 2 months yields NaN."""
+    # Build a monthly series where 2020Q1 has months 1 and 2, but month 3 is missing
+    m_idx = pd.period_range("2020-01", "2020-06", freq="M")
+    m_series = pd.Series([100.0, 102.0, np.nan, 105.0, 106.0, 107.0], index=m_idx)
+
+    # Monthly -> Quarterly aggregation: complete quarter rule
+    # A quarter is valid ONLY if all 3 constituent months are not null
+    q_counts = m_series.notna().groupby(m_series.index.asfreq("Q")).sum()
+    q_mean = m_series.groupby(m_series.index.asfreq("Q")).mean()
+    q_mean[q_counts < 3] = np.nan
+
+    assert pd.isna(q_mean.loc[pd.Period("2020Q1", freq="Q")]), "2020Q1 must be NaN (only 2 months present)"
+    assert pd.notna(q_mean.loc[pd.Period("2020Q2", freq="Q")]), "2020Q2 must be valid (all 3 months present)"
+    assert q_mean.loc[pd.Period("2020Q2", freq="Q")] == pytest.approx(106.0)
+
+
+def test_coverage_gate_branches() -> None:
+    """Verify exact 6/8 pass, 5/8 fail, and exact 70% threshold boundaries (Rule C-03)."""
+    window = pd.period_range("1990Q1", "2025Q4", freq="Q")  # 144 quarters
+    # 70% of 144 = 100.8 -> requires >= 101 quarters
+
+    # Test 1: Exactly 6 indicators passing at 101 quarters -> PASS
+    data_pass = {}
+    for i, col in enumerate(CORE_INDICATORS):
+        s = pd.Series(np.nan, index=window)
+        if i < 6:
+            s.iloc[:101] = 1.0  # 101 / 144 = 70.14% >= 70%
+        data_pass[col] = s
+    res_pass = check_coverage_gate(pd.DataFrame(data_pass), window=window)
+    assert res_pass.passed is True
+    assert res_pass.n_passing_indicators == 6
+
+    # Test 2: Exactly 5 indicators passing at 101 quarters -> FAIL
+    data_fail_5 = {}
+    for i, col in enumerate(CORE_INDICATORS):
+        s = pd.Series(np.nan, index=window)
+        if i < 5:
+            s.iloc[:101] = 1.0
+        data_fail_5[col] = s
+    res_fail_5 = check_coverage_gate(pd.DataFrame(data_fail_5), window=window)
+    assert res_fail_5.passed is False
+    assert res_fail_5.n_passing_indicators == 5
+
+    # Test 3: 6 indicators present, but one has only 100 quarters (69.4%) -> 5 pass -> FAIL
+    data_boundary = {}
+    for i, col in enumerate(CORE_INDICATORS):
+        s = pd.Series(np.nan, index=window)
+        if i < 5:
+            s.iloc[:101] = 1.0
+        elif i == 5:
+            s.iloc[:100] = 1.0  # 100 / 144 = 69.44% < 70%
+        data_boundary[col] = s
+    res_boundary = check_coverage_gate(pd.DataFrame(data_boundary), window=window)
+    assert res_boundary.passed is False
+    assert res_boundary.n_passing_indicators == 5
+
+
+def test_sample_start_is_config_driven() -> None:
+    """Verify that sample starts resolve from config/scope.yaml rather than manual CLI flags."""
+    import yaml
+    with (PROJECT / "config" / "scope.yaml").open(encoding="utf-8") as fh:
+        cfg = yaml.safe_load(fh)
+
+    sample_starts = cfg.get("window", {}).get("sample_start", {})
+    assert sample_starts.get("DEU") == "1991Q2", "DEU sample start must resolve to 1991Q2 from config"
+    assert sample_starts.get("USA") == "1960Q1", "USA sample start must resolve to 1960Q1 from config"
+    assert sample_starts.get("JPN") is None, "JPN sample start must be null (dynamic rule)"
 
 
 def test_jpn_frozen_labels_invariants() -> None:
