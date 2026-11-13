@@ -24,6 +24,8 @@ items are recorded as pending.
 | `docs/team/04b_clean_clone_review.md` | Day 4 checklist; Arshiya's evidence recorded as pending |
 | `docs/team/04c_integration_rehearsal.md` | Day 5/6 merge checklist; rehearsal recorded as not run |
 | `docs/team/04d_pitch.md` | One-page plain-English pitch |
+| `docs/EXPLORATORY_MODEL_RUN.md` | Exploratory USA-first model run; explicitly not the pre-registered result |
+| `experiments/usa_first_models.py` | Self-contained numpy/scipy walk-forward run behind that note |
 
 `docs/team/03a_palchhin_model_spec.md` and its PDF are part of the working tree but were
 added before this lane's final commit; include them only if the branch is intended to carry
@@ -41,6 +43,9 @@ make check
 
 git diff --check
 # clean
+
+.venv/bin/python experiments/usa_first_models.py
+# exploratory only; ~7.5 min; writes outputs/exploratory/usa_first/ (git-ignored)
 ```
 
 No `make pipeline` and no `make labels` was run. No estimator, BBQ setting, diffusion gate,
@@ -75,10 +80,10 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
 | Day 5 integration rehearsal | **Not run** (no lane branches) | Sathvik / all |
 | H3 Japan/Germany labels | Missing | Shravani |
 | H4 features/folds | Missing | Arshiya |
-| H5 model results / ensemble | Missing | Palchhin |
+| H5 model results / ensemble | Official result missing | Palchhin |
 | Day 7 combined clean clone | Blocked on merges | Arshiya |
 | Packaging, mirror, zip, tag | Not created; approval required | Sathvik |
-| Out-of-sample model result | Does not exist | Palchhin |
+| Out-of-sample model result | Official result does not exist; exploratory run only (`docs/EXPLORATORY_MODEL_RUN.md`) | Palchhin (official) |
 
 ## 6. Reviewer notes
 
@@ -88,5 +93,9 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
 - The pre-audit's 4/8 assumed a 1996-97 quarterly start that the official API does not
   provide. The change is documented rather than hidden.
 - The model specification (`03a`) is a supporting document, not a Part 4 deliverable.
+- An exploratory USA-first run was made on 2026-11-13 while H4/H5 were missing. It uses
+  hand-built features, hand-built folds and numpy/scipy reference models. It fails C-13
+  (Δ −0.0017, 95% CI includes zero) and is **not** the official result; do not merge its
+  numbers into the results docs as pre-registered evidence.
 - Do not present the local 38-test result as a clean-clone result. The Day 4 and Day 7
   clean-clone gates remain open.
