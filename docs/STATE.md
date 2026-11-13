@@ -6,15 +6,15 @@ Last updated: **2026-11-13** (Lane 1: Japan & Germany Labels - Shravani Math - C
 
 - **Branch**: `feat/jpn-deu-labels`
 - **Baseline USA Hash**: `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0` (CRLF) / `f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e` (LF) — **PROVEN BYTE-IDENTICAL**.
-- **Japan BEAI Label (`labels-v1-JPN`)**: Built and frozen. 6 of 8 core indicators pass C-03 ($\ge 83.3\%$ coverage). DFM converged (`loglik = -903.87`). 7 contraction episodes dated, matching all 5 official post-1994 Cabinet Office (ESRI) business cycle reference dates (景気基準日付) with 0 missed cycles (recall 88.0%, precision 62.9%, accuracy 87.4%). Documented in [docs/LABEL_VALIDATION_JPN.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_JPN.md).
-- **Germany BEAI Label (`labels-v1-DEU`)**: Built and frozen. 6 of 8 core indicators pass C-03 ($\ge 90.3\%$ coverage). 1990–1991 reunification break handled by starting estimation sample at `1991Q2` without artificial level splicing. DFM converged (`loglik = -934.50`). 7 kept episodes, matching all 5 CEPR / Sachverständigenrat recessions (accuracy 86.3%, precision 75.0%). Documented in [docs/LABEL_VALIDATION_DEU.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_DEU.md) and [docs/COVERAGE_DEU.md](file:///D:/ml_ews/recession-ews/docs/COVERAGE_DEU.md).
-- **Country-Parameterised Plumbing**: `scripts/harmonize.py` and `scripts/03_labels.py` accept `--country <ISO3>`. Output paths are strictly namespaced (`data/clean/<ISO3>_*`, `outputs/labels/<ISO3>/`).
-- **Tests**: `tests/test_country_plumbing.py` has 10 passing tests verifying C-01, C-03, country isolation, and invariant preservation for USA, JPN, and DEU.
+- **Japan BEAI Label (`labels-v1-JPN`)**: Built and frozen. 6 of 8 core indicators pass C-03 (raw window coverage $\ge 88.9\%$, sample coverage $\ge 83.3\%$). DFM converged (`loglik = -903.87`). 7 contraction episodes dated, matching all 5 official post-1994 Cabinet Office (ESRI) business cycle reference dates (景気基準日付) with 0 missed cycles (episode-level match 5/5; quarter-level recall 88.0%, precision 62.9%, accuracy 87.4%). Documented in [docs/LABEL_VALIDATION_JPN.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_JPN.md).
+- **Germany Status (Coverage Finding)**: Formal **Coverage Finding Report** delivered. Decision Q-02 strictly forbids substituting total GFCF (`NAEXKP04DEQ661S`) for business fixed investment. Excluding total GFCF leaves Germany with 5 passing indicators, failing the C-03 gate ($\ge 6/8$). Germany does not qualify for a frozen label; preliminary freeze `labels-v1-DEU` has been revoked. Post-reunification structural break (1990–1991) and GCEE reference chronology comparison documented in [docs/COVERAGE_DEU.md](file:///D:/ml_ews/recession-ews/docs/COVERAGE_DEU.md) and [docs/LABEL_VALIDATION_DEU.md](file:///D:/ml_ews/recession-ews/docs/LABEL_VALIDATION_DEU.md).
+- **Country-Parameterised Plumbing**: `scripts/harmonize.py` and `scripts/03_labels.py` accept `--country <ISO3>`. Output paths are strictly namespaced (`data/clean/<ISO3>_*`, `outputs/labels/<ISO3>/`). Sample starts are config-driven in `config/scope.yaml` (DEU `1991Q2`, USA `1960Q1`, JPN dynamic).
+- **Tests**: `tests/test_country_plumbing.py` contains 14 passing tests (1 skipped for revoked DEU label) enforcing C-01, C-02, C-03, C-06, and C-12.
 
 ### Frozen Label Artefacts & Digests
 - **USA**: `outputs/labels/USA_labels.csv` — `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0`
 - **JPN**: `outputs/labels/JPN/JPN_labels.csv` — `b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5`
-- **DEU**: `outputs/labels/DEU/DEU_labels.csv` — `22cfb91a9b47d35f6f864df5c1e115e0182a4e95e269eb1dfa18f156403f02de`
+- **DEU**: None (Freeze revoked under Decision Q-02; delivered as Coverage Finding)
 
 ---
 
