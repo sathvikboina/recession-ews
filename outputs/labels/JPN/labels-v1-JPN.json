@@ -17,14 +17,12 @@
       "ACT_INV"
     ],
     "source_ids": {
-      "ACT_GDP_REAL": "00100409 / tables/gaku-jk2622.csv (Col 1)",
-      "ACT_IP": "00550300 / b2020_sgo1j.xlsx",
-      "ACT_EMP": "Q-04 LFS fallback (quarterly mean of JPN.ACT_EMP.M.LFS)",
-      "ACT_HOURS": "MHLW Table 0003058864",
-      "ACT_RINC": "tables/kshotoku-q2622.csv",
-      "ACT_CONS": "tables/gaku-jk2622.csv (Col 2)",
-      "ACT_RETAIL": "00550030 / Table 0003195026",
-      "ACT_INV": "tables/gaku-jk2622.csv (Col 5)"
+      "ACT_GDP_REAL": "ESRI:tables/gaku-jk2622.csv (Col 1 - \u5b9f\u8cea\uff27\uff24\uff30)",
+      "ACT_CONS": "ESRI:tables/gaku-jk2622.csv (Col 2 - \u6c11\u9593\u6700\u7d42\u6d88\u8cbb\u652f\u51fa)",
+      "ACT_INV": "ESRI:tables/gaku-jk2622.csv (Col 6 - \u6c11\u9593\u4f01\u696d\u8a2d\u5099)",
+      "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 3 - \u96c7\u7528\u8005\u5831\u916c\uff08\u5b9f\u8cea\uff09)",
+      "ACT_IP": "FRED:JPNPROINDMISMEI",
+      "ACT_EMP": "FRED:LFEMTTTTJPM647S"
     },
     "coverage_window": {
       "ACT_GDP_REAL": 127,
@@ -36,7 +34,17 @@
     },
     "source": "Official statistics (JPN)",
     "growth_file_sha256": "465c5d9bdd591eade0cb67c4398661c23ad6b6d9f30e1db7232d2adcb70a3033",
-    "growth_values_sha256": "8991681af5b5558b549545853aa04685745e3b9cd6a4d0af46456fa70afe15f5"
+    "growth_values_sha256": "8991681af5b5558b549545853aa04685745e3b9cd6a4d0af46456fa70afe15f5",
+    "raw_input_hashes": {
+      "data/raw/esri/2026-11-13/gaku-jk2622.csv": "28c7c31e6f0809034acc75c5acf26817edf8039cb92066c0f6aa982a10bbf09c",
+      "data/raw/esri/2026-11-13/kshotoku-q2622.csv": "3bdb17a410af23dd6c3e9d2b80c85120d247ea9b53b932eba6cf82d9011af928",
+      "data/raw/esri/2026-11-13/JPN_ACT_GDP_REAL.csv": "2e3760f61c654398abfe7b5f8441f073b4ce5531db837266df39fe812ba22f51",
+      "data/raw/esri/2026-11-13/JPN_ACT_CONS.csv": "f1fc87665acdca8cda942a01d52eed1c3d643f8720cb3160533f20568d9d084e",
+      "data/raw/esri/2026-11-13/JPN_ACT_INV.csv": "b6299d78548def11b08a6f9358764d21fbdd95d709294d83699182d4e0caef5f",
+      "data/raw/esri/2026-11-13/JPN_ACT_RINC.csv": "85cfeb7dddc53f9a3f3186c5d0288dc765e6654ab665acd778439e6266440b1a",
+      "data/raw/fred/2026-11-13/JPNPROINDMISMEI.csv": "ec405b22dc2c14eebd7c7f349876584d7d789f3e45ea403f1ed42d3408f2b4bd",
+      "data/raw/fred/2026-11-13/LFEMTTTTJPM647S.csv": "5cb62ea3df195eb3c5a3dc4258d92965a5350464d1a090f8bf962817b472a82b"
+    }
   },
   "method": {
     "estimator": "dfm",
@@ -117,5 +125,9 @@
     "labels_csv_sha256": "b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5",
     "episodes_csv_sha256": "ec84ea45db65da606af7504f4fd7d066c846b9f55d729233eebae401ba82c849",
     "turning_points_csv_sha256": "0465c16f88d352eec3803b1b067e7d6ddefe04807782e98a8ce64f3d6e6ea709"
+  },
+  "sample_start": {
+    "resolved": "1994Q2",
+    "provenance": "dynamic_rule_c03_min4_indicators"
   }
 }

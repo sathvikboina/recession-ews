@@ -61,6 +61,16 @@ def load_scope_config() -> dict:
 
 def get_source_ids(country: str) -> dict[str, str]:
     """Retrieve mapping of core indicator -> source_id."""
+    if country == "JPN":
+        return {
+            "ACT_GDP_REAL": "ESRI:tables/gaku-jk2622.csv (Col 1 - 実質ＧＤＰ)",
+            "ACT_CONS": "ESRI:tables/gaku-jk2622.csv (Col 2 - 民間最終消費支出)",
+            "ACT_INV": "ESRI:tables/gaku-jk2622.csv (Col 6 - 民間企業設備)",
+            "ACT_RINC": "ESRI:tables/kshotoku-q2622.csv (Col 3 - 雇用者報酬（実質）)",
+            "ACT_IP": "FRED:JPNPROINDMISMEI",
+            "ACT_EMP": "FRED:LFEMTTTTJPM647S",
+        }
+
     res_path = PROJECT / "data" / "series_resolution.csv"
     map_path = PROJECT / "data" / f"source_map_{country}.csv"
     source_ids: dict[str, str] = {}
@@ -86,6 +96,29 @@ def get_source_ids(country: str) -> dict[str, str]:
                 source_ids[parts[1]] = str(row.get("series_id", ""))
 
     return source_ids
+
+
+def get_raw_input_files_and_hashes(country: str) -> dict[str, str]:
+    """Return dictionary of relative_path -> sha256 for all raw input files."""
+    raw_files: dict[str, str] = {}
+    if country == "JPN":
+        esri_dir = PROJECT / "data" / "raw" / "esri" / "2026-11-13"
+        fred_dir = PROJECT / "data" / "raw" / "fred" / "2026-11-13"
+        target_files = [
+            esri_dir / "gaku-jk2622.csv",
+            esri_dir / "kshotoku-q2622.csv",
+            esri_dir / "JPN_ACT_GDP_REAL.csv",
+            esri_dir / "JPN_ACT_CONS.csv",
+            esri_dir / "JPN_ACT_INV.csv",
+            esri_dir / "JPN_ACT_RINC.csv",
+            fred_dir / "JPNPROINDMISMEI.csv",
+            fred_dir / "LFEMTTTTJPM647S.csv",
+        ]
+        for p in target_files:
+            if p.exists():
+                rel = str(p.relative_to(PROJECT)).replace("\\", "/")
+                raw_files[rel] = sha256(p)
+    return raw_files
 
 
 def main() -> int:
@@ -194,6 +227,14 @@ def main() -> int:
     # ---- metadata -------------------------------------------------------
     created = existing_created(meta_path, date.today().isoformat())
     source_ids = get_source_ids(country)
+    cfg = load_scope_config()
+    sample_start_cfg = cfg.get("window", {}).get("sample_start", {}).get(country)
+    if country == "USA":
+        sample_start_provenance = "usa_baseline (D-R22 implementation baseline)"
+    elif sample_start_cfg:
+        sample_start_provenance = f"config_scope_yaml_{country}"
+    else:
+        sample_start_provenance = "dynamic_rule_c03_min4_indicators"
 
     record = {
         "label_version": label_version,
@@ -229,6 +270,12 @@ def main() -> int:
             "turning_points_csv_sha256": sha256(turning_points_path),
         },
     }
+    if country != "USA":
+        record["sample_start"] = {
+            "resolved": str(growth.index[0]),
+            "provenance": sample_start_provenance,
+        }
+        record["inputs"]["raw_input_hashes"] = get_raw_input_files_and_hashes(country)
     if supersedes:
         record["supersedes"] = supersedes
         v1_labels = OUT / "archive" / supersedes / f"{country}_labels.csv"

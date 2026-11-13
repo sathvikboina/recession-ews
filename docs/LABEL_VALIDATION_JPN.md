@@ -10,20 +10,22 @@ Status: **Passed**. Exactly 6 of 8 core indicators pass the $\ge 70\%$ reporting
 
 Coverage evaluation of the 144-quarter reporting window (`1990Q1–2025Q4`) following rule C-03 (`data/clean/coverage_JPN.csv`):
 
-| BEAI Core Indicator | Source | Series ID / Table | Native Freq | Window Coverage | Pass $\ge 70\%$? | Transform |
-|---|---|---|---|---:|:---:|---|
-| `ACT_GDP_REAL` | Cabinet Office (ESRI) | `00100409 / tables/gaku-jk2622.csv` (Col 1) | Q | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
-| `ACT_IP` | METI / OECD MEI (FRED) | `JPNPROINDMISMEI` | M $\to$ Q mean | 120/144 (83.3%) | **Yes** | $\Delta\log$ |
-| `ACT_EMP` | MIC Labour Force Survey (FRED) | `LFEMTTTTJPM647S` | M $\to$ Q mean | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
-| `ACT_HOURS` | MHLW (Monthly Labour Survey) | `MHLW Table 0003058864` | Q | 0/144 (0.0%) | No | N/A |
-| `ACT_RINC` | Cabinet Office (ESRI) | `tables/kshotoku-q2622.csv` (Col 11) | Q | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
-| `ACT_CONS` | Cabinet Office (ESRI) | `tables/gaku-jk2622.csv` (Col 2) | Q | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
-| `ACT_RETAIL` | METI (Current Survey of Commerce) | `00550030 / Table 0003195026` | M | 0/144 (0.0%) | No | N/A |
-| `ACT_INV` | Cabinet Office (ESRI) | `tables/gaku-jk2622.csv` (Col 6) | Q | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| BEAI Core Indicator | Source | Series ID / Table | Native Freq | Raw Window Coverage | Estimator Sample Coverage | Pass $\ge 70\%$? | Transform |
+|---|---|---|:---:|---:|---:|:---:|---|
+| `ACT_GDP_REAL` | Cabinet Office (ESRI) SNA | `ESRI:tables/gaku-jk2622.csv` (Col 1) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| `ACT_IP` | METI / OECD MEI (FRED) | `FRED:JPNPROINDMISMEI` | M $\to$ Q mean | 137/144 (95.1%) | 120/144 (83.3%) | **Yes** | $\Delta\log$ |
+| `ACT_EMP` | MIC Labour Force Survey (FRED) | `FRED:LFEMTTTTJPM647S` | M $\to$ Q mean | 144/144 (100.0%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| `ACT_HOURS` | MHLW (Monthly Labour Survey) | `MHLW Table 0003058864` | Q | 0/144 (0.0%) | 0/144 (0.0%) | No | N/A |
+| `ACT_RINC` | Cabinet Office (ESRI) SNA | `ESRI:tables/kshotoku-q2622.csv` (Col 3) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| `ACT_CONS` | Cabinet Office (ESRI) SNA | `ESRI:tables/gaku-jk2622.csv` (Col 2) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
+| `ACT_RETAIL` | METI (Current Survey of Commerce) | `00550030 / Table 0003195026` | M | 0/144 (0.0%) | 0/144 (0.0%) | No | N/A |
+| `ACT_INV` | Cabinet Office (ESRI) SNA | `ESRI:tables/gaku-jk2622.csv` (Col 6) | Q | 128/144 (88.9%) | 127/144 (88.2%) | **Yes** | $\Delta\log$ |
 
-### Data Notes & Methodological Choices
+### Data Notes, Metric Reconciliation & Sample Start Choices
+- **Two Coverage Metrics Reconciled (Audit A5 / Step 3):** The metrics differ because `raw_window_coverage` evaluates complete quarters of the underlying raw series across the entire 144-quarter reporting window (`1990Q1–2025Q4`; C-03 gate input), whereas `estimator_sample_coverage` measures quarters available after dynamic sample start truncation (`1994Q2`, when $\ge 4$ core indicators first become simultaneously available) and growth first-differencing.
+- **Handling of 1990–1994 Data (Step 3):** Prior to 1994Q1, only 2 indicators (`ACT_IP` and `ACT_EMP`) exist for Japan; national accounts from ESRI begin in 1994Q1. Under Rule C-03, dating a quarter requires $\ge 4$ indicators. Therefore, starting the estimation sample before 1994Q2 is mathematically prohibited by C-03, discards zero datable cycles, and changes no episode outcomes.
 - **Aggregation (Rule C-06):** Monthly indicators (`ACT_IP`, `ACT_EMP`) are aggregated to quarterly mean only when all 3 constituent months are present. No interpolation and no forward-fill are permitted (Rule C-03).
-- **ESRI SNA Chained 2020 Tables:** Real GDP (expenditure approach), Private Final Consumption Expenditure, and Private Non-Residential Business Fixed Investment (`民間企業設備`) are sourced from the official Cabinet Office quarterly national accounts (`gaku-jk2622.csv`). Real Compensation of Employees (`実質雇用者報酬`) is sourced from SNA quarterly income estimates (`kshotoku-q2622.csv`), deflated by the household final consumption deflator.
+- **ESRI SNA Chained 2020 Tables:** Real GDP (expenditure approach), Private Final Consumption Expenditure, and Private Non-Residential Business Fixed Investment (`民間企業設備`, Col 6) are sourced from the official Cabinet Office quarterly national accounts (`gaku-jk2622.csv`). Real Compensation of Employees (`実質雇用者報酬`) is sourced from SNA quarterly income estimates (`kshotoku-q2622.csv`), deflated by the household final consumption deflator.
 - **Coverage Gate Result (Rule C-03):** Exactly 6 of 8 indicators cover $\ge 70\%$ of the window ($\ge 101$ quarters). Indicators `ACT_HOURS` and `ACT_RETAIL` remain `PENDING_VERIFICATION` due to conceptual gaps (hours per employee vs aggregate hours; retail sales nominal value vs retail volume deflator). Under Build Contract C-03, a 6/8 pass qualifies Japan for BEAI label construction without exception or dilution.
 
 ---
@@ -91,6 +93,8 @@ Evaluating BEAI against the 5 official ESRI reference cycles:
 - **Recall (Sensitivity):** $0.880$ (88.0% of ESRI recession quarters captured)
 - **Precision:** $0.629$ (62.9%)
 - **F1 Score:** $0.733$
+
+*Honest Metric Distinction (Audit A7):* "0 missed cycles" refers strictly to **episode-level** identification (all 5 official ESRI post-1994 reference recessions are detected). The **quarter-level** recall of 88.0% reflects 3 false negative quarters occurring at cycle boundary transitions (e.g. BEAI dating a peak or trough 1 quarter earlier/later than the committee's retrospective consensus).
 
 ---
 
