@@ -10,8 +10,9 @@ BEAI label built and validated against NBER, and the panel and label extended to
 `labels-v2` and `labels-v1` remain byte-identical under `outputs/labels/archive/`.
 **No official feature or model pipeline exists yet.** An **exploratory** USA-first run now
 exists (`docs/EXPLORATORY_MODEL_RUN.md`); it is not the pre-registered result because the
-frozen feature table, folds and model code are still missing. Other countries have not been
-collected.
+frozen feature table, folds and model code are still missing. A static offline dashboard
+(`dashboard/index.html`, rebuilt with `make dashboard`) renders the frozen label and that
+exploratory run. Other countries have not been collected.
 
 The 2026-11-05 review added the pre-registered ensemble
 (`docs/PROPOSAL_ADDENDUM.md`), the India coverage audit

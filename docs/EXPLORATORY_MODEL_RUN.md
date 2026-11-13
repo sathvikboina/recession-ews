@@ -155,6 +155,9 @@ Writes to `outputs/exploratory/usa_first/` (git-ignored, like other generated ar
 
 Runtime is about 7–8 minutes on this machine.
 
+The same numbers are rendered in `dashboard/index.html` (`make dashboard`). The dashboard
+page is a view only: it reads the CSVs and never writes labels, predictions or folds.
+
 ## What would replace this
 
 The official result needs Arshiya's `dataset.parquet`/`folds.json` and Palchhin's model
