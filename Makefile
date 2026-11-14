@@ -2,7 +2,11 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
+<<<<<<< HEAD
 .PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean features folds baselines lane2a
+=======
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard features folds bootstrap clean
+>>>>>>> origin/feat/features-harness
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -19,6 +23,8 @@ help:
 	@echo "make worklog    rebuild EWS_Work_Log.xlsx (detailed work log)"
 	@echo "make reports    rebuild both generated workbooks"
 	@echo "make dashboard  build the static USA dashboard (dashboard/index.html)"
+	@echo "make folds      export draft walk-forward folds (outputs/folds/folds.json)"
+	@echo "make features   build the USA predictor table (data/clean/dataset.parquet)"
 
 env:
 	python3 -m venv $(VENV)
@@ -64,9 +70,10 @@ dashboard:
 
 features:
 	"$(PY)" scripts/06_features.py
+	"$(PY)" scripts/05_features.py
 
 folds:
-	"$(PY)" scripts/06_folds.py
+	"$(PY)" scripts/06_folds.py --approved
 
 baselines:
 	"$(PY)" scripts/07_baselines.py

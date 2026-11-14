@@ -5,12 +5,15 @@ Deterministic expanding-window folds generator for horizons 1Q, 2Q (primary), an
 Initial train 60 quarters (15 years); test blocks of 4 quarters; gap/embargo equal
 to the horizon so no test row can appear in training.
 Outputs data/features/folds.json and prints its SHA-256 checksum.
+
+Also supports Lane 2B export to outputs/folds/folds.json via ews.harness when requested.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -133,19 +136,57 @@ def build_folds_payload() -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate deterministic expanding folds")
     parser.add_argument("--out", type=Path, default=FOLDS_FILE)
+    parser.add_argument("--labels", type=Path, default=PROJECT / "outputs" / "labels" / "USA_labels.csv")
+    parser.add_argument("--output", type=Path, default=PROJECT / "outputs" / "folds" / "folds.json")
+    parser.add_argument("--start", default=None)
+    parser.add_argument("--last-scored", default=None)
+    parser.add_argument("--initial-train", type=int, default=80)
+    parser.add_argument("--inner-initial-train", type=int, default=40)
+    parser.add_argument("--approved", action="store_true", help="mark the fold file as frozen under D-R37")
     args = parser.parse_args()
 
+    # 1. Lane 2A deterministic folds output
     args.out.parent.mkdir(parents=True, exist_ok=True)
-
-    payload = build_folds_payload()
-    json_bytes = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8")
+    payload_2a = build_folds_payload()
+    json_bytes_2a = json.dumps(payload_2a, indent=2, sort_keys=True).encode("utf-8")
 
     with open(args.out, "wb") as fh:
-        fh.write(json_bytes)
+        fh.write(json_bytes_2a)
 
-    digest = hashlib.sha256(json_bytes).hexdigest()
+    digest = hashlib.sha256(json_bytes_2a).hexdigest()
     print(f"Folds written: {args.out}")
     print(f"SHA-256: {digest}")
+
+    # 2. Lane 2B harness export if ews.harness is importable
+    try:
+        sys.path.insert(0, str(PROJECT / "src"))
+        from ews.harness import build_payload, load_labels, write_folds, HORIZONS as HARNESS_HORIZONS
+        if args.labels.exists():
+            first, last = load_labels(args.labels)
+            start = args.start or first
+            last_scored = args.last_scored or last
+            try:
+                labels_file = args.labels.resolve().relative_to(PROJECT).as_posix()
+            except ValueError:
+                labels_file = str(args.labels)
+
+            payload_2b = build_payload(
+                start=start,
+                last_scored=last_scored,
+                initial_train=args.initial_train,
+                inner_initial_train=args.inner_initial_train,
+                labels_path=args.labels,
+                labels_file=labels_file,
+                horizons=HARNESS_HORIZONS,
+                approved=args.approved,
+            )
+            write_folds(payload_2b, args.output)
+            counts = {h: len(v["outer"]) for h, v in payload_2b["horizons"].items()}
+            print(f"wrote {args.output} ({args.output.stat().st_size:,} bytes)")
+            print(f"outer folds by horizon: {counts}")
+    except Exception as exc:
+        print(f"Lane 2B harness export note: {exc}")
+
     return 0
 
 
