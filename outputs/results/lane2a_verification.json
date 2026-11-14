@@ -1,0 +1,89 @@
+{
+  "all_passed": true,
+  "gates": {
+    "G1 frozen label hashes": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "usa": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa",
+        "jpn": "b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5",
+        "jpn_metadata": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a"
+      }
+    },
+    "G2 feature table (147 x 149, valid)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "rows": 147,
+        "features": 149,
+        "sha256": "368b60056872b9883ab8767fa148249d5f5c13ea85ca68abfc4e9437ee4304f4"
+      }
+    },
+    "G3 harmonised panel window": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "rows": 267,
+        "series": 26
+      }
+    },
+    "G4 frozen folds (D-R37)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "approved": true,
+        "sha256": "afd51bc5f885f74a84f2e5f29bd6732de78454945cb189f2fee1d8c426afc261",
+        "outer_2q": 67
+      }
+    },
+    "G5 firewall suite": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "pytest": ".......                                                                  [100%]"
+      }
+    },
+    "G6 baselines reproducible": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "csv_sha256": "66d5c47eb7da66e2a14a77d26c2dd63cce0badebd7dd2d69678a778cc0c560ec",
+        "md_sha256": "77c617fce0b8242a8ff590cb93bbf6d4fea2e584dc09e70bbbb8f088e153968c",
+        "stable": true,
+        "primary": [
+          {
+            "model": "majority",
+            "pr_auc": 0.023562,
+            "episode_recall": 0.0
+          },
+          {
+            "model": "term_spread",
+            "pr_auc": 0.155556,
+            "episode_recall": 0.0
+          },
+          {
+            "model": "plain_logistic",
+            "pr_auc": 0.107955,
+            "episode_recall": 0.0
+          }
+        ]
+      }
+    },
+    "G7 JPN 144/147 closeout (D-R38)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "recorded": true,
+        "documented": true,
+        "metadata_sha256": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a"
+      }
+    },
+    "G8 labels untouched": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "status": ""
+      }
+    }
+  }
+}

@@ -1,85 +1,89 @@
-# Part 4 — Day 4 Clean-Clone Review and Packaging Checklist
+# Part 4 — Clean-Clone Review and Packaging Checklist
 
-**Date:** 2026-11-13
-**Owner of the dry run:** Arshiya
-**Reviewer:** Sathvik Boina
-**Scope:** a clean clone of current `main`. This is a dry run, not the Day 7 combined
-clean clone.
+**Date:** 2026-11-14
+**Owner of the dry run:** Sathvik Boina
+**Reviewer:** Shravani Math (label hashes)
+**Scope:** a clean clone of `feat/india-scope-docs` at `82d1137`, the integration tip that
+contains Lane 2A/2B, PR #4, PR #5 and the master merge. This is a **Lane 2B / integration**
+dry run. It is **not** the Day 7 combined clean clone, because Lane 3 official results do
+not exist yet.
 
-## 1. Status
+## 1. Result
 
-**Arshiya's dry-run evidence has not been received.** No clean-clone log or hash table was
-available on 2026-11-13, so this note records the gap rather than inventing a result.
+Run from outside the repository:
 
-What was checked locally on the working tree:
+```bash
+git clone git@github.com:sathvikboina/recession-ews.git /tmp/opencode/ews-clean2
+cd /tmp/opencode/ews-clean2
+git switch feat/india-scope-docs
+git log -1 --oneline        # 82d1137 Merge origin/master (PR #5) ...
+```
 
 | Check | Result |
 |---|---|
-| `python -m pytest` | **38 passed** in 5.81s |
-| `make check` | **33 ok, 3 warnings, 0 failures** |
-| Warnings | optional model packages `sklearn`, `xgboost`, `shap` not installed |
-| `git diff --check` | clean |
-| Frozen `labels-v3` label hash | `2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa` |
-| Frozen `labels-v3` metadata hash | `6f1aa66598b1cdf823e3f97a25709c6cb5a7ed851ee8ab1c0a9b8e45402c0a50` |
-| `labels-v2` label hash | `f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e` |
-| `labels-v1` label hash | `1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a` |
+| `make check` | **33 ok, 1 warning, 0 failures** |
+| Warning | `shap` not installed; it is unused by the current code |
+| `make test` before clean data exists | **181 passed, 3 skipped** |
+| `make test` after `make harmonize` | **183 passed, 1 skipped** |
+| Remaining skip | `tests/test_country_plumbing.py` raw-hash test (see finding F1) |
+| `make harmonize` | regenerated the USA quarterly panel from the raw snapshot |
+| `make features` | 147 rows × 149 unscaled features, 64 `beai_copy_*` columns |
+| `dataset.parquet` SHA-256 | `368b60056872b9883ab8767fa148249d5f5c13ea85ca68abfc4e9437ee4304f4` — **matches** |
+| `make folds` | 67 outer folds per horizon (1/2/4), frozen under D-R37 |
+| `folds.json` SHA-256 | `afd51bc5f885f74a84f2e5f29bd6732de78454945cb189f2fee1d8c426afc261` — **matches** |
+| Frozen `labels-v3` label hash | `2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa` — unchanged |
+| `labels-v2` label hash | `f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e` — unchanged |
+| `labels-v1` label hash | `1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a` — unchanged |
 
-These are **working-tree checks**, not a clean-clone result. They do not satisfy the Day 4
-deliverable and must not be presented as the Day 7 combined evidence.
+The first `folds.json` run in a clone produced a different hash because the export embedded
+an absolute labels path. That was a genuine reproducibility bug; commit `be185ac` records
+the repo-relative path, and the hash above is identical in the working tree and in the
+clone.
 
-## 2. Exact dry-run procedure for Arshiya
+## 2. What this dry run does not prove
 
-Run from a directory outside the repository:
+- **No network fetch.** `FRED_API_KEY` is empty in this environment, so `make fetch` was
+  not run. The git-ignored `data/raw/` snapshot was copied in to rebuild the clean panel.
+  A true from-scratch clone still needs a FRED key or the team-approved raw snapshot.
+- **No model results.** Lane 3 has no frozen tuning config and no official run, so the
+  clone cannot reproduce a headline, an episode table or the C-13 decision.
+- **Not the Day 7 gate.** The combined clean clone is still owed after the model results
+  land.
 
-```bash
-git clone git@github.com:sathvikboina/recession-ews.git /tmp/opencode/dryrun-main
-cd /tmp/opencode/dryrun-main
-git checkout main
-git log -1 --oneline
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-make config
-make scope
-make check
-make test
-```
+## 3. Finding F1 — the raw-hash test skips even when raw data exists
 
-Record:
+`tests/test_country_plumbing.py:177` skips when no raw hash was checked. In a clone with
+the full `data/raw/` snapshot it still skips, because the label metadata contains no
+`raw_hashes` mapping for the test to iterate over. The test therefore does not currently
+verify any raw input. This is a Lane 1 test, so it is reported here rather than changed.
 
-- the exact commit hash;
-- the Python and package versions (`pip freeze`);
-- `make check` summary line;
-- `make test` summary line;
-- any skip reason;
-- the SHA-256 of the frozen label files.
+**Required fix (Lane 1):** either publish the raw hashes in the label metadata/`data/manifest.csv`
+and read them in the test, or rename/repurpose the test so it does not imply coverage it
+does not have.
 
-Expected result on a tree equivalent to the current `main`: **36 passed, 2 explicit skips**
-until the git-ignored `data/clean` is rebuilt, as recorded in the 2026-11-08 review. If the
-clone has the rebuilt clean data, the expected result is **38 passed**. A different count
-is a finding, not something to explain away.
+## 4. Packaging checklist
 
-## 3. Packaging checklist
+Nothing here authorises a release. All items require explicit approval first.
 
-Nothing in this checklist authorises a release. All items require explicit approval first.
-
-| Item | Required state | Status 2026-11-13 |
+| Item | Required state | Status 2026-11-14 |
 |---|---|---|
 | Bundle | not created | OK — none |
 | Mirror | not created | OK — none |
 | Zip | not created | OK — none |
 | Release tag | not created | OK — none |
 | Frozen labels | v1/v2 archived, v3 active | OK — hashes unchanged |
-| Combined clean clone | Day 7, owned by Arshiya | Pending |
+| Combined clean clone | Day 7, after model results | Pending — Lane 3 results absent |
 | Combined `make check test` | green on Day 7 | Pending |
-| Hash table | recorded by lane owners | Pending |
+| Hash table | recorded by lane owners | Partial — labels, table and folds recorded |
 | Go/no-go note | written after Day 7 review | Pending |
 
-## 4. Blocking gaps
+## 5. Blocking gaps
 
-- Arshiya's Day 4 dry-run log is missing.
-- The Day 7 combined clean clone cannot be run until all four branches are merged.
-- JPN/DEU labels, features, folds and model results are absent, so a clean clone cannot
-  prove those lanes.
+- Lane 3 has no frozen `config/models.yaml`, no official USA run and no
+  `docs/EXPERIMENTS.md`.
+- Lane 2A is integrated on `feat/features-harness`: `docs/FEATURES.md`,
+  `tests/test_feature_firewall.py`, baselines, `scripts/08_verify_lane2a.py` and the JPN
+  decision (D-R38). The combined Day 7 clone must still be re-run on the merged tree.
+- The JPN/DEU labels are frozen/decided, but the cross-country feature table is USA-only.
 
-**Do not mark the Day 4 or Day 7 gate as passed on the strength of this note.**
+**Do not mark the Day 7 gate as passed on the strength of this note.**

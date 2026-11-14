@@ -245,10 +245,10 @@ def sheet_start_here(wb: Workbook) -> None:
          "There is no Japan or Germany label, no predictor table, no model and no out-of-sample result yet. "
          "India cannot get the main label, so it is a case study."),
         ("Who does what?",
-         "Four people, four separate jobs, with shared verification.",
+         "Three people, five lanes, with shared verification.",
          "1) Japan and Germany labels. 2) Predictor table and fair test splits. 3) Six models plus the "
          "pre-registered ensemble. 4) India, integration, writing and final packaging. Verification is "
-         "shared: Arshiya owns the clean clone, Palchhin the results docs, Shravani the label docs."),
+         "shared: Sathvik owns the clean clone, Palchhin the results docs, Shravani the label docs."),
         ("How does the week work?",
          "Days 1-5 individual work; Days 6-7 combine and review.",
          "Each person owns one lane and hands off fixed files. On Day 6 the branches are merged in order "
@@ -338,7 +338,7 @@ def sheet_what_next(wb: Workbook) -> None:
         wb,
         "What Happens Next",
         "What happens next: the seven-day sprint",
-        "Days 1-5: four people work in parallel on separate lanes. Days 6-7: combine, review and decide. "
+        "Days 1-5: three people work in parallel on separate lanes. Days 6-7: combine, review and decide. "
         "Packaging is a separate approval step after Day 7.",
         [10, 26, 58, 54, 44, 22],
     )
@@ -356,7 +356,7 @@ def sheet_what_next(wb: Workbook) -> None:
          "Model code, USA headline table, episode table, ablations, results note.",
          "Code starts Day 1 on a fixture; real runs use Part 2's draft folds from Day 3 and final folds from Day 4.", "Days 1-5"),
         ("Days 1-5", "Part 4 - India + integration",
-         "Finish India's downloaded-data count, keep the scope honest, and coordinate shared verification: Arshiya owns the dry-run clean clone, Palchhin the results docs, Shravani the label docs.",
+         "Finish India's downloaded-data count, keep the scope honest, and coordinate shared verification: Sathvik owns the dry-run clean clone, Palchhin the results docs, Shravani the label docs.",
          "India coverage table, updated docs, dry-run clean-clone evidence, integration checklist.",
          "Runs alongside everyone; coordinates the merge on Day 6.", "Days 1-5"),
         ("Day 6", "Combine the four lanes",
@@ -417,9 +417,9 @@ def sheet_team_plan(wb: Workbook) -> None:
             "Day 6: merge your label branch and audit the Japan label and Germany coverage.\nDay 7: sign off the label lane.\n\nMain risk: the generic refactor, source keys and Japan hours/employment; Germany may not finish in five days. If time is short, protect Japan first.",
         ),
         (
-            "Part 2\nSuggested owner: Arshiya",
-            "ML engineering lead",
-            "Job: Build the USA predictor table and the fair time-based test harness on the extended USA panel. Own the dry-run clean clone on Day 4.\n\n"
+            "Part 2A/2B\nOwners: Shravani (2A) + Sathvik (2B)",
+            "Feature specification / ML engineering",
+            "Job: 2A writes the predictor spec, dictionary, firewall tests and baselines; 2B builds the USA predictor table and the fair time-based test harness, and owns the dry-run clean clone on Day 4.\n\n"
             "Why it matters: Models are only as honest as the features and folds. Leakage is the biggest technical risk in the project.",
             "Day 1: feature spec and 2026 data audit.\nDay 2: build the USA feature table.\nDay 3: leakage tests and draft folds.\nDay 4: final walk-forward folds and fold tests; dry-run clean clone of current main.\nDay 5: baselines, freeze dataset/folds and hand off.",
             "Inputs: extended clean panels, series_resolution, C-01/C-05/C-06/C-07/C-08, scope config.\n\n"
@@ -441,13 +441,13 @@ def sheet_team_plan(wb: Workbook) -> None:
         (
             "Part 4\nSuggested owner: Sathvik Boina",
             "Validation, integration and writing lead",
-            "Job: Close the India question, keep the scope honest, coordinate the merge and run the final review. Verification is shared: Arshiya owns the clean clone, Palchhin the results docs, Shravani the label docs.\n\n"
+            "Job: Close the India question, keep the scope honest, coordinate the merge and run the final review. Verification is shared: Sathvik owns the clean clone, Palchhin the results docs, Shravani the label docs.\n\n"
             "Why it matters: A good project is not just code. It needs a clear story, consistent documents and proof that it reproduces.",
-            "Day 1: download India data or record the access failure.\nDay 2: final India count and O-2 decision.\nDay 3: audit the 2026 extension and sync docs with Shravani and Palchhin.\nDay 4: review Arshiya's dry-run clean clone and the packaging checklist.\nDay 5: integration rehearsal with all four; write the plain-English pitch.",
+            "Day 1: download India data or record the access failure.\nDay 2: final India count and O-2 decision.\nDay 3: audit the 2026 extension and sync docs with Shravani and Palchhin.\nDay 4: review the dry-run clean clone and the packaging checklist.\nDay 5: integration rehearsal with all three; write the plain-English pitch.",
             "Inputs: all outputs from Parts 1-3, docs/INDIA_COVERAGE_AUDIT.md, decisions log, test results.\n\n"
             "Outputs: data/india_core_coverage.csv, updated decisions and docs, final README/pitch, dry-run evidence, integration checklist.\n\n"
             "Done when: India has a downloaded-data count or recorded access failure; docs agree; combined clean clone passes on Day 7; no unsupported forecast claim; package ready for approval.",
-            "Day 6: coordinate the merge in the fixed order; each owner merges their own branch.\nDay 7: coordinate the review and go/no-go with Arshiya.\n\nMain risk: waiting for other lanes; document drift; scope creep. Coordinate, but do not absorb another lane's unfinished work.",
+            "Day 6: coordinate the merge in the fixed order; each owner merges their own branch.\nDay 7: coordinate the review and go/no-go with Palchhin and Shravani.\n\nMain risk: waiting for other lanes; document drift; scope creep. Coordinate, but do not absorb another lane's unfinished work.",
         ),
     ]
     row = table(
@@ -494,19 +494,19 @@ def sheet_tasks(wb: Workbook) -> None:
         ("1.5", "Part 1", "Shravani", "Day 5", "Germany coverage and label decision",
          "Compute Germany 6/8 coverage. Build the label only if the gate passes. If it fails, write the missing-indicator finding and hand off a complete coverage note.",
          "DEU clean panel", "DEU coverage note, label if gate passes", "Gate decision recorded; no rule relaxation", "1.4"),
-        ("2.1", "Part 2", "Arshiya", "Day 1", "Write feature spec and audit 2026 data",
+        ("2.1", "Part 2A", "Shravani", "Day 1", "Write feature spec and audit 2026 data",
          "Write the exact predictor list, transforms, lags and missing-data rules. Confirm the 2026Q1-Q3 extension is complete and that no BEAI-derived output, NBER or label output enters the table. Document allowed raw BEAI-eligible predictor copies.",
          "Scope, C-01/C-05/C-06/C-07, 2026 panel", "Feature spec and column list", "Every column has a source, transform and lag; 2026 audit written; allowed copies documented", "None"),
-        ("2.2", "Part 2", "Arshiya", "Day 2", "Build the USA feature table",
+        ("2.2", "Part 2B", "Sathvik", "Day 2", "Build the USA feature table",
          "Build one row per USA quarter, 1990Q1-2026Q3. Store unscaled values only. Missing stays missing. The eight BEAI-eligible series may appear only as separate, versioned predictor copies with their own transform and availability lag.",
          "Clean panels, feature spec", "Makefile target features, src/ews/features.py, scripts/05_features.py, dataset.parquet", "make features runs; row count and keys check out; copies labelled", "2.1"),
-        ("2.3", "Part 2", "Arshiya", "Day 3", "Add leakage tests and draft folds",
+        ("2.3", "Part 2A/2B", "Shravani + Sathvik", "Day 3", "Add leakage tests and draft folds",
          "Test that no BEAI-derived output, NBER column, future observation, country id or country-size level enters the table. Build a draft expanding-window fold file for Part 3.",
-         "Feature table", "tests/test_features.py, draft folds.json", "All leakage tests pass; a deliberately leaking table fails", "2.2"),
-        ("2.4", "Part 2", "Arshiya", "Day 4", "Build final walk-forward folds",
+         "Feature table", "tests/test_feature_firewall.py, draft folds.json", "All leakage tests pass; a deliberately leaking table fails", "2.2"),
+        ("2.4", "Part 2B", "Sathvik", "Day 4", "Build final walk-forward folds",
          "Expanding-window walk-forward. Inner folds are time-ordered. y(t,H)=1 if a recession starts in t+1 to t+H. Horizons 1, 2 and 4 quarters; 2 is primary. Hand the final file to Part 3 at end of day; also dry-run the clean clone of current main.",
          "Labels, feature table, C-08", "Makefile target folds, src/ews/harness.py, scripts/06_folds.py, folds.json, dry-run clean-clone note", "make folds runs; boundaries written to JSON; no test row in training; Part 3 can run the USA headline", "2.3"),
-        ("2.5", "Part 2", "Arshiya", "Day 5", "Add baselines and freeze handoff",
+        ("2.5", "Part 2A", "Shravani", "Day 5", "Add baselines and freeze handoff",
          "Add majority class, term-spread probit/logit and plain logistic. Freeze dataset.parquet and folds.json. Write the feature dictionary and exact build commands. If the frozen files differ from Day 4, Part 3 reruns.",
          "All Part 2 outputs", "Feature dictionary, handoff note", "Part 3 can run from the handed files and a seed", "2.2, 2.4"),
         ("3.1", "Part 3", "Palchhin", "Day 1", "Build model interfaces",
@@ -533,16 +533,16 @@ def sheet_tasks(wb: Workbook) -> None:
         ("4.3", "Part 4", "Sathvik + Shravani + Palchhin", "Day 3", "Audit the 2026 extension and sync docs",
          "Verify labels-v3, the 147-quarter window, v1/v2 archives and every hash. Shravani checks label docs; Palchhin checks results docs; Sathvik updates README, STATE, VERIFICATION and the claim wording. No unsupported forecast.",
          "v3 outputs, docs", "Updated docs", "Docs agree with v3; no unsupported forecast claim", "1.3, 2.2"),
-        ("4.4", "Part 4", "Arshiya (Sathvik reviews)", "Day 4", "Clean-clone and packaging dry run",
+        ("4.4", "Part 4", "Sathvik (Shravani cross-checks)", "Day 4", "Clean-clone and packaging dry run",
          "Clone current main into a fresh directory. Run make check, make test and the label hash check. Confirm the packaging checklist; do not create a bundle, mirror, zip or release tag. This does not prove the combined tree.",
          "Current main", "Dry-run clean-clone evidence, packaging checklist", "Current main passes; nothing packaged or tagged; combined clone is Day 7", "4.3"),
-        ("4.5", "Part 4", "All four (Sathvik facilitates)", "Day 5", "Integration rehearsal and plain-English pitch",
+        ("4.5", "Part 4", "All three (Sathvik facilitates)", "Day 5", "Integration rehearsal and plain-English pitch",
          "Do a dry-run merge in the fixed order. Write the one-page story: what was built, what the label proves, what the model result does not prove, and what is next.",
          "Outputs from Parts 1-3", "Rehearsal notes, pitch", "Merge order works; pitch is accurate and plain", "4.3, 2.5, 3.5"),
         ("6.1", "Day 6", "Shravani", "Day 6", "Merge Part 1 labels first",
          "Merge the label branch. Run the label hash checks and the chronology notes. Do not merge if a frozen hash moves or a country gate is undocumented.",
          "Part 1 outputs, main branch", "Labels on main", "All label checks green", "1.5"),
-        ("6.2", "Day 6", "Arshiya", "Day 6", "Merge Part 2 features and folds",
+        ("6.2", "Day 6", "Sathvik", "Day 6", "Merge Part 2 features and folds",
          "Merge the feature/fold branch. Re-run leakage tests and check that the folds match the labels now on main.",
          "Part 2 outputs", "Features and folds on main", "Leakage tests green; fold boundaries unchanged", "6.1"),
         ("6.3", "Day 6", "Palchhin", "Day 6", "Merge Part 3 models",
@@ -551,16 +551,16 @@ def sheet_tasks(wb: Workbook) -> None:
         ("6.4", "Day 6", "Sathvik + all", "Day 6", "Merge Part 4 docs and run full check",
          "Merge the docs/integration branch. Run make check, make test and the label hash check on the combined tree.",
          "All branches", "Combined main branch", "All checks green; no red merge", "6.3"),
-        ("7.1", "Day 7", "All four", "Day 7", "Cross-review each other's lane",
-         "Shravani reviews features/folds; Arshiya reviews labels; Palchhin reviews docs/India; Sathvik reviews models. Write findings, not verbal comments.",
+        ("7.1", "Day 7", "All three", "Day 7", "Cross-review each other's lane",
+         "Shravani reviews the feature spec and table; Sathvik reviews labels, folds and models; Palchhin reviews docs/India. Write findings, not verbal comments.",
          "Combined main branch", "Review notes", "Every lane has one named reviewer and written findings", "6.4"),
-        ("7.2", "Day 7", "Arshiya + Sathvik", "Day 7", "Run the full clean-clone check",
-         "Clone the combined repository into a fresh directory. Arshiya runs make check, make test and the label hash checks; Sathvik records the exact commands and output.",
+        ("7.2", "Day 7", "Sathvik (Shravani cross-checks)", "Day 7", "Run the full clean-clone check",
+         "Clone the combined repository into a fresh directory. Sathvik runs make check, make test and the label hash checks and records the exact commands and output; Shravani cross-checks the label hashes.",
          "Combined main branch", "Clean-clone evidence", "Fresh clone passes; hashes match", "7.1"),
-        ("7.3", "Day 7", "All four", "Day 7", "Go/no-go review",
+        ("7.3", "Day 7", "All three", "Day 7", "Go/no-go review",
          "Review the four gates: label, features, models and release. Record a clear go or no-go with the reasons and the owner of each follow-up.",
          "Review notes, clean-clone evidence", "Written go/no-go decision", "Decision recorded; no silent exceptions", "7.2"),
-        ("7.4", "Day 7", "Sathvik + Arshiya", "Day 7", "Package only if approved",
+        ("7.4", "Day 7", "Sathvik", "Day 7", "Package only if approved",
          "If the decision is go and the lead approves, build the bundle, mirror and zip and tag the release. If not, write the findings and next actions instead.",
          "Approval, combined tree", "Final package or findings note", "Approval recorded before any tag", "7.3"),
     ]
@@ -582,16 +582,16 @@ def sheet_schedule(wb: Workbook) -> None:
         wb,
         "Parallel Schedule",
         "Seven-day parallel schedule",
-        "Days 1-5: four people work in parallel on separate lanes. Day 6: merge. Day 7: review and sign off.",
+        "Days 1-5: three people work in parallel on separate lanes. Day 6: merge. Day 7: review and sign off.",
         [38, 17, 17, 17, 17, 17, 17, 17],
     )
     rows = [
         ("Part 1 - Japan (Shravani)", "Sources +\nplumbing", "Data", "Label\nM1", "", "", "Merge", "Sign-off"),
         ("Part 1 - Germany (Shravani)", "", "", "", "Sources", "Coverage\nM2", "Merge", "Sign-off"),
-        ("Part 2 - Features/folds (Arshiya)", "Spec", "Table", "Draft folds", "Folds +\ndry clone", "Freeze\nM3", "Merge", "Clean clone"),
+        ("Part 2 - Features/folds (Shravani 2A / Sathvik 2B)", "Spec", "Table", "Draft folds", "Folds +\ndry clone", "Freeze\nM3", "Merge", "Clean clone"),
         ("Part 3 - Models (Palchhin)", "Interfaces", "Singles", "REWI", "USA\nheadline", "Results\nM4", "Merge", "Audit"),
         ("Part 4 - India/integration (Sathvik)", "India data", "India count", "Docs", "Review dry\nclone", "Rehearsal", "Merge lead", "Review lead\nM5"),
-        ("Joint - all four", "Individual", "Individual", "Individual", "Individual", "Individual", "Merge", "Review"),
+        ("Joint - all three", "Individual", "Individual", "Individual", "Individual", "Individual", "Merge", "Review"),
         ("Release", "", "", "", "", "", "", "Approval"),
     ]
     row = table(
@@ -643,22 +643,22 @@ def sheet_handoffs(wb: Workbook) -> None:
         ("H1", "Sathvik -> all", "Sprint start",
          "Read the v3 label, the 2026 data extension and the 7-day plan.",
          "docs/STATE.md, docs/TEAM_PLAN.md, Team_Plan.xlsx", "Everyone can state their Day 1 task", "Day 1 morning"),
-        ("H2", "Arshiya -> Palchhin", "Draft folds",
+        ("H2", "Sathvik (2B) -> Palchhin", "Draft folds",
          "A draft fold file with the same row keys and horizons as the final file.",
          "outputs/folds/folds.json (draft)", "Part 3 can run a fixture and a first real pass", "Day 3 end"),
         ("H3", "Shravani -> Sathvik", "Japan label and Germany coverage",
          "Japan label, chronology note and the German 6/8 decision.",
          "outputs/labels/JPN/*, DEU coverage note", "Hash recorded; chronology compared; gate decision written", "Day 5 end"),
-        ("H4", "Arshiya -> Palchhin + Sathvik", "Final features and folds",
+        ("H4", "Shravani (2A) + Sathvik (2B) -> Palchhin", "Final features and folds",
          "One predictor table and one fold file used by every model. Hand the final folds on Day 4 for the USA headline; freeze the files on Day 5.",
          "data/clean/dataset.parquet, outputs/folds/folds.json", "Leakage tests pass; no BEAI-derived/NBER; boundaries frozen", "Day 4 end (folds); Day 5 end (frozen)"),
         ("H5", "Palchhin -> Sathvik", "Model results",
          "USA headline, episode, ablation and ensemble tables; JPN/DEU only if labels landed.",
          "outputs/results/*", "Same folds and features; C-13 applied once", "Day 5 end"),
-        ("H6", "All -> Sathvik + Arshiya", "Merge inputs",
+        ("H6", "All -> Sathvik", "Merge inputs",
          "One branch per lane, green checks and a short hand-off note.",
          "Four lane branches", "Each branch passes its own checks before merge", "Day 6 morning"),
-        ("H7", "Sathvik + Arshiya -> all", "Review pack",
+        ("H7", "Sathvik -> all", "Review pack",
          "Clean-clone evidence, hash table and the written go/no-go draft.",
          "Combined main branch", "All four gates answered in writing", "Day 7 morning"),
     ]
@@ -805,11 +805,11 @@ def sheet_rules(wb: Workbook) -> None:
         ("RK9", "Optional model packages are not installed.",
          "Warning: Part 3 cannot run XGBoost or SHAP.\nAction: install the full development environment before Day 3.",
          "Part 3"),
-        ("RK10", "Four people working in parallel for one week.",
+        ("RK10", "Three people working in parallel for one week.",
          "Warning: files collide, docs drift and the merge becomes a rescue.\nAction: one branch per lane, fixed output paths, daily stand-up and the Day 6 merge order.",
          "All"),
         ("RK11", "The integration owner becomes the bottleneck.",
-         "Warning: every check, doc and merge waits for one person.\nAction: shared verification roles - Arshiya owns the clean clone, Palchhin the results docs, Shravani the label docs, and each owner merges their own branch.",
+         "Warning: every check, doc and merge waits for one person.\nAction: shared verification roles - Sathvik owns the clean clone, Palchhin the results docs, Shravani the label docs, and each owner merges their own branch.",
          "All"),
     ]
     table(ws, row, ["ID", "Risk", "Early warning and what to do", "Owner"], risks, [8, 30, 70, 40], bold_first=True)
@@ -840,7 +840,7 @@ def sheet_review(wb: Workbook) -> None:
         ("Frozen artefacts", "Solid", "labels-v1 and labels-v2 archive hashes match. labels-v3 is the active label. A fresh clone reproduces the same hashes."),
         ("Japan and Germany labels", "Gap", "Not started. Part 1 starts with Japan source resolution and the country-plumbing refactor on Day 1; Germany is a stretch goal. A complete coverage note is acceptable."),
         ("Features, folds and models", "Gap", "Not started. Parts 2 and 3 build them during Days 1-5. The first model result is USA-first; no out-of-sample score exists yet."),
-        ("Work balance", "Watch", "No single person owns every check. Each lane owner merges their own branch; Arshiya owns the combined clean clone, Palchhin the results docs, Shravani the label docs, and Sathvik coordinates."),
+        ("Work balance", "Watch", "No single person owns every check. Each lane owner merges their own branch; Sathvik owns the combined clean clone, Palchhin the results docs, Shravani the label docs, and Sathvik coordinates."),
         ("Final bundle and tag", "Waiting", "Deliberately not built. It waits for explicit approval after the combined project passes its checks."),
     ]
     fills = []

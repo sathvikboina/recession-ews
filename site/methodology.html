@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Method — Recession Early Warning</title>
+<meta name="description" content="How the recession label, predictor table and walk-forward folds are built.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="methodology">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><span class="mark">EW</span><span>Recession Early Warning</span></a>
+    <nav class="nav" aria-label="Project pages">
+      <a href="index.html">Overview</a>
+      <a href="methodology.html" aria-current="page">Method</a>
+      <a href="firewall.html">Firewall</a>
+      <a href="results.html">Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <p class="eyebrow">Methodology</p>
+    <h1>Build the chronology first. Then protect the test.</h1>
+    <p class="lede">The method is deliberately conservative: one frozen estimator, one table, one fold file, and a firewall that is tested by trying to break it.</p>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>1 · The label pipeline</h2><p>An ex-post chronology from coincident activity, not a forecasting model.</p></div><span class="badge ok">Frozen</span></div>
+    <div class="pipeline">
+      <div class="stage done"><span class="tag">Step 1</span><div class="num">1</div><h3>Eight indicators</h3><p>Output, income, employment, hours, consumption, retail, investment and industrial production.</p></div>
+      <div class="stage done"><span class="tag">Step 2</span><div class="num">2</div><h3>Dynamic factor</h3><p>One-factor DFM with AR(1) idiosyncratic terms; EM and Kalman smoothing; no country-specific tuning.</p></div>
+      <div class="stage done"><span class="tag">Step 3</span><div class="num">3</div><h3>BBQ dating</h3><p>Bry–Boschan rules on the cumulated factor: minimum phase 2Q, minimum cycle 5Q, endpoint censor 2Q.</p></div>
+      <div class="stage done"><span class="tag">Step 4</span><div class="num">4</div><h3>Diffusion gate</h3><p>A contraction is kept only if the mean share of deteriorating indicators is at least 0.50.</p></div>
+      <div class="stage done"><span class="tag">Step 5</span><div class="num">5</div><h3>Recession flag</h3><p><span class="mono">R = 1</span> from peak + 1 through trough. The label is frozen with its metadata and hashes.</p></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card">
+        <h3>Activity level and labelled episodes</h3>
+        <div id="label-chart" class="chart" data-label="USA activity level with labelled recessions"></div>
+      </div>
+      <div class="card">
+        <h3>The diffusion gate in action</h3>
+        <p class="small muted">The dashed line is the 0.50 gate. Candidate contractions below it are not labelled.</p>
+        <div id="diffusion-chart" class="chart" data-label="Diffusion share with 0.50 gate"></div>
+        <p class="tiny muted" style="margin:10px 0 0">Diffusion is the fraction of the eight core indicators deteriorating in a quarter.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>2 · The predictor table</h2><p>Only predictors. Never the label, the factor or a chronology.</p></div><span class="badge ok">149 columns</span></div>
+    <div class="grid2b">
+      <div class="card">
+        <h3>Availability before transformation</h3>
+        <p class="small muted">A predictor at quarter <em>t</em> may use only data published by the prediction origin: quarter end plus six weeks. The lag is applied to the source series <em>before</em> differencing and rolling windows.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Lag class</th><th>Publication lag</th><th>Typical series</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">NA</span></td><td>3 months</td><td>national accounts, credit, quarterly house prices</td></tr>
+              <tr><td><span class="mono">MONTHLY</span></td><td>6 weeks</td><td>industrial production, retail, monthly prices</td></tr>
+              <tr><td><span class="mono">MARKET</span></td><td>0 days</td><td>interest rates, equity, yield slope</td></tr>
+              <tr><td><span class="mono">SURVEY</span></td><td>4 weeks</td><td>business confidence, consumer sentiment</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>What each series becomes</h3>
+        <p class="small muted">Growth and price series enter as log changes. Rates, spreads and surveys keep a dimensionless level. Every family adds lags and rolling statistics.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Form</th><th>Base</th><th>Columns</th></tr></thead>
+            <tbody>
+              <tr><td>growth</td><td>100 × Δlog</td><td>8</td></tr>
+              <tr><td>price</td><td>100 × Δlog</td><td>7</td></tr>
+              <tr><td>rate / spread / survey</td><td>level</td><td>7</td></tr>
+              <tr><td>ratio</td><td>level</td><td>8</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="grid4" style="margin-top:16px">
+      <div class="kpi"><div class="k">Input series</div><div class="v">20</div><div class="n">19 scope + 1 derived slope</div></div>
+      <div class="kpi"><div class="k">BEAI copies</div><div class="v"><span data-count="beai">64</span></div><div class="n">8 series × 8 columns</div></div>
+      <div class="kpi"><div class="k">Other predictors</div><div class="v">85</div><div class="n">12 families</div></div>
+      <div class="kpi"><div class="k">Scaling</div><div class="v">In-fold</div><div class="n">table is unscaled</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>3 · The walk-forward protocol</h2><p>Every test quarter is scored once, after everything before it.</p></div><span class="badge ok">folds.json · frozen</span></div>
+    <div class="card">
+      <div class="controls">
+        <label for="fold-horizon">Horizon</label>
+        <select id="fold-horizon">
+          <option value="1">1Q</option>
+          <option value="2" selected>2Q (primary)</option>
+          <option value="4">4Q</option>
+        </select>
+      </div>
+      <div id="fold-chart" class="chart" data-label="Outer fold timeline"></div>
+      <p id="fold-note" class="table-note"></p>
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="card flat"><h4>Outer training</h4><p class="small muted" style="margin:0">Expanding, initial 80 quarters. The training block grows by one quarter per fold.</p></div>
+      <div class="card flat"><h4>Inner validation</h4><p class="small muted" style="margin:0">Initial 40 quarters, time-ordered, entirely inside the parent training block.</p></div>
+      <div class="card flat"><h4>Purge</h4><p class="small muted" style="margin:0">Equals the horizon before every test and validation block, so overlapping targets cannot cross the boundary.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>4 · Countries and scope</h2><p>Labels where the data support them; a finding where they do not.</p></div></div>
+    <div class="grid4">
+      <div class="card accent"><h3>USA</h3><p class="small muted" style="margin:0">25/25 series resolved. 147-quarter label and predictor table. <strong>Primary study.</strong></p></div>
+      <div class="card accent"><h3>Japan</h3><p class="small muted" style="margin:0">6/8 indicators pass. 144-quarter label, frozen under D-R38. 5/5 ESRI episodes matched.</p></div>
+      <div class="card warn"><h3>Germany</h3><p class="small muted" style="margin:0">Strict Q-02 leaves 5/8. No label; delivered as a coverage finding.</p></div>
+      <div class="card warn"><h3>India</h3><p class="small muted" style="margin:0">1/8 official indicators. Label-B coverage case study only; the 6-of-8 gate is not relaxed.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="banner">
+      <div><strong>What this method cannot say</strong><p>The data are revised history with simulated publication lags, not real-time vintages. The label is an ex-post chronology, not a real-time recession call. Four USA episodes make episode-level conclusions fragile.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Method details: <span class="mono">docs/BUILD_CONTRACT.md</span>, <span class="mono">docs/FEATURES.md</span>, <span class="mono">docs/LABEL_VALIDATION.md</span>.</span>
+    <span>Generated <span data-generated>—</span></span>
+  </footer>
+</main>
+<script src="assets/app.js"></script>
+</body>
+</html>

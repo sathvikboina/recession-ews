@@ -4,11 +4,11 @@
 Thin CLI over :mod:`ews.harness`. Fold generation itself lives in
 :mod:`ews.models.folds`.
 
-Status: **DRAFT**. The initial training window is not yet approved
-(docs/DECISIONS.md). Do not treat the output as frozen.
+Status: **DRAFT** unless run with ``--approved`` (D-R37).
 
 Usage:
     python scripts/06_folds.py
+    python scripts/06_folds.py --approved
     python scripts/06_folds.py --initial-train 80 --inner-initial-train 40
 """
 from __future__ import annotations
@@ -39,11 +39,20 @@ def main() -> None:
     parser.add_argument("--last-scored", default=None)
     parser.add_argument("--initial-train", type=int, default=80)
     parser.add_argument("--inner-initial-train", type=int, default=40)
+    parser.add_argument(
+        "--approved",
+        action="store_true",
+        help="mark the fold file as frozen under D-R37",
+    )
     args = parser.parse_args()
 
     first, last = load_labels(args.labels)
     start = args.start or first
     last_scored = args.last_scored or last
+    try:
+        labels_file = args.labels.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        labels_file = str(args.labels)
 
     payload = build_payload(
         start=start,
@@ -51,14 +60,20 @@ def main() -> None:
         initial_train=args.initial_train,
         inner_initial_train=args.inner_initial_train,
         labels_path=args.labels,
+        labels_file=labels_file,
         horizons=HORIZONS,
+        approved=args.approved,
     )
     write_folds(payload, args.output)
 
     counts = {h: len(v["outer"]) for h, v in payload["horizons"].items()}
     print(f"wrote {args.output} ({args.output.stat().st_size:,} bytes)")
     print(f"outer folds by horizon: {counts}")
-    print("status: DRAFT - initial training window not approved")
+    print(
+        "status: FROZEN (D-R37)"
+        if payload["metadata"]["approved"]
+        else "status: DRAFT - initial training window not approved"
+    )
 
 
 if __name__ == "__main__":

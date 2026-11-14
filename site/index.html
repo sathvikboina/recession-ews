@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Country Recession Early Warning — Project Overview</title>
+<meta name="description" content="An interactive guide to a label-first recession early-warning study: chronology, predictors, firewall, folds and baselines.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="overview">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><span class="mark">EW</span><span>Recession Early Warning</span></a>
+    <nav class="nav" aria-label="Project pages">
+      <a href="index.html" aria-current="page">Overview</a>
+      <a href="methodology.html">Method</a>
+      <a href="firewall.html">Firewall</a>
+      <a href="results.html">Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Label-first macro study · 1990Q1–2026Q3</p>
+      <h1>Can we see a recession coming without leaking the answer?</h1>
+      <p class="lede">This project separates two jobs. First it builds an <strong>ex-post recession chronology</strong> from eight official activity indicators. Then it asks whether a small set of lag-aware predictors can warn of the next peak <em>out of sample</em> — without ever touching the label.</p>
+      <div class="badges" style="margin-top:16px">
+        <span class="badge ok">Labels frozen</span>
+        <span class="badge ok">149 features</span>
+        <span class="badge ok">Folds frozen</span>
+        <span class="badge ok">Firewall tested</span>
+        <span class="badge warn">Official model run pending</span>
+      </div>
+    </div>
+    <aside class="card warn">
+      <h4>Read this first</h4>
+      <p class="small" style="margin-bottom:10px"><strong>No forecasting claim is made yet.</strong> The label, the predictor table, the firewall and the walk-forward folds are complete. The official six-model comparison and the pre-registered ensemble belong to Lane 3 and are still missing.</p>
+      <p class="small muted" style="margin:0">The exploratory run that exists is not the official result: it fails the pre-registered ensemble test.</p>
+    </aside>
+  </section>
+
+  <section>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Study window</div><div class="v">147 <small>quarters</small></div><div class="n">1990Q1–2026Q3</div></div>
+      <div class="kpi"><div class="k">Predictors</div><div class="v" data-count="features">149</div><div class="n">from 20 input series</div></div>
+      <div class="kpi"><div class="k">Outer folds</div><div class="v" data-count="folds">67</div><div class="n">per horizon · 1Q / 2Q / 4Q</div></div>
+      <div class="kpi"><div class="k">NBER episodes</div><div class="v">4 / 4</div><div class="n">matched in the window</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Two questions, one firewall</h2>
+        <p>The chronology is a measurement problem. The warning model is a prediction problem. Mixing them is the failure mode this project is built to prevent.</p>
+      </div>
+    </div>
+    <div class="grid2b">
+      <div class="card accent">
+        <h3>1 · What happened?</h3>
+        <p class="small muted">A dynamic factor model summarises eight coincident activity indicators. Bry–Boschan dating finds peaks and troughs; a diffusion gate keeps only broad contractions. The result is a quarterly recession flag <span class="mono">R</span> and an episode list.</p>
+        <p class="small"><strong>Output:</strong> <span class="mono">labels-v3</span> for the USA, <span class="mono">labels-v1-JPN</span> for Japan.</p>
+        <p class="small"><strong>Validation:</strong> 4/4 NBER episodes in the USA window; 5/5 post-1994 ESRI episodes in Japan.</p>
+      </div>
+      <div class="card gold">
+        <h3>2 · What comes next?</h3>
+        <p class="small muted">A separate table turns only predictor series into lag-aware features. Availability lags are applied before transforms, scaling happens inside folds, and the label is never a column. The frozen folds score each quarter once, in time order.</p>
+        <p class="small"><strong>Output:</strong> 147 × 149 unscaled predictor table and 67 outer folds per horizon.</p>
+        <p class="small"><strong>Status:</strong> baselines are in; the official model result is pending.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>The chronology</h2>
+        <p>The teal line is the cumulated activity factor. Shaded bands are labelled recessions. Red and blue dots mark labelled peaks and troughs.</p>
+      </div>
+      <span class="badge ok">labels-v3 · frozen</span>
+    </div>
+    <div class="card">
+      <div id="label-chart" class="chart" data-label="USA activity level with labelled recessions"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:#0b6e75"></i>activity level</span>
+        <span><i class="sw box" style="background:rgba(166,61,47,.18)"></i>labelled recession</span>
+        <span><i class="sw box" style="background:#a63d2f;border-radius:50%"></i>peak</span>
+        <span><i class="sw box" style="background:#2b6cb0;border-radius:50%"></i>trough</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Where the project stands</h2>
+        <p>Five stages. Three are frozen, one is in progress, and one is the missing official model run.</p>
+      </div>
+    </div>
+    <div class="pipeline">
+      <div class="stage done"><span class="tag">Done</span><div class="num">1</div><h3>Data & labels</h3><p>Harmonised quarterly panels; DFM + BBQ + diffusion; USA and Japan labels frozen.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">2</div><h3>Features</h3><p>149 unscaled predictors. Eight BEAI series appear only as separate <span class="mono">beai_copy_*</span> columns.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">3</div><h3>Firewall</h3><p>Independent tests for schema, blacklist, scaling, future leakage and mutation.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">4</div><h3>Folds</h3><p>Expanding, 80 outer / 40 inner quarters, horizon purge, first score 2010Q1.</p></div>
+      <div class="stage pending"><span class="tag">Pending</span><div class="num">5</div><h3>Official models</h3><p>Six singles, then C-13 applied once. No official headline, episode table or ensemble verdict yet.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <h3>What is established</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>The USA chronology matches all four NBER recessions with one false quarter.</li>
+          <li>Japan matches all five post-1994 ESRI episodes at episode level.</li>
+          <li>The predictor table is unscaled, lag-aware and independently firewalled.</li>
+          <li>Every fold is time-ordered with a purge equal to the horizon.</li>
+          <li>Simple baselines run on the frozen folds with no test-set tuning.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What is not established</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>Whether any model forecasts a recession out of sample.</li>
+          <li>Whether the pre-registered top-3 ensemble beats the best single model.</li>
+          <li>Any real-time claim: the data are revised history with simulated publication lags.</li>
+          <li>Any cross-country model result: only the USA has both labels and predictors aligned.</li>
+          <li>Germany: below the 6-of-8 gate, delivered as a coverage finding.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Explore the project</h2>
+        <p>Three deeper pages, built from the frozen artefacts.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <a class="card flat" href="methodology.html" style="text-decoration:none;color:inherit">
+        <h4>Method</h4>
+        <h3>From indicators to a fair test</h3>
+        <p class="small muted" style="margin:0">The label estimator, the availability ladder, the 149-column table and the frozen fold protocol.</p>
+      </a>
+      <a class="card flat" href="firewall.html" style="text-decoration:none;color:inherit">
+        <h4>Firewall</h4>
+        <h3>Try to leak the answer</h3>
+        <p class="small muted" style="margin:0">Explore any predictor and poison the table. The tests are designed to fail on a leak.</p>
+      </a>
+      <a class="card flat" href="results.html" style="text-decoration:none;color:inherit">
+        <h4>Results</h4>
+        <h3>Labels, baselines and the gap</h3>
+        <p class="small muted" style="margin:0">Validated chronologies, honest baselines, and the official model result that is still pending.</p>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="banner info">
+      <div>
+        <strong>Submission note</strong>
+        <p>The provided instructions ask for an IEEE conference report of 4–6 pages, due 13 November 2026, with a training-loss curve. The report draft now mirrors those sections, but the loss curve and the official results cannot be produced honestly until the Lane 3 run exists.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Source: frozen <span class="mono">labels-v3</span>, <span class="mono">dataset.parquet</span> and <span class="mono">folds.json</span>.</span>
+    <span>Generated <span data-generated>—</span> · offline, no external calls</span>
+  </footer>
+</main>
+<script src="assets/app.js"></script>
+</body>
+</html>

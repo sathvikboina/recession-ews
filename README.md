@@ -7,7 +7,9 @@ feature table or model has been built yet; an exploratory USA-first run is clear
 as such, so no forecasting performance is claimed. A static dashboard renders the label and
 that exploratory run.
 
-Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
+Team: Sathvik Boina, Shravani Math, Palchhin. (The original Lane 2 owner resigned; Lane 2 is
+now split into 2A — specification and tests, Shravani — and 2B — table and folds, Sathvik.
+See D-R34.)
 
 ## Status
 
@@ -18,7 +20,7 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 | Phase 3 — scoped verification | USA 25/25 resolved; JPN 18/21 resolved (3 pending); DEU 18/21 resolved (3 pending; Q-02 blocks the investment row) |
 | Phase 4 — collect + harmonise | USA and JPN done; DEU collected, delivered as a coverage finding |
 | Phase 5 — BEAI label | **USA `labels-v3` and JPN `labels-v1-JPN` frozen** (`labels-v2`/`labels-v1` archived); DEU below the 6/8 gate |
-| Phase 6–8 — features / harness / models | not started officially; exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |
+| Phase 6–8 — features / harness / models | feature table and frozen folds built (Lane 2B); firewall suite, spec and baselines integrated (Lane 2A); official models not started — exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |
 | Phase 9+ — experiments, interpretation, dashboard | static dashboard built (`dashboard/index.html`); official experiments not started |
 
 Review state (2026-11-08): the USA panel and label run to **2026Q3** (147 quarters,
@@ -54,6 +56,10 @@ make fetch       # verify + download the FRED series (no API key needed)
 make pipeline    # fetch -> harmonise -> label -> NBER validation
 make check       # environment + configuration gate
 make test        # test suite
+make features    # build the USA predictor table (data/clean/dataset.parquet)
+make folds       # export the frozen walk-forward folds (outputs/folds/folds.json)
+make baselines   # Lane 2A baselines on the frozen folds (outputs/results)
+make lane2a      # verify the Lane 2A firewall, folds and baselines
 make team-plan   # rebuild the plain-English Team_Plan.xlsx
 make worklog     # rebuild the detailed EWS_Work_Log.xlsx
 make reports     # rebuild both generated workbooks
@@ -104,13 +110,17 @@ data/
   superseded_series.csv  retired source ids, kept for provenance
   raw/ interim/ clean/   data stages (git-ignored)
 src/ews/labels/    dfm.py, bbq.py, diffusion.py, build.py
+src/ews/           features.py (Pipeline B table), harness.py (fold export + adapter)
+src/ews/models/    Lane 3 panel, transforms, folds, runner, nested runner
 scripts/           00_env, export_spec, scope_catalog, fetch_fred, harmonize, 03_labels,
-                   04_compare_nber, 05_dashboard, make_worklog, make_team_plan
+                   04_compare_nber, 05_features, 06_folds, 05_dashboard,
+                   make_worklog, make_team_plan
 tests/             config/window, scope, harmonise, label, frozen artefacts, review invariants
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md,
                    DECISION_NOTE_Q02_Q04_Q05.md, PROPOSAL_ADDENDUM.md,
                    INDIA_COVERAGE_AUDIT.md, EXPLORATORY_MODEL_RUN.md, TEAM_PLAN.md,
-                   REVIEW_2026-11-05.md
+                   REVIEW_2026-11-05.md, FINAL_REPORT.md (draft), FEATURES.md,
+                   LANE2A_RESULT.md
 dashboard/         index.html — generated, self-contained USA dashboard
 outputs/           labels, folds, results, figures, runs
 Team_Plan.xlsx     generated plain-English team plan: what happened, what is next,
@@ -181,7 +191,9 @@ Work is split into four packages in `docs/TEAM_PLAN.md`:
    harmonise, run the frozen label and compare with ESRI / the German chronology. Japan is
    the priority; a complete German coverage note is acceptable if the 6/8 gate fails.
 2. **Feature table and walk-forward harness** — predictors only (raw BEAI-eligible series
-   only as separate copies), leakage tests, and the combined clean clone.
+   only as separate copies), leakage tests, frozen folds and the combined clean clone.
+   The table and folds are built (Lane 2B); the spec, firewall tests and baselines are
+   Lane 2A.
 3. **Models and the pre-registered ensemble** — six singles, then the exact C-13 rule.
    The first model result is **USA-first**; JPN/DEU join only if their labels land.
 4. **India coverage, scope and integration** — downloaded-data count or recorded access

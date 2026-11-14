@@ -1,8 +1,8 @@
 # One-Week Sprint — Lane Briefs
 
-Status: **active; Part 4 content complete 2026-11-13.** Lane 2 was reassigned on 2026-11-14
-after the original owner resigned; it is now split into 2A (specification and tests) and 2B
-(build and integration). Days 1–5 are individual work; Days 6–7 are shared combining,
+Status: **Lanes 1, 2A, 2B and 4 integrated; Lane 3 official run pending.** Lane 2 was
+reassigned on 2026-11-14 after the original owner resigned; it is now split into 2A
+(specification and tests) and 2B (build and integration). Days 1–5 are individual work; Days 6–7 are shared combining,
 cross-review and sign-off.
 
 These briefs are the short, self-contained version of `docs/TEAM_PLAN.md`. Read your own
@@ -29,10 +29,12 @@ what is frozen and what Palchhin must freeze on Day 1. PDF:
 [03a_palchhin_model_spec.pdf](03a_palchhin_model_spec.pdf).
 
 **Part 4 artefacts:** [04a_docs_audit.md](04a_docs_audit.md) (Day 3),
-[04b_clean_clone_review.md](04b_clean_clone_review.md) (Day 4 checklist; Arshiya's evidence
+[04b_clean_clone_review.md](04b_clean_clone_review.md) (Day 4 checklist; Sathvik's evidence
 pending), [04c_integration_rehearsal.md](04c_integration_rehearsal.md) (merge checklist;
 rehearsal pending), [04d_pitch.md](04d_pitch.md) (one-page pitch) and
-[04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps).
+[04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps) and
+[05_2a_intake.md](05_2a_intake.md) (the Lane 2A intake sequence, now executed) and
+[LANE2A_RESULT.md](../LANE2A_RESULT.md) (what was integrated and what was rejected).
 
 ## Schedule at a glance
 
@@ -54,23 +56,24 @@ hand-off; it does not start another lane's work. A slipping lane says so on Day 
 | ID | From → to | When | What |
 |---|---|---|---|
 | H1 | Sathvik → all | Day 1 morning | Briefs and plan understood; Day 1 task stated |
-| H2 | Arshiya → Palchhin | Day 3 end | Draft folds with stable keys and horizons |
+| H2 | Sathvik (2B) → Palchhin | Day 3 end | Draft folds with stable keys and horizons |
 | H3 | Shravani → Sathvik | Day 5 end | Japan label, chronology note, Germany decision, hashes |
-| H4 | Arshiya → Palchhin + Sathvik | Day 4 end (folds); Day 5 end (frozen) | Table + folds for the USA headline; frozen files later |
+| H4 | Shravani (2A) + Sathvik (2B) → Palchhin | Day 4 end (folds); Day 5 end (frozen) | Table + folds for the USA headline; frozen files later |
 | H5 | Palchhin → Sathvik | Day 5 end | USA headline, episodes, ablations, ensemble decision |
-| H6 | All → Sathvik + Arshiya | Day 6 morning | One branch per lane, green checks, short hand-off note |
-| H7 | Sathvik + Arshiya → all | Day 7 morning | Clean-clone evidence, hash table, draft go/no-go |
+| H6 | All → Sathvik | Day 6 morning | One branch per lane, green checks, short hand-off note |
+| H7 | Sathvik → all | Day 7 morning | Clean-clone evidence, hash table, draft go/no-go |
 
 ## Review matrix (Day 7)
 
 | Lane | Author | Reviewer |
 |---|---|---|
-| 1. Labels | Shravani | Arshiya |
-| 2. Features/folds | Arshiya | Shravani |
+| 1. Labels | Shravani | Sathvik |
+| 2A. Feature specification/tests | Shravani | Sathvik |
+| 2B. Feature table/folds | Sathvik | Shravani |
 | 3. Models/ensemble | Palchhin | Sathvik |
 | 4. India/docs/integration | Sathvik | Palchhin |
 
-Write findings, not verbal comments. Verification is shared: Arshiya owns the combined clean
+Write findings, not verbal comments. Verification is shared: Sathvik owns the combined clean
 clone, Palchhin the results docs, Shravani the label docs, and Sathvik coordinates.
 
 ## The rules that do not bend

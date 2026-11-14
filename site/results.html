@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results — Recession Early Warning</title>
+<meta name="description" content="Label validation, honest baselines and the pending official model result.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="results">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><span class="mark">EW</span><span>Recession Early Warning</span></a>
+    <nav class="nav" aria-label="Project pages">
+      <a href="index.html">Overview</a>
+      <a href="methodology.html">Method</a>
+      <a href="firewall.html">Firewall</a>
+      <a href="results.html" aria-current="page">Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <p class="eyebrow">Results and status</p>
+    <h1>The chronology is validated. The forecast is not yet tested.</h1>
+    <p class="lede">This page separates what is measured from what is still missing. The label and baseline numbers are real. There is no official model headline to show.</p>
+  </section>
+
+  <section>
+    <div class="banner">
+      <div><strong>Official result pending — Lane 3</strong><p>No six-model comparison, episode table, ablation or C-13 verdict exists. The exploratory run is deliberately excluded because it used hand-built folds and reference implementations, and it failed the ensemble rule.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>1 · Label validation</h2><p>The chronology is checked against official dating, not against a model.</p></div></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>USA vs NBER</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>NBER</th><th>Label</th><th>Peak Δ</th><th>Trough Δ</th><th>Diffusion</th></tr></thead>
+            <tbody>
+              <tr><td>1990Q3–1991Q1</td><td>1990Q2–1991Q1</td><td>−1</td><td>0</td><td>0.810</td></tr>
+              <tr><td>2001Q1–2001Q4</td><td>2001Q1–2001Q4</td><td>0</td><td>0</td><td>0.708</td></tr>
+              <tr><td>2007Q4–2009Q2</td><td>2007Q4–2009Q2</td><td>0</td><td>0</td><td>0.875</td></tr>
+              <tr><td>2019Q4–2020Q2</td><td>2019Q4–2020Q2</td><td>0</td><td>0</td><td>0.938</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Quarter-level: 13 TP, 1 FP, 0 FN, 133 TN. Accuracy 0.993 · precision 0.929 · recall 1.000 · F1 0.963.</p>
+      </div>
+      <div class="card">
+        <h3>Japan vs ESRI</h3>
+        <p class="small muted">Six of eight indicators pass the coverage gate. The frozen label covers 144 quarters and matches all five post-1994 ESRI episodes at episode level.</p>
+        <div class="grid2b" style="margin-top:12px">
+          <div class="kpi"><div class="k">Episodes</div><div class="v">5 / 5</div><div class="n">matched</div></div>
+          <div class="kpi"><div class="k">Recall</div><div class="v">88.0%</div><div class="n">quarter level</div></div>
+          <div class="kpi"><div class="k">Precision</div><div class="v">62.9%</div><div class="n">quarter level</div></div>
+          <div class="kpi"><div class="k">Window</div><div class="v">144</div><div class="n">quarters · D-R38</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2b" style="margin-top:16px">
+      <div class="card warn"><h3>Germany — coverage finding</h3><p class="small muted" style="margin:0">Strict Q-02 leaves 5 of 8 indicators. The 6-of-8 gate is not relaxed. No German label is claimed; the deliverable is the coverage note and the documented reunification break.</p></div>
+      <div class="card warn"><h3>India — Label-B only</h3><p class="small muted" style="margin:0">One official indicator (industrial production) meets the coverage rule. No proxy, carry-forward or relaxed threshold. The finding is a coverage case study, not a model result.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>2 · Baselines on the frozen folds</h2><p>Seed 42, fixed threshold 0.50, fitted inside each outer training block.</p></div><span class="badge gold">Supplementary</span></div>
+    <div class="grid2">
+      <div class="card">
+        <div id="baseline-chart" class="chart" data-label="Pooled PR-AUC by baseline and horizon"></div>
+        <div id="baseline-legend" class="legend"></div>
+        <p class="table-note">PR-AUC at 2Q prevalence is about 0.024. Ranking skill above that line is real but small.</p>
+      </div>
+      <div class="card">
+        <h3>The honest reading</h3>
+        <p class="small muted">The yield-curve slope is the strongest baseline at 2Q, with PR-AUC 0.156 and ROC-AUC 0.873. The plain logistic over all 149 columns does worse at 0.108, which is a warning against assuming more features help.</p>
+        <p class="small muted">No baseline crosses 0.50 in the two quarters before the 2019Q4 peak, so 2Q episode recall is zero. At 4Q the slope baseline reaches PR-AUC 0.177 and detects that peak.</p>
+        <p class="small muted" style="margin:0">These are context for the official comparison, not the headline.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Horizon</th><th>Baseline</th><th>PR-AUC</th><th>ROC-AUC</th><th>Episode recall</th><th>Brier</th><th>N test</th></tr></thead>
+          <tbody id="baseline-body"></tbody>
+        </table>
+      </div>
+      <p class="table-note">Episode recall counts in-window peaks detected by a warning in the preceding H quarters. It is a baseline diagnostic, not the C-13 guardrail.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>3 · The pre-registered ensemble rule</h2><p>Fixed before any result. Applied once.</p></div><span class="badge blue">C-13</span></div>
+    <div class="grid4">
+      <div class="kpi"><div class="k">Members</div><div class="v">3</div><div class="n">top-3 by inner PR-AUC</div></div>
+      <div class="kpi"><div class="k">Weighting</div><div class="v">Equal</div><div class="n">probability average</div></div>
+      <div class="kpi"><div class="k">Minimum gain</div><div class="v">+0.01</div><div class="n">pooled PR-AUC</div></div>
+      <div class="kpi"><div class="k">Guardrails</div><div class="v">CI ≠ 0</div><div class="n">and no episode-recall loss</div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <p class="small muted" style="margin:0">The ensemble is accepted only if it beats the best single model by at least 0.01 pooled PR-AUC, the paired-bootstrap 95% interval (1,000 resamples) excludes zero, and episode recall does not fall. Otherwise the best single model is primary and the ensemble is reported as a negative result. A logistic stack is exploratory only.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>4 · What the official run must add</h2><p>The missing section, stated plainly.</p></div><span class="badge warn">Pending</span></div>
+    <div class="grid2b">
+      <div class="card">
+        <h3>Required outputs</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>Frozen tuning configuration and six single models.</li>
+          <li>Pooled out-of-sample PR-AUC, Brier, precision and recall by horizon.</li>
+          <li>Episode table with peak and trough offsets.</li>
+          <li>C-13 verdict with delta, bootstrap interval and recall guardrail.</li>
+          <li>Feature stability and REWI on training folds only.</li>
+          <li>Leave-one-country-out and COVID ablations.</li>
+          <li>Training-loss versus epochs curve for the MLP.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Why it cannot be faked</h3>
+        <p class="small muted">The exploratory run used four hand-built folds, a different feature set and reference implementations. Its ensemble delta was −0.0017 with a 95% interval of [−0.0550, +0.0556]. Copying those numbers into the official table would break C-13 and the project's claim discipline.</p>
+        <p class="small muted" style="margin:0">Until the run exists, this page shows no forecast.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>5 · Reproducibility</h2><p>Frozen hashes behind the pages.</p></div></div>
+    <div class="table-wrap card">
+      <table>
+        <thead><tr><th>Artefact</th><th>SHA-256 prefix</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td><span class="mono">outputs/labels/USA_labels.csv</span></td><td class="mono" data-hash="label">—</td><td><span class="pill ok">frozen</span></td></tr>
+          <tr><td><span class="mono">data/clean/dataset.parquet</span></td><td class="mono" data-hash="table">—</td><td><span class="pill ok">rebuilt</span></td></tr>
+          <tr><td><span class="mono">outputs/folds/folds.json</span></td><td class="mono" data-hash="folds">—</td><td><span class="pill ok">frozen</span></td></tr>
+          <tr><td><span class="mono">outputs/results/baselines.csv</span></td><td class="mono">reproducible</td><td><span class="pill gold">supplementary</span></td></tr>
+        </tbody>
+      </table>
+      <p class="table-note">Table and fold hashes are full-file SHA-256; the page shows a 12-character prefix. The label hash is also checked by the eight-gate verification script.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Baselines: <span class="mono">outputs/results/baselines.md</span>. Frozen rules: <span class="mono">docs/DECISIONS.md</span>.</span>
+    <span>Generated <span data-generated>—</span></span>
+  </footer>
+</main>
+<script src="assets/app.js"></script>
+</body>
+</html>

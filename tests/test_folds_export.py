@@ -6,7 +6,9 @@ import pandas as pd
 from ews.harness import (
     PRIMARY_HORIZON,
     build_payload,
+    fold_index_splits,
     quarter_index,
+    quarter_positions,
     validate_payload,
 )
 
@@ -108,3 +110,89 @@ def test_validation_rejects_a_leaking_fold(tmp_path):
     except ValueError:
         return
     raise AssertionError("validate_payload accepted a leaking fold")
+
+
+# --- adapter: fold quarter labels -> row positions -------------------------
+
+def test_quarter_positions_rejects_duplicates():
+    try:
+        quarter_positions(["2010Q1", "2010Q1"])
+    except ValueError:
+        return
+    raise AssertionError("quarter_positions accepted duplicate quarters")
+
+
+def test_fold_index_splits_cover_every_fold(tmp_path):
+    payload = build(tmp_path)
+    quarters = pd.period_range("1990Q1", "2012Q3", freq="Q")
+    splits = fold_index_splits(payload, quarters)
+    assert len(splits) == len(payload["horizons"]["2"]["outer"])
+    assert [s["fold"] for s in splits] == list(range(len(splits)))
+
+
+def test_fold_index_splits_have_no_train_test_overlap(tmp_path):
+    payload = build(tmp_path)
+    quarters = pd.period_range("1990Q1", "2012Q3", freq="Q")
+    for record in fold_index_splits(payload, quarters):
+        assert set(record["outer_train"]).isdisjoint(record["outer_test"])
+        assert max(record["outer_train"]) + PRIMARY_HORIZON < min(record["outer_test"])
+
+
+def test_fold_index_splits_keep_inner_inside_outer_train(tmp_path):
+    payload = build(tmp_path)
+    quarters = pd.period_range("1990Q1", "2012Q3", freq="Q")
+    for record in fold_index_splits(payload, quarters):
+        outer_train = set(record["outer_train"])
+        for train, validation in record["inner_splits"]:
+            assert set(train) <= outer_train
+            assert set(validation) <= outer_train
+            assert set(train).isdisjoint(validation)
+            assert max(train) + PRIMARY_HORIZON < min(validation)
+
+
+def test_fold_index_splits_reject_missing_quarters(tmp_path):
+    payload = build(tmp_path)
+    quarters = pd.period_range("1990Q1", "2012Q2", freq="Q")  # ends one short
+    try:
+        fold_index_splits(payload, quarters)
+    except KeyError:
+        return
+    raise AssertionError("adapter accepted an index missing fold quarters")
+
+
+def test_fold_index_splits_single_fold(tmp_path):
+    payload = build(tmp_path)
+    quarters = pd.period_range("1990Q1", "2012Q3", freq="Q")
+    record = fold_index_splits(payload, quarters, fold=0)
+    assert record["fold"] == 0
+
+
+def test_approved_flag_freezes_metadata(tmp_path):
+    labels = make_labels(tmp_path)
+    payload = build_payload(
+        start="1990Q1",
+        last_scored="2012Q3",
+        initial_train=40,
+        inner_initial_train=16,
+        labels_path=labels,
+        approved=True,
+    )
+    metadata = payload["metadata"]
+    assert metadata["approved"] is True
+    assert metadata["draft"] is False
+    assert metadata["decision"] == "D-R37"
+    assert "D-R37" in metadata["reason"]
+
+
+def test_labels_file_override_keeps_export_portable(tmp_path):
+    labels = make_labels(tmp_path)
+    payload = build_payload(
+        start="1990Q1",
+        last_scored="2012Q3",
+        initial_train=40,
+        inner_initial_train=16,
+        labels_path=labels,
+        labels_file="outputs/labels/USA_labels.csv",
+    )
+    assert payload["metadata"]["labels_file"] == "outputs/labels/USA_labels.csv"
+    assert payload["metadata"]["generated_from"] == "outputs/labels/USA_labels.csv"

@@ -145,6 +145,13 @@ Robustness tests evaluated under the frozen rules (no tuning per country):
 Baseline comparison file:
 - `outputs/labels/USA_labels.csv`: `2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa` (labels-v3, unchanged).
 
+*Window exception note (D-R38 / Option A):*
+`labels-v1-JPN` covers 144 quarters (`1990Q1–2025Q4`) as a documented exception to D-R02/D-R31
+(147 quarters, `1990Q1–2026Q3`). Cross-country features must align on 147 quarters or use the
+144-quarter JPN window explicitly. A rebuild as `labels-v2-JPN` is deferred until after the
+official run and needs separate approval. The SHA-256 of `outputs/labels/JPN/labels-v1-JPN.json`
+is `3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a`.
+
 ---
 
 ## 8. What I Learned
