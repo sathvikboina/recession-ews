@@ -250,12 +250,14 @@ version; the Markdown file is the detailed reference.
 |---|---|---|---|
 | O-1 | Report pre-1990 labels now that the estimator runs from 1960? | no, 1990–2026Q3 | Step 6 |
 | O-2 | India fallback if §19 fails? | Label B only, reported (downloaded-data count 1/8) | JPN/DEU/IND labels |
-| O-3 | Threshold objective? | max F1 | harness |
+| O-3 | Threshold objective? | **closed 2026-11-14**: max F1 on inner validation, locked before test (D-R19) | harness |
 | O-4 | Widen scope to P0–P2 (68 → 140 rows)? | after the label gate | collection |
 | O-5 | COVID 2020 treatment + with/without evaluation? | keep, document, evaluate | experiments |
 
 ## Session hand-off rule
 
 Start a session by reading **this file + `docs/BUILD_CONTRACT.md` + `docs/LABEL_VALIDATION.md`**.
+For the Lane 2A hand-off, follow `docs/team/05_2a_intake.md`. The consolidated draft report is
+`docs/FINAL_REPORT.md` (stable sections filled; model results pending).
 Do not re-read `spec.py`, `build.py` or `series_catalogue.csv`; they are large and already
 summarised here. When a rule changes, update the contract, bump the hash, and note it above.
