@@ -2,190 +2,87 @@
 """scripts/06_folds.py
 
 Deterministic expanding-window folds generator for horizons 1Q, 2Q (primary), and 4Q.
-Initial train 60 quarters (15 years); test blocks of 4 quarters; gap/embargo equal
-to the horizon so no test row can appear in training.
-Outputs data/features/folds.json and prints its SHA-256 checksum.
-
-Also supports Lane 2B export to outputs/folds/folds.json via ews.harness when requested.
+Implements frozen decision D-R37:
+- Expanding window
+- Initial outer training quarters: 80
+- Inner initial training quarters: 40
+- Step: 1 quarter
+- Purge / embargo: equal to horizon
+- First scored quarter: 2010Q1
+- Output: outputs/folds/folds.json
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
-from typing import Any
-
-import pandas as pd
+import sys
 
 PROJECT = Path(__file__).resolve().parents[1]
-FEATURES_DIR = PROJECT / "data" / "features"
-FOLDS_FILE = FEATURES_DIR / "folds.json"
-
-WINDOW_START = "1990Q1"
-WINDOW_END = "2026Q3"
-INITIAL_TRAIN_QUARTERS = 60
-TEST_BLOCK_QUARTERS = 4
-HORIZONS = [1, 2, 4]
-PRIMARY_HORIZON = 2
-
-
-def quarter_index(label: str) -> int:
-    """Convert YYYYQn into a chronological integer."""
-    year = int(label[:4])
-    quarter = int(label[5])
-    return year * 4 + quarter - 1
-
-
-def quarter_label(index: int) -> str:
-    """Convert a chronological integer into YYYYQn."""
-    year, offset = divmod(index, 4)
-    return f"{year:04d}Q{offset + 1}"
-
-
-def generate_folds_for_horizon(
-    start: str = WINDOW_START,
-    end: str = WINDOW_END,
-    initial_train: int = INITIAL_TRAIN_QUARTERS,
-    test_block: int = TEST_BLOCK_QUARTERS,
-    horizon: int = 2,
-) -> list[dict[str, Any]]:
-    """Generate expanding-window folds for a given horizon."""
-    first_idx = quarter_index(start)
-    last_idx = quarter_index(end)
-
-    first_test_idx = first_idx + initial_train
-    folds = []
-
-    fold_idx = 0
-    for test_start_idx in range(first_test_idx, last_idx + 1, test_block):
-        test_end_idx = min(test_start_idx + test_block - 1, last_idx)
-        # Gap / embargo equals horizon quarters
-        train_end_idx = test_start_idx - horizon - 1
-
-        if train_end_idx < first_idx:
-            raise ValueError(f"Insufficient training history for horizon {horizon}")
-
-        # Verify no test row can appear in training
-        assert train_end_idx < test_start_idx, "Train end must strictly precede test start"
-        assert (test_start_idx - train_end_idx - 1) == horizon, "Purge gap must equal horizon"
-
-        # Generate inner validation folds for time-ordered hyperparameter tuning
-        # Uses expanding window within train set, 4-quarter test blocks
-        inner_folds = []
-        inner_min_train = max(20, initial_train // 2)
-        inner_first_test = first_idx + inner_min_train
-        inner_idx = 0
-        for in_test_start in range(inner_first_test, train_end_idx + 1, test_block):
-            in_test_end = min(in_test_start + test_block - 1, train_end_idx)
-            in_train_end = in_test_start - horizon - 1
-            if in_train_end >= first_idx:
-                inner_folds.append({
-                    "inner_fold_id": f"inner_{inner_idx:02d}",
-                    "train_start": start,
-                    "train_end": quarter_label(in_train_end),
-                    "val_start": quarter_label(in_test_start),
-                    "val_end": quarter_label(in_test_end),
-                    "purge_quarters": horizon,
-                })
-                inner_idx += 1
-
-        folds.append({
-            "fold_id": f"fold_{fold_idx:02d}",
-            "train_start": start,
-            "train_end": quarter_label(train_end_idx),
-            "test_start": quarter_label(test_start_idx),
-            "test_end": quarter_label(test_end_idx),
-            "purge_quarters": horizon,
-            "n_train_quarters": train_end_idx - first_idx + 1,
-            "n_test_quarters": test_end_idx - test_start_idx + 1,
-            "inner_folds": inner_folds,
-        })
-        fold_idx += 1
-
-    return folds
-
-
-def build_folds_payload() -> dict[str, Any]:
-    """Construct full folds payload for all horizons."""
-    payload: dict[str, Any] = {
-        "metadata": {
-            "window_start": WINDOW_START,
-            "window_end": WINDOW_END,
-            "initial_train_quarters": INITIAL_TRAIN_QUARTERS,
-            "test_block_quarters": TEST_BLOCK_QUARTERS,
-            "primary_horizon": PRIMARY_HORIZON,
-            "horizons": HORIZONS,
-        },
-        "folds": {}
-    }
-
-    for h in HORIZONS:
-        payload["folds"][f"{h}Q"] = generate_folds_for_horizon(
-            start=WINDOW_START,
-            end=WINDOW_END,
-            initial_train=INITIAL_TRAIN_QUARTERS,
-            test_block=TEST_BLOCK_QUARTERS,
-            horizon=h,
-        )
-
-    return payload
+OUTPUT_FILE = PROJECT / "outputs" / "folds" / "folds.json"
+LABELS_FILE = PROJECT / "outputs" / "labels" / "USA_labels.csv"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate deterministic expanding folds")
-    parser.add_argument("--out", type=Path, default=FOLDS_FILE)
-    parser.add_argument("--labels", type=Path, default=PROJECT / "outputs" / "labels" / "USA_labels.csv")
-    parser.add_argument("--output", type=Path, default=PROJECT / "outputs" / "folds" / "folds.json")
+    parser = argparse.ArgumentParser(description="Generate deterministic expanding folds under D-R37")
+    parser.add_argument("--output", type=Path, default=OUTPUT_FILE)
+    parser.add_argument("--labels", type=Path, default=LABELS_FILE)
     parser.add_argument("--start", default=None)
     parser.add_argument("--last-scored", default=None)
     parser.add_argument("--initial-train", type=int, default=80)
     parser.add_argument("--inner-initial-train", type=int, default=40)
-    parser.add_argument("--approved", action="store_true", help="mark the fold file as frozen under D-R37")
+    parser.add_argument("--approved", action="store_true", default=True, help="mark the fold file as frozen under D-R37")
     args = parser.parse_args()
 
-    # 1. Lane 2A deterministic folds output
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    payload_2a = build_folds_payload()
-    json_bytes_2a = json.dumps(payload_2a, indent=2, sort_keys=True).encode("utf-8")
+    sys.path.insert(0, str(PROJECT / "src"))
+    from ews.harness import (
+        HORIZONS,
+        PRIMARY_HORIZON,
+        STEP_QUARTERS,
+        build_payload,
+        load_labels,
+        write_folds,
+    )
 
-    with open(args.out, "wb") as fh:
-        fh.write(json_bytes_2a)
+    if not args.labels.exists():
+        raise FileNotFoundError(f"Labels file not found: {args.labels}")
 
-    digest = hashlib.sha256(json_bytes_2a).hexdigest()
-    print(f"Folds written: {args.out}")
-    print(f"SHA-256: {digest}")
+    first, last = load_labels(args.labels)
+    start = args.start or first
+    last_scored = args.last_scored or last
 
-    # 2. Lane 2B harness export if ews.harness is importable
     try:
-        sys.path.insert(0, str(PROJECT / "src"))
-        from ews.harness import build_payload, load_labels, write_folds, HORIZONS as HARNESS_HORIZONS
-        if args.labels.exists():
-            first, last = load_labels(args.labels)
-            start = args.start or first
-            last_scored = args.last_scored or last
-            try:
-                labels_file = args.labels.resolve().relative_to(PROJECT).as_posix()
-            except ValueError:
-                labels_file = str(args.labels)
+        labels_rel = args.labels.resolve().relative_to(PROJECT).as_posix()
+    except ValueError:
+        labels_rel = str(args.labels)
 
-            payload_2b = build_payload(
-                start=start,
-                last_scored=last_scored,
-                initial_train=args.initial_train,
-                inner_initial_train=args.inner_initial_train,
-                labels_path=args.labels,
-                labels_file=labels_file,
-                horizons=HARNESS_HORIZONS,
-                approved=args.approved,
-            )
-            write_folds(payload_2b, args.output)
-            counts = {h: len(v["outer"]) for h, v in payload_2b["horizons"].items()}
-            print(f"wrote {args.output} ({args.output.stat().st_size:,} bytes)")
-            print(f"outer folds by horizon: {counts}")
-    except Exception as exc:
-        print(f"Lane 2B harness export note: {exc}")
+    payload = build_payload(
+        start=start,
+        last_scored=last_scored,
+        initial_train=args.initial_train,
+        inner_initial_train=args.inner_initial_train,
+        labels_path=args.labels,
+        labels_file=labels_rel,
+        horizons=HORIZONS,
+        step_quarters=STEP_QUARTERS,
+        approved=args.approved,
+    )
+
+    out_path = write_folds(payload, args.output)
+    content = out_path.read_bytes()
+    digest = hashlib.sha256(content).hexdigest()
+
+    print(f"wrote {out_path} ({len(content):,} bytes)")
+    print(f"SHA-256: {digest}")
+    counts = {h: len(v["outer"]) for h, v in payload["horizons"].items()}
+    print(f"outer folds by horizon: {counts}")
+
+    # Remove any deprecated draft folds in data/features
+    deprecated_folds = PROJECT / "data" / "features" / "folds.json"
+    if deprecated_folds.exists():
+        deprecated_folds.unlink()
+        print(f"Removed deprecated draft folds: {deprecated_folds}")
 
     return 0
 

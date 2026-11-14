@@ -18,8 +18,12 @@ This document defines the complete and unambiguous specification of legal predic
 ### 1.1 Study Window vs. Estimation Sample
 - **Reporting & Evaluation Window:** **1990Q1–2026Q3** (exactly **147 quarters**, one row per calendar quarter).
 - **Estimation History (Context):** The harmonised clean panel (`data/clean/USA_panel.csv`) begins in **1960Q1** (267 quarters total). Features requiring growth differencing or rolling statistics compute transformations over available pre-1990 history so that initial reporting quarters (e.g. 1990Q1) are not artificially lost to differencing lags.
-- **Unscaled Contract (Rule C-07 / C-08):** The feature dataset is strictly **UNSCALED**. No column in `data/features/dataset.parquet` is standardized to zero mean or unit variance across the sample. All feature scaling (e.g. `StandardScaler`) and imputation (`SimpleImputer`) must be fitted **strictly inside each outer training fold**. Test blocks must remain entirely untouched during scaling.
+- **Unscaled Contract (Rule C-07 / C-08):** The feature dataset is strictly **UNSCALED**. No column in `data/clean/dataset.parquet` is standardized to zero mean or unit variance across the sample. All feature scaling (e.g. `StandardScaler`) and imputation (`SimpleImputer`) must be fitted **strictly inside each outer training fold**. Test blocks must remain entirely untouched during scaling.
 - **Label Independence (Rule C-01):** Pipeline A builds the ex-post recession chronology ($R_t$). Pipeline B builds early-warning predictors. **No label output is ever a predictor.** Under no circumstance may any factor index ($F_t$), level, recession indicator ($R_t$), turning-point date, diffusion share, or NBER chronology column enter the predictor table.
+
+### 1.2 Shipped Table Builder vs. Reference Fixture
+- **Official Shipped Table:** The official shipped feature table is `data/clean/dataset.parquet` (147 rows, 149 features covering 1990Q1–2026Q3), produced by `scripts/05_features.py` (and invoked via `make features`). It reads `data/clean/USA_panel.csv`, applies conservative C-05 publication availability lags, and expands features using `ews.models.feature_transforms`.
+- **Reference Fixture:** `scripts/06_features.py` serves strictly as a documented reference fixture for testing and mutation checks (e.g. testing no-future leakage across arbitrary cutoffs and validating that poison mutations raise exceptions). `tests/test_features.py` polices the official shipped table `data/clean/dataset.parquet`.
 
 ---
 

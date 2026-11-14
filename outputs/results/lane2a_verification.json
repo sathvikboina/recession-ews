@@ -33,20 +33,22 @@
       "passed": true,
       "details": {
         "rows": 147,
-        "predictors": 27
+        "predictors": 149
       }
     },
-    "G5 make folds deterministic (identical bytes, no test row in train)": {
+    "G5 make folds deterministic (identical bytes, D-R37 parameters verified)": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "sha256": "b59ea4c2bbcc5da3fde3a45ed4b04bc3278ffe3d2a67577489fd40b9eb3ad8a9",
+        "sha256": "cc4814be7e020d466d53e905961c46f5a2ccbe3a0b9197fd7b9e62eb0feb8719",
         "horizons": [
-          "1Q",
-          "2Q",
-          "4Q"
+          "1",
+          "2",
+          "4"
         ],
-        "n_folds_2q": 22
+        "n_folds_2q": 67,
+        "approved": true,
+        "decision": "D-R37"
       }
     },
     "G6 tests/test_features.py passes; mutation fails on leaks": {
@@ -61,62 +63,71 @@
       "status": "PASS",
       "passed": true,
       "details": {
-        "csv_sha256": "e1e4319b3cdedb0b9c1e7f007ac5e519a90fb087229e68243b807f51d171ad1a",
-        "md_sha256": "0adc771c604a29176e1c1bd2f2617cbb7ff7d2e3258499072bd54abe66ba685b",
+        "csv_sha256": "e227e2543334dd6c11b43db9e6433fadb4eeccaacd8a7e64833647d07377af86",
+        "md_sha256": "9cfe616c6fde0b78676750d55b8d94a3dad12afa5a2878f7ccc667f1212b00ce",
         "results": [
           {
             "horizon": "1Q",
             "model": "majority",
-            "pr_auc": 0.019961,
-            "episode_recall": 0.0
+            "pr_auc": 0.015385,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "1Q",
             "model": "term_spread",
-            "pr_auc": 0.087121,
-            "episode_recall": 0.0
+            "pr_auc": 0.111111,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "1Q",
             "model": "plain_logistic",
-            "pr_auc": 0.044466,
-            "episode_recall": 0.0
+            "pr_auc": 0.047619,
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "2Q",
             "model": "majority",
-            "pr_auc": 0.035875,
-            "episode_recall": 0.0
+            "pr_auc": 0.023562,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "2Q",
             "model": "term_spread",
-            "pr_auc": 0.153518,
-            "episode_recall": 0.0
+            "pr_auc": 0.155556,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "2Q",
             "model": "plain_logistic",
-            "pr_auc": 0.087897,
-            "episode_recall": 0.0
+            "pr_auc": 0.107955,
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "4Q",
             "model": "majority",
-            "pr_auc": 0.066545,
-            "episode_recall": 0.0
+            "pr_auc": 0.040995,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
             "horizon": "4Q",
             "model": "term_spread",
-            "pr_auc": 0.252896,
-            "episode_recall": 1.0
+            "pr_auc": 0.176804,
+            "episode_recall": 1.0,
+            "episode_recall_05": 1.0
           },
           {
             "horizon": "4Q",
             "model": "plain_logistic",
-            "pr_auc": 0.203956,
-            "episode_recall": 0.0
+            "pr_auc": 0.197276,
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
           }
         ]
       }
