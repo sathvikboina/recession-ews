@@ -2,16 +2,18 @@
 
 > **STATUS: DRAFT — NOT A FINAL REPORT.**
 > Stable sections (data, labels, features, folds, reproducibility) are complete.
-> Every section marked **PENDING** waits on Lane 3 (official model run) or Lane 2A
-> (firewall tests and baselines). Do not present this document, or any number in it, as an
-> out-of-sample forecasting result until those placeholders are replaced and signed off.
+> Every section marked **PENDING** waits on Lane 3 (official model run). The Lane 2A
+> specification, firewall tests and baselines are integrated; their numbers are baseline
+> context, not the official out-of-sample result. Do not present this document as a
+> forecasting claim until §8 is filled and signed off.
 
 | Field | Value |
 |---|---|
 | Document status | Draft for internal review |
 | Date | 2026-11-14 |
-| Integration tip | `feat/india-scope-docs@8829098` |
+| Integration tip | `feat/features-harness` (Lane 2A integration commit; see git) |
 | Authors | Sathvik Boina, Shravani Math, Palchhin |
+| Lane 2A status | integrated: `docs/FEATURES.md`, `tests/test_feature_firewall.py`, baselines, D-R38 |
 | Frozen label versions | USA `labels-v3`; JPN `labels-v1-JPN`; DEU no label (coverage finding) |
 | Feature table | `data/clean/dataset.parquet` (generated) |
 | Frozen folds | `outputs/folds/folds.json` (D-R37) |
@@ -121,8 +123,9 @@ Evidence: `docs/LABEL_VALIDATION.md`, `docs/DECISION_NOTE_Q02_Q04_Q05.md`,
 - 6 of 8 indicators pass; fiscal quarters re-labelled to calendar quarters.
 - 5 of 5 post-1994 ESRI episodes matched at episode level.
 - Quarter-level recall **88.0%**, precision **62.9%**.
-- Window: 144 quarters, 1990Q1–2025Q4. The 147-quarter references in `config/scope.yaml`
-  and D-R02/D-R31 are the outstanding documentation item (Lane 2A closeout).
+- Window: 144 quarters, 1990Q1–2025Q4, recorded as a documented exception under **D-R38**.
+  Cross-country work must align on 147 quarters or use the 144-quarter window explicitly;
+  the frozen label is not rebuilt.
 
 Evidence: `docs/LABEL_VALIDATION_JPN.md`, `docs/HANDOFF_JPN_DEU.md`.
 
@@ -172,9 +175,22 @@ by `make features`. It is **unscaled**; scaling belongs inside each training fol
 - Activity and price series enter as growth/change, not raw levels; rates keep a
   dimensionless `__level`.
 
-**PENDING (Lane 2A):** the written column dictionary (`docs/FEATURES.md`), the independent
-firewall suite (`tests/test_feature_firewall.py`) and the mutation test. Until they land,
-this section describes the builder, not an independently verified table.
+**Written specification and firewall.** `docs/FEATURES.md` is the authority on what a legal
+predictor is; it lists the 20 input series, the 149 columns, the availability ladder and the
+exclusion blacklist. `tests/test_feature_firewall.py` checks the table independently:
+
+- schema: 147 contiguous quarters, 149 columns;
+- blacklist: no label, factor, chronology or identifier column, and the validator raises on
+  an injected `R`, `factor` or `n_available`;
+- unscaled: no standardised column and rate levels equal the source series;
+- no future leakage: rebuilding on truncated history at 2000Q4, 2010Q2, 2019Q4 and 2024Q3
+  leaves all past values identical;
+- independence: all 64 `beai_copy_*` columns are reproducible from the harmonised panel
+  alone with no fitted object stored;
+- mutation: a one-quarter future shift and injected forbidden columns are both caught.
+
+`scripts/08_verify_lane2a.py` runs eight gates (labels, table, panel, folds, firewall,
+baselines, JPN closeout, untouched labels) and all pass.
 
 ---
 
@@ -226,8 +242,20 @@ reserved).
   (D-R19).
 - REWI: coefficients from training folds only, intercept excluded, stability reported.
 
-**PENDING (Lane 2A):** majority, term-spread probit/logit and plain logistic baselines on
-the frozen folds.
+**Lane 2A baselines (integrated, supplementary).** Seed 42, fixed threshold 0.50, fitted
+inside each outer training block, on the frozen folds and the 149-column table. Pooled
+out-of-sample at the primary 2Q horizon (65 scored quarters):
+
+| Baseline | Pooled PR-AUC | ROC-AUC | Episode recall |
+|---|---:|---:|---:|
+| Majority prevalence | 0.0236 | 0.0159 | 0.0000 |
+| Yield-curve slope logistic | **0.1556** | 0.8730 | 0.0000 |
+| Plain logistic (all 149) | 0.1080 | 0.8095 | 0.0000 |
+
+The slope baseline has ranking skill over the 2.4% prevalence, but no baseline crosses 0.50
+in the two quarters before the 2019Q4 peak, so 2Q episode recall is zero. At 4Q the slope
+baseline reaches 0.1768 PR-AUC and detects that peak. These are baselines under D-R39, not
+the official result.
 
 **PENDING (Lane 3):** the official run. The existing exploratory run is **not** a
 substitute: it fails C-13 (Δ −0.0017, 95% CI includes zero) and is documented as
@@ -274,6 +302,8 @@ make check
 make test
 make features     # data/clean/dataset.parquet
 make folds        # outputs/folds/folds.json (frozen)
+make baselines    # outputs/results/baselines.csv + .md (Lane 2A)
+make lane2a       # eight-gate Lane 2A verification
 ```
 
 ### 10.2 Verified clean clone
@@ -284,9 +314,11 @@ and checked on 2026-11-14:
 | Check | Result |
 |---|---|
 | `make check` | 33 ok, 1 warning (`shap`, unused), 0 failures |
-| `make test` after `make harmonize` | 183 passed, 1 skipped |
+| `make test` after `make harmonize` | 190 passed, 1 skipped |
 | Feature table hash | reproduced exactly |
 | Fold hash | reproduced exactly |
+| Firewall suite | 7 tests pass, including the two mutation checks |
+| Baseline hashes | reproducible across two runs |
 | Frozen label hashes | unchanged |
 
 Evidence and caveats: `docs/team/04b_clean_clone_review.md`. `make fetch` was not run
@@ -318,8 +350,8 @@ The combined Day 7 clone is still owed after the official run.
    features and labels are aligned.
 4. **Small event count.** Four USA episodes in the window; episode-level conclusions are
    fragile even when quarter-level metrics look strong.
-5. **Japan window mismatch.** `labels-v1-JPN` covers 144 quarters while several documents
-   say 147; the Lane 2A closeout must resolve it.
+5. **Japan window exception.** `labels-v1-JPN` covers 144 quarters (1990Q1–2025Q4) under
+   D-R38; cross-country work must align on 147 or use the 144-quarter window explicitly.
 6. **Germany below gate.** No German label; cross-country claims cannot include Germany.
 7. **India excluded.** The Label-B finding is a coverage result, not a modelling result.
 8. **Optional dependencies.** `shap` is not installed; if it becomes a required analysis,
@@ -346,8 +378,8 @@ The combined Day 7 clone is still owed after the official run.
 
 | Item | Owner | Blocks |
 |---|---|---|
-| `docs/FEATURES.md`, `tests/test_feature_firewall.py`, `scripts/07_baselines.py` | Shravani (2A) | final feature section, baselines table |
-| JPN 144/147 closeout | Shravani (2A) | cross-country consistency |
+| ~~`docs/FEATURES.md`, `tests/test_feature_firewall.py`, `scripts/07_baselines.py`~~ | ~~Shravani (2A)~~ | **integrated** (see §5, §7, `docs/LANE2A_RESULT.md`) |
+| ~~JPN 144/147 closeout~~ | ~~Shravani (2A)~~ | **closed as D-R38** (documented exception) |
 | `config/models.yaml` tuning freeze (D-R32) | Palchhin | official run |
 | Official USA run, C-13 once, episodes, ablations | Palchhin | §8, §9, headline claim |
 | `docs/EXPERIMENTS.md` | Palchhin | results documentation |
@@ -370,6 +402,8 @@ The combined Day 7 clone is still owed after the official run.
 | India audit | `docs/INDIA_COVERAGE_AUDIT.md` |
 | Pre-registered ensemble | `docs/PROPOSAL_ADDENDUM.md` |
 | Exploratory run (not official) | `docs/EXPLORATORY_MODEL_RUN.md` |
+| Feature specification and firewall | `docs/FEATURES.md` |
+| Lane 2A integration result | `docs/LANE2A_RESULT.md` |
 | Lane 2A intake | `docs/team/05_2a_intake.md` |
 | Clean-clone evidence | `docs/team/04b_clean_clone_review.md` |
 | Integration rehearsal | `docs/team/04c_integration_rehearsal.md` |

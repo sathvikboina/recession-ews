@@ -20,7 +20,7 @@ See D-R34.)
 | Phase 3 — scoped verification | USA 25/25 resolved; JPN 18/21 resolved (3 pending); DEU 18/21 resolved (3 pending; Q-02 blocks the investment row) |
 | Phase 4 — collect + harmonise | USA and JPN done; DEU collected, delivered as a coverage finding |
 | Phase 5 — BEAI label | **USA `labels-v3` and JPN `labels-v1-JPN` frozen** (`labels-v2`/`labels-v1` archived); DEU below the 6/8 gate |
-| Phase 6–8 — features / harness / models | feature table and frozen folds built (Lane 2B); firewall suite and baselines pending (Lane 2A); official models not started — exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |
+| Phase 6–8 — features / harness / models | feature table and frozen folds built (Lane 2B); firewall suite, spec and baselines integrated (Lane 2A); official models not started — exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |
 | Phase 9+ — experiments, interpretation, dashboard | static dashboard built (`dashboard/index.html`); official experiments not started |
 
 Review state (2026-11-08): the USA panel and label run to **2026Q3** (147 quarters,
@@ -58,6 +58,8 @@ make check       # environment + configuration gate
 make test        # test suite
 make features    # build the USA predictor table (data/clean/dataset.parquet)
 make folds       # export the frozen walk-forward folds (outputs/folds/folds.json)
+make baselines   # Lane 2A baselines on the frozen folds (outputs/results)
+make lane2a      # verify the Lane 2A firewall, folds and baselines
 make team-plan   # rebuild the plain-English Team_Plan.xlsx
 make worklog     # rebuild the detailed EWS_Work_Log.xlsx
 make reports     # rebuild both generated workbooks
@@ -117,7 +119,8 @@ tests/             config/window, scope, harmonise, label, frozen artefacts, rev
 docs/              BUILD_CONTRACT.md, DECISIONS.md, VERIFICATION.md, STATE.md,
                    DECISION_NOTE_Q02_Q04_Q05.md, PROPOSAL_ADDENDUM.md,
                    INDIA_COVERAGE_AUDIT.md, EXPLORATORY_MODEL_RUN.md, TEAM_PLAN.md,
-                   REVIEW_2026-11-05.md, FINAL_REPORT.md (draft)
+                   REVIEW_2026-11-05.md, FINAL_REPORT.md (draft), FEATURES.md,
+                   LANE2A_RESULT.md
 dashboard/         index.html — generated, self-contained USA dashboard
 outputs/           labels, folds, results, figures, runs
 Team_Plan.xlsx     generated plain-English team plan: what happened, what is next,

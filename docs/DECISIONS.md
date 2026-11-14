@@ -42,6 +42,8 @@ named step · **OPEN** = not decided yet.
 | D-R31 | **2026 data extension.** The reporting window moves from 1990Q1–2025Q4 (144 quarters) to **1990Q1–2026Q3 (147 quarters)** using FRED observations through 2026-09. `labels-v2` is archived byte-identically; `labels-v3` is active. The estimator, BBQ parameters, diffusion gate and eight-indicator structure are unchanged. The extension adds no new recession episode and keeps 4/4 NBER agreement. | 2026 data request, D-R22 | FROZEN | labels / features / report |
 | D-R33 | **India downloaded-data audit.** Official MoSPI series give India **1 of 8** BEAI indicators: `ACT_IP` 130/147 (88.4%). NAS GDP, PFCE and GFCF cover 2011Q2–2026Q2, 61/147 (41.5%), because quarterly NAS exists only for the 2011-12 and 2022-23 bases and the Back series is annual. Quarterly PLFS covers 2018Q2–2026Q3, 33/147 (22.4%); monthly PLFS starts April 2025. No quarterly hours or household-income series and no official monthly retail series were found. The quarterly GFCF institutional split returns `No Data Found`. India stays Label-B-only under O-2; no proxy or relaxation. Evidence: `data/india_core_coverage.csv`. (D-R32 is reserved for Palchhin's model tuning freeze.) | Q-06 to Q-09, §19 | FROZEN | India / report |
 | D-R37 | **Walk-forward fold definitions.** Expanding window, study window 1990Q1–2026Q3, step 1 quarter, horizons 1Q/2Q/4Q with 2Q primary. Initial outer training is **80 quarters (20 years)**; initial inner validation is **40 quarters (10 years)**; the purge before every test block equals the horizon. The first scored quarter is therefore 2010Q1. This freezes `outputs/folds/folds.json`; regenerate with `make folds --approved` only after a recorded change. | C-11, C-13, D-R11 | FROZEN (2026-11-14) | features / harness |
+| D-R38 | **Japan window exception (Option A).** `labels-v1-JPN` covers **144 quarters (1990Q1–2025Q4)** while D-R02/D-R31 require 147 (1990Q1–2026Q3). This is a documented exception: the frozen label is not rewritten or regenerated. Cross-country work must either align on 147 quarters or use the 144-quarter JPN window explicitly. A rebuild as `labels-v2-JPN` is deferred until after the official run and needs separate approval. Reference: `docs/LABEL_VALIDATION_JPN.md`. | JPN validation, D-R02, D-R31 | FROZEN (2026-11-14) | JPN / cross-country / report |
+| D-R39 | **Lane 2A baseline protocol.** Three supplementary baselines on the frozen folds with seed 42 and a fixed 0.50 threshold: training-prevalence ``majority``, univariate logistic on the 10Y–3M slope, and plain logistic on all predictors. Imputation and scaling are fitted inside each outer training block; no feature selection or threshold search touches the test block. These baselines are context for the official Lane 3 result, not a substitute for it, and they do not alter C-13. | Lane 2A brief, D-R37 | FROZEN (2026-11-14) | features / report |
 
 ## Consequences to keep in mind
 
@@ -127,8 +129,12 @@ for the comparison, selected options and joint re-validation.
 - **D-R36 — Firewall test filename.** `tests/test_features.py` already exists and tests
   `ews.models.features`. Shravani's Lane 2 firewall suite is therefore
   `tests/test_feature_firewall.py`; the existing file is not edited.
+- **D-R38 — Japan window exception.** `labels-v1-JPN` stays at 144 quarters as a documented
+  exception to the 147-quarter reporting window. Cross-country work must align explicitly;
+  no frozen Japanese label is rewritten. See the decision table and
+  `docs/LABEL_VALIDATION_JPN.md`.
+- **D-R39 — Baseline protocol.** The Lane 2A baselines are supplementary and fixed in
+  advance: seed 42, threshold 0.50, three models, in-fold scaling. They do not change C-13.
 
-**Still open (needs a recorded decision before folds are frozen):** the initial training
-window. `ews.models.folds` requires an explicit `initial_train_quarters` and its module
-docstring flags the 20-year (80-quarter) default as unapproved. Lane 2 may emit a
-**draft** fold file, but `folds.json` cannot be frozen until that value is agreed.
+The initial fold window is no longer open: **D-R37** freezes 80 outer / 40 inner quarters,
+step 1, horizons 1/2/4 and first scored quarter 2010Q1 in `outputs/folds/folds.json`.

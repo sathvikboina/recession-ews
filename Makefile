@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard features folds bootstrap clean
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard features folds baselines lane2a bootstrap clean
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -21,6 +21,8 @@ help:
 	@echo "make dashboard  build the static USA dashboard (dashboard/index.html)"
 	@echo "make folds      export draft walk-forward folds (outputs/folds/folds.json)"
 	@echo "make features   build the USA predictor table (data/clean/dataset.parquet)"
+	@echo "make baselines  Lane 2A baselines on the frozen folds (outputs/results)"
+	@echo "make lane2a      verify the Lane 2A firewall, folds and baselines"
 
 env:
 	python3 -m venv $(VENV)
@@ -69,6 +71,12 @@ folds:
 
 features:
 	"$(PY)" scripts/05_features.py
+
+baselines:
+	"$(PY)" scripts/07_baselines.py
+
+lane2a:
+	"$(PY)" scripts/08_verify_lane2a.py
 
 bootstrap: config scope check test
 

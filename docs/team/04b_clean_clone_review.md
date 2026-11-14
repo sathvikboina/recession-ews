@@ -81,8 +81,9 @@ Nothing here authorises a release. All items require explicit approval first.
 
 - Lane 3 has no frozen `config/models.yaml`, no official USA run and no
   `docs/EXPERIMENTS.md`.
-- Lane 2A (`docs/FEATURES.md`, `tests/test_feature_firewall.py`, baselines, JPN 144/147
-  decision) is still absent.
+- Lane 2A is integrated on `feat/features-harness`: `docs/FEATURES.md`,
+  `tests/test_feature_firewall.py`, baselines, `scripts/08_verify_lane2a.py` and the JPN
+  decision (D-R38). The combined Day 7 clone must still be re-run on the merged tree.
 - The JPN/DEU labels are frozen/decided, but the cross-country feature table is USA-only.
 
 **Do not mark the Day 7 gate as passed on the strength of this note.**

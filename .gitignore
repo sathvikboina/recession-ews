@@ -40,6 +40,9 @@ outputs/**
 !outputs/results/USA_robustness.csv
 !outputs/results/USA_false_episodes.csv
 !outputs/results/USA_labelB.csv
+!outputs/results/baselines.csv
+!outputs/results/baselines.md
+!outputs/results/lane2a_verification.json
 !outputs/results/archive/**
 !outputs/results/JPN_*
 
