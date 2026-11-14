@@ -82,6 +82,7 @@ def build_payload(
     initial_train: int,
     inner_initial_train: int,
     labels_path: Path,
+    labels_file: str | None = None,
     horizons: tuple[int, ...] = HORIZONS,
     step_quarters: int = STEP_QUARTERS,
     approved: bool = False,
@@ -115,8 +116,8 @@ def build_payload(
                 )
             ),
             "decision": "D-R37" if approved else None,
-            "generated_from": "outputs/labels/USA_labels.csv",
-            "labels_file": str(Path(labels_path)),
+            "generated_from": labels_file or str(Path(labels_path)),
+            "labels_file": labels_file or str(Path(labels_path)),
             "labels_sha256": sha256_file(labels_path),
             "start": start,
             "last_scored": last_scored,
