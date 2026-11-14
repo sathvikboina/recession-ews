@@ -35,7 +35,7 @@ the supporting model specification.
 
 ```bash
 .venv/bin/python -m pytest
-# 38 passed in 5.81s
+# 54 collected: 53 passed, 1 skipped (after the Lane 1 merge)
 
 make check
 # 33 ok, 3 warnings, 0 failures
@@ -55,6 +55,7 @@ eight-indicator structure, fold boundary or ensemble rule was changed.
 
 ```text
 2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa  outputs/labels/USA_labels.csv
+b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5  outputs/labels/JPN/JPN_labels.csv
 6f1aa66598b1cdf823e3f97a25709c6cb5a7ed851ee8ab1c0a9b8e45402c0a50  outputs/labels/labels-v3.json
 f5ed42a6c4333aaecbae4fae1f5f6fcab3606ce46dd2b459791a6aa31816dc8e  outputs/labels/archive/labels-v2/USA_labels.csv
 1a1b1f6a566cb2cffe7181cbc59ec20bd07d8ef25e0300d4dd2d96ceb749e29a  outputs/labels/archive/labels-v1/USA_labels.csv
@@ -77,8 +78,8 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
 | Item | State | Owner |
 |---|---|---|
 | Arshiya's Day 4 clean-clone dry run | **Not received** | Arshiya |
-| Day 5 integration rehearsal | **Not run** (no lane branches) | Sathvik / all |
-| H3 Japan/Germany labels | Missing | Shravani |
+| Day 5 integration rehearsal | **Partially run**: Lane 1 merged into `master`; feature/model lanes still absent | Sathvik / all |
+| H3 Japan/Germany labels | **Delivered 2026-11-13**: `labels-v1-JPN` frozen; DEU coverage finding | Shravani |
 | H4 features/folds | Missing | Arshiya |
 | H5 model results / ensemble | Official result missing | Palchhin |
 | Day 7 combined clean clone | Blocked on merges | Arshiya |
@@ -97,5 +98,6 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
   hand-built features, hand-built folds and numpy/scipy reference models. It fails C-13
   (Δ −0.0017, 95% CI includes zero) and is **not** the official result; do not merge its
   numbers into the results docs as pre-registered evidence.
-- Do not present the local 38-test result as a clean-clone result. The Day 4 and Day 7
-  clean-clone gates remain open.
+- Do not present the local 54-test result as a clean-clone result. The Day 4 and Day 7
+  clean-clone gates remain open. Lane 1 arrived later on 2026-11-13 and is now merged into
+  `master`; its label hashes and docs are part of the combined tree.

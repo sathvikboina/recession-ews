@@ -1,8 +1,9 @@
 # One-Week Sprint — Lane Briefs
 
-Status: **active; Part 4 content complete 2026-11-13.** Four people, four lanes, one shared
-merge. Days 1–5 are individual work; Days 6–7 are shared combining, cross-review and
-sign-off.
+Status: **active; Part 4 content complete 2026-11-13.** Lane 2 was reassigned on 2026-11-14
+after the original owner resigned; it is now split into 2A (specification and tests) and 2B
+(build and integration). Days 1–5 are individual work; Days 6–7 are shared combining,
+cross-review and sign-off.
 
 These briefs are the short, self-contained version of `docs/TEAM_PLAN.md`. Read your own
 brief first, then the plan. They describe what you own, what already exists, what is
@@ -13,9 +14,14 @@ expected, what to do, what not to do, where you have creative freedom, and the s
 | Lane | Owner | Brief | Branch | Main output |
 |---|---|---|---|---|
 | 1. Japan and Germany labels | Shravani Math | [01_shravani_japan_germany.md](01_shravani_japan_germany.md) | `feat/jpn-deu-labels` | Japan label + chronology note; Germany label or coverage note |
-| 2. Feature table and walk-forward harness | Arshiya | [02_arshiya_features_harness.md](02_arshiya_features_harness.md) | `feat/features-harness` | `dataset.parquet`, `folds.json`, leakage tests |
+| 2A. Feature specification and firewall tests | Shravani Math | [02a_shravani_feature_spec.md](02a_shravani_feature_spec.md) | `feat/features-harness` | Feature spec, leakage tests, baselines |
+| 2B. Feature table and walk-forward folds | Sathvik Boina | [02b_sathvik_features_folds.md](02b_sathvik_features_folds.md) | `feat/features-harness` (owner) | `dataset.parquet`, `folds.json`, harness, clean clone |
+| 2. Feature table and harness (superseded) | Arshiya | [02_arshiya_features_harness.md](02_arshiya_features_harness.md) | — | Reassigned 2026-11-14; kept for history |
 | 3. Models, ensemble and experiments | Palchhin | [03_palchhin_models_ensemble.md](03_palchhin_models_ensemble.md) | `feat/models-ensemble` | USA headline, episodes, ablations, ensemble decision |
 | 4. India, scope, integration and pitch | Sathvik | [04_sathvik_india_integration.md](04_sathvik_india_integration.md) | `feat/india-scope-docs` | India verdict, consistent docs, merge and review |
+
+**Reassigned Lane 2 PDFs:** `shrav.pdf` (2A, Shravani) and `satv.pdf` (2B, Sathvik) at the
+repository root; Markdown sources are the two 02a/02b files above.
 
 **Supporting specification:** [03a_palchhin_model_spec.md](03a_palchhin_model_spec.md) covers the six-model
 implementation, REWI, feature stability and the pre-registered ensemble in detail, including
