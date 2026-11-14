@@ -63,3 +63,10 @@ bootstrap: config scope check test
 clean:
 	rm -rf build dist *.egg-info .pytest_cache
 	find . -name '__pycache__' -type d -prune -exec rm -rf {} +
+
+# Part 3 modelling smoke test
+.PHONY: models-demo
+
+models-demo:
+	python scripts/demo_models.py
+	python -m pytest -q --disable-warnings
