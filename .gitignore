@@ -19,6 +19,8 @@ data/interim/*
 !data/interim/.gitkeep
 data/clean/*
 !data/clean/.gitkeep
+data/features/*
+!data/features/.gitkeep
 
 # Generated artefacts. The validated label is frozen and committed on purpose.
 outputs/**
@@ -42,6 +44,8 @@ outputs/**
 !outputs/results/USA_labelB.csv
 !outputs/results/archive/**
 !outputs/results/JPN_*
+!outputs/results/baselines.*
+!outputs/results/lane2a_*
 
 # OS
 .DS_Store

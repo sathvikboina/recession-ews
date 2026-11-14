@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean features folds baselines lane2a
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -61,6 +61,19 @@ reports: team-plan worklog
 
 dashboard:
 	"$(PY)" scripts/05_dashboard.py
+
+features:
+	"$(PY)" scripts/06_features.py
+
+folds:
+	"$(PY)" scripts/06_folds.py
+
+baselines:
+	"$(PY)" scripts/07_baselines.py
+
+lane2a: features folds baselines
+	"$(PY)" -m pytest tests/test_features.py -p no:cacheprovider
+	"$(PY)" scripts/08_verify_lane2a.py
 
 bootstrap: config scope check test
 
