@@ -4,8 +4,9 @@ The generator lives in :mod:`ews.models.folds`; this module serialises its
 output, validates the harness contract and writes ``folds.json``. It does not
 reimplement fold generation and it does not read model scores.
 
-Status: the exported file is **draft** until the initial training window is
-approved (docs/DECISIONS.md).
+Status: the exported file is **draft** unless generated with ``approved=True``.
+``D-R37`` freezes the current definition (expanding, 80 outer / 40 inner
+quarters, step 1, horizons 1/2/4, 2 primary).
 """
 from __future__ import annotations
 
@@ -83,6 +84,7 @@ def build_payload(
     labels_path: Path,
     horizons: tuple[int, ...] = HORIZONS,
     step_quarters: int = STEP_QUARTERS,
+    approved: bool = False,
 ) -> dict:
     payload = {
         "schema": {
@@ -101,12 +103,18 @@ def build_payload(
             ),
         },
         "metadata": {
-            "draft": True,
-            "approved": False,
+            "draft": not approved,
+            "approved": approved,
             "reason": (
-                "initial training window is not yet approved "
-                "(docs/DECISIONS.md, Lane 2 open decision)"
+                "frozen under D-R37 on 2026-11-14 (expanding, 80 outer / 40 "
+                "inner quarters, step 1, horizons 1/2/4, 2 primary)"
+                if approved
+                else (
+                    "initial training window is not yet approved "
+                    "(docs/DECISIONS.md, Lane 2 open decision)"
+                )
             ),
+            "decision": "D-R37" if approved else None,
             "generated_from": "outputs/labels/USA_labels.csv",
             "labels_file": str(Path(labels_path)),
             "labels_sha256": sha256_file(labels_path),
@@ -189,3 +197,110 @@ def load_labels(path: Path) -> tuple[str, str]:
     if not quarters:
         raise ValueError(f"{path} has no rows")
     return quarters[0], quarters[-1]
+
+
+# ---------------------------------------------------------------------------
+# Adapter: fold quarter labels -> row positions for ews.models.nested_runner
+# ---------------------------------------------------------------------------
+
+def quarter_positions(index) -> dict[str, int]:
+    """Map quarter labels to row positions.
+
+    ``index`` is a PeriodIndex, a sequence of quarter strings, or a DataFrame
+    with a ``quarter`` column. Duplicate quarters are rejected so a position
+    cannot silently mean two rows.
+    """
+    if isinstance(index, pd.DataFrame):
+        if "quarter" not in index.columns:
+            raise ValueError("DataFrame index source has no 'quarter' column")
+        values = index["quarter"].astype(str).tolist()
+    else:
+        values = [str(value) for value in index]
+
+    positions: dict[str, int] = {}
+    for position, quarter in enumerate(values):
+        if quarter in positions:
+            raise ValueError(f"duplicate quarter in index: {quarter}")
+        positions[quarter] = position
+    if not positions:
+        raise ValueError("index is empty")
+    return positions
+
+
+def _span(positions: dict[str, int], start: str, end: str) -> list[int]:
+    if start not in positions:
+        raise KeyError(f"quarter {start} is not in the feature table")
+    if end not in positions:
+        raise KeyError(f"quarter {end} is not in the feature table")
+    first = positions[start]
+    last = positions[end]
+    if first > last:
+        raise ValueError(f"span {start}..{end} is reversed")
+    return list(range(first, last + 1))
+
+
+def fold_index_splits(
+    payload: dict,
+    index,
+    *,
+    horizon: int = PRIMARY_HORIZON,
+    fold: int | None = None,
+) -> list[dict] | dict:
+    """Map fold quarter boundaries onto row positions.
+
+    Returns one record per outer fold::
+
+        {"fold": i, "outer_train": [...], "outer_test": [...],
+         "inner_splits": [(train, validation), ...]}
+
+    Positions index the rows of the feature table used to build ``X``/``y``.
+    Every inner train/validation split lies inside the outer training block,
+    and the purge gap before each test/validation block equals the horizon.
+    """
+    key = str(horizon)
+    if key not in payload.get("horizons", {}):
+        raise KeyError(f"horizon {horizon} is not in the fold payload")
+    block = payload["horizons"][key]
+    positions = quarter_positions(index)
+
+    records = []
+    for i, (outer, inner) in enumerate(zip(block["outer"], block["inner"])):
+        if fold is not None and i != fold:
+            continue
+
+        outer_train = _span(positions, outer["train_start"], outer["train_end"])
+        outer_test = _span(positions, outer["test_start"], outer["test_end"])
+        if outer_train[-1] + horizon >= outer_test[0]:
+            raise ValueError(
+                f"horizon {horizon} fold {i}: purge gap shorter than {horizon}"
+            )
+
+        inner_splits = []
+        for train_end_i, test_start_i, test_end_i in inner:
+            train = _span(positions, outer["train_start"], train_end_i)
+            validation = _span(positions, test_start_i, test_end_i)
+            if train[-1] + horizon >= validation[0]:
+                raise ValueError(
+                    f"horizon {horizon} fold {i}: inner purge shorter than {horizon}"
+                )
+            if validation[-1] > outer_train[-1]:
+                raise ValueError(
+                    f"horizon {horizon} fold {i}: inner validation escapes outer train"
+                )
+            inner_splits.append((train, validation))
+
+        records.append(
+            {
+                "fold": i,
+                "outer_train": outer_train,
+                "outer_test": outer_test,
+                "inner_splits": inner_splits,
+            }
+        )
+
+    if fold is not None:
+        if not records:
+            raise IndexError(f"fold {fold} is out of range for horizon {horizon}")
+        return records[0]
+    return records
+
