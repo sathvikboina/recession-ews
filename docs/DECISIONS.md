@@ -41,6 +41,7 @@ named step · **OPEN** = not decided yet.
 | D-R30 | India pre-audit: best case 4/8 under §19 because employment, hours, household income and retail are structurally missing. No relaxation; India is Label-B-only under O-2, reported as a coverage case study. The final count from downloaded MoSPI/RBI data is recorded in D-R33. | Q-06, §19, O-2 | CONFIRM (O-2) | India / report |
 | D-R31 | **2026 data extension.** The reporting window moves from 1990Q1–2025Q4 (144 quarters) to **1990Q1–2026Q3 (147 quarters)** using FRED observations through 2026-09. `labels-v2` is archived byte-identically; `labels-v3` is active. The estimator, BBQ parameters, diffusion gate and eight-indicator structure are unchanged. The extension adds no new recession episode and keeps 4/4 NBER agreement. | 2026 data request, D-R22 | FROZEN | labels / features / report |
 | D-R33 | **India downloaded-data audit.** Official MoSPI series give India **1 of 8** BEAI indicators: `ACT_IP` 130/147 (88.4%). NAS GDP, PFCE and GFCF cover 2011Q2–2026Q2, 61/147 (41.5%), because quarterly NAS exists only for the 2011-12 and 2022-23 bases and the Back series is annual. Quarterly PLFS covers 2018Q2–2026Q3, 33/147 (22.4%); monthly PLFS starts April 2025. No quarterly hours or household-income series and no official monthly retail series were found. The quarterly GFCF institutional split returns `No Data Found`. India stays Label-B-only under O-2; no proxy or relaxation. Evidence: `data/india_core_coverage.csv`. (D-R32 is reserved for Palchhin's model tuning freeze.) | Q-06 to Q-09, §19 | FROZEN | India / report |
+| D-R34 | **Japan window exception (Option A).** `labels-v1-JPN` covers 144 quarters (1990Q1–2025Q4) while D-R02/D-R31 require 147 quarters (1990Q1–2026Q3); recorded as a documented exception. Cross-country features must align on 147 or use the JPN window explicitly; `labels-v2-JPN` is deferred to after the official run. Reference: `docs/LABEL_VALIDATION_JPN.md`. | Option A decision | FROZEN | JPN / cross-country |
 
 ## Consequences to keep in mind
 
@@ -104,9 +105,10 @@ API does not provide.
 `labels-v3` (2026Q3 window extension); see `docs/DECISION_NOTE_Q02_Q04_Q05.md`
 for the comparison, selected options and joint re-validation.
 
-## Lane 2 reassignment and Lane 3 overlap (2026-11-14)
+## Lane 2 reassignment, JPN window exception, and Lane 3 overlap (2026-11-14)
 
-- **D-R34 — Lane 2 ownership.** After the original owner resigned, Lane 2 is split.
+- **D-R34 — Japan window exception (Option A).** `labels-v1-JPN` covers 144 quarters (1990Q1–2025Q4) while D-R02 and D-R31 require 147 (1990Q1–2026Q3). Under Option A, this is recorded as a documented exception without rewriting history or regenerating the frozen label. Cross-country features must align on 147 or use the 144-quarter JPN window explicitly; `labels-v2-JPN` is deferred to after the official run. Reference: `docs/LABEL_VALIDATION_JPN.md`.
+- **Lane 2 ownership.** After the original owner resigned, Lane 2 is split.
   Shravani Math owns 2A (feature specification, firewall tests, feature dictionary,
   baselines) and Sathvik Boina owns 2B (feature table, folds, harness, Makefile,
   clean clone). Sathvik is the named branch owner of `feat/features-harness` and merges
