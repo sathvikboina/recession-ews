@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.venv-win/
 .pytest_cache/
 .ruff_cache/
 build/
@@ -55,3 +56,7 @@ Thumbs.db
 
 # Office lock files
 .~lock.*#
+
+# LaTeX build by-products (main.tex is compiled in Overleaf)
+*.synctex
+*.synctex.gz
