@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Firewall — Recession Early Warning</title>
+<meta name="description" content="Explore predictors and try to break the leakage firewall.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="firewall">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><span class="mark">EW</span><span>Recession Early Warning</span></a>
+    <nav class="nav" aria-label="Project pages">
+      <a href="index.html">Overview</a>
+      <a href="methodology.html">Method</a>
+      <a href="firewall.html" aria-current="page">Firewall</a>
+      <a href="results.html">Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <p class="eyebrow">Leakage firewall</p>
+    <h1>Assume the table is guilty. Make the tests prove it is not.</h1>
+    <p class="lede">A clean-looking backtest can hide a target, a future value or a full-sample scaler. The firewall is a small set of tests written against the builder, including mutations that must fail.</p>
+  </section>
+
+  <section>
+    <div class="grid2b">
+      <div class="card">
+        <h3>What is forbidden</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>The recession flag <span class="mono">R</span> and episode identifiers.</li>
+          <li>The BEAI factor, cumulated level or diffusion share.</li>
+          <li>Turning-point dates and the NBER chronology.</li>
+          <li>Country identifiers and raw country-size levels.</li>
+          <li>Any value dated after the prediction origin.</li>
+          <li>Any scaler or imputer fitted on the full sample.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>How it is checked</h3>
+        <p class="small muted" style="margin:0">Seven tests run against <span class="mono">ews.features</span>. The key one rebuilds the table on history truncated at four different cutoffs: if any past value changes, the table is reading the future. Two mutation checks then poison a clean table and require a failure.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div><h2>Explore a predictor</h2><p>Pick any of the 149 columns. Bands mark labelled recessions. Values are the frozen, unscaled table.</p></div>
+      <span class="badge ok">147 × 149</span>
+    </div>
+    <div class="card">
+      <div class="controls">
+        <label for="feature-select">Feature</label>
+        <select id="feature-select"></select>
+        <button id="feature-random" type="button">Random column</button>
+      </div>
+      <h3 id="feature-name" class="mono" style="margin-bottom:2px">—</h3>
+      <p class="tiny muted" id="feature-group" style="margin:0 0 8px">—</p>
+      <div id="feature-chart" class="chart" data-label="Selected feature over time"></div>
+      <div id="feature-stats" class="grid4 small" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div><h2>Try to poison the table</h2><p>These are illustrations of the real checks, not a live Python session. Each state corresponds to a mutation the test suite rejects.</p></div>
+      <span class="badge warn">Adversarial by design</span>
+    </div>
+    <div class="demo-grid">
+      <div class="card">
+        <div class="controls" id="demo-controls">
+          <button type="button" class="active" data-state="clean">Clean table</button>
+          <button type="button" data-state="label">Inject R</button>
+          <button type="button" data-state="factor">Inject factor</button>
+          <button type="button" data-state="shift">Shift future</button>
+          <button type="button" data-state="level">Raw level</button>
+        </div>
+        <ul class="checklist" id="demo-checks"></ul>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <h4>What the suite does</h4>
+        <div class="codebox" id="demo-code"></div>
+        <p class="tiny muted" style="margin:10px 0 0">A suite that only passes on clean data is not a firewall. The mutation test is the point.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><h2>The seven tests</h2><p>Each one maps to a rule in the build contract.</p></div></div>
+    <div class="table-wrap card">
+      <table>
+        <thead><tr><th>Test</th><th>What it enforces</th><th>Rule</th><th>Failure mode</th></tr></thead>
+        <tbody>
+          <tr><td>Schema</td><td>147 contiguous quarters, 149 unique columns</td><td>C-01</td><td>silent window drift</td></tr>
+          <tr><td>Blacklist</td><td>No label, factor, chronology or identifier column</td><td>C-01 / FW-06</td><td>target leakage</td></tr>
+          <tr><td>Unscaled</td><td>No standardised column; rate levels match source</td><td>C-07 / C-08</td><td>full-sample scaling</td></tr>
+          <tr><td>No future leakage</td><td>Truncated rebuild leaves past values identical</td><td>C-05</td><td>look-ahead</td></tr>
+          <tr><td>Independence</td><td>BEAI copies reproducible from the panel alone</td><td>C-01</td><td>shared fitted object</td></tr>
+          <tr><td>Mutation</td><td>Poisoned tables must fail the checks</td><td>C-01 / C-05</td><td>toothless tests</td></tr>
+          <tr><td>Inventory</td><td>Spec, dictionary and table agree at 149 columns</td><td>C-07</td><td>documentation drift</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="banner info">
+      <div><strong>Reproduce it</strong><p><span class="mono">make features</span> rebuilds the table; <span class="mono">python -m pytest tests/test_feature_firewall.py -q</span> runs the suite; <span class="mono">make lane2a</span> runs eight integration gates. The frozen table hash is <span class="mono" data-hash="table">—</span>.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Implementation: <span class="mono">src/ews/features.py</span>, <span class="mono">tests/test_feature_firewall.py</span>.</span>
+    <span>Generated <span data-generated>—</span></span>
+  </footer>
+</main>
+<script src="assets/app.js"></script>
+</body>
+</html>
