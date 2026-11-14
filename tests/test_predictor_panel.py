@@ -1,6 +1,15 @@
 
 import pandas as pd
 import pytest
+from pathlib import Path
+import pytest
+
+FRED_GDP_FILE = Path("data/raw/fred/2026-11-06/GDPC1.csv")
+
+pytestmark = pytest.mark.skipif(
+    not FRED_GDP_FILE.exists(),
+    reason="Raw FRED snapshot is not available in this environment",
+)
 
 from ews.models.predictor_panel import (
     aggregate_available,
