@@ -1,0 +1,54 @@
+
+# Part 3 - Model tuning configuration
+# Proposed Day 1 freeze: requires team approval
+# Do not use for scoring until recorded in decisions log.
+
+experiment:
+  country: USA
+  horizons: [1, 2, 4]
+  primary_horizon: 2
+  random_seed: 42
+
+validation:
+  method: expanding_window
+  inner_folds_source: outputs/folds/folds.json
+  shuffle: false
+  tuning_budget: 24
+  selection_metric: pooled_pr_auc
+  tie_breaker: brier
+
+preprocessing:
+  scaler: standard
+  feature_selector: elastic_net_logistic
+  feature_count_forced: false
+  shared_features: true
+
+class_balancing:
+  strategy: balanced
+  xgboost: training_fold_negative_positive_ratio
+  mlp: balanced_sample_weights
+
+mlp:
+  seeds: [0, 1, 2]
+  max_epochs: 300
+  early_stopping_patience: 10
+  restore_best_weights: true
+  average_probabilities: true
+
+threshold:
+  objective: max_f1
+  source: inner_validation
+  lock_before_outer_test: true
+
+ensemble:
+  method: equal_weight_probability_average
+  top_k_configurations: 3
+  ranking_metric: pooled_inner_pr_auc
+  minimum_pr_auc_gain: 0.01
+  bootstrap_resamples: 1000
+  confidence_level: 0.95
+  require_no_episode_recall_loss: true
+
+reporting:
+  primary_metric: pooled_out_of_sample_pr_auc
+  report_negative_ensemble: true
