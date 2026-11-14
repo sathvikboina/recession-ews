@@ -54,7 +54,7 @@ Record the output verbatim in the Day 6 integration note. Do not summarise a red
 | H3 | Shravani | Japan label + chronology note + Germany 6/8 decision; hashes | Label frozen; Germany coverage decision written |
 | H4 | Shravani (2A) + Sathvik (2B) | `dataset.parquet` + frozen `folds.json` + harness; firewall tests from 2A | **2B done**: table, frozen folds, adapter, clean-clone evidence. **2A outstanding**: `docs/FEATURES.md`, `tests/test_feature_firewall.py`, baselines, JPN 144/147 decision |
 | H5 | Palchhin | USA headline, episode, ablation and ensemble tables; C-13 once | **Pending** — no frozen tuning config, no official run |
-| H6 | All | one branch per lane, green checks, short hand-off note | Partial — lanes 1, 2B and 4 green; Lane 3 pending |
+| H6 | All | one branch per lane, green checks, short hand-off note | Partial — lanes 1, 2A, 2B and 4 green; Lane 3 pending |
 | H7 | Sathvik | combined clean-clone evidence, hash table, draft go/no-go | Partial — Lane 2B clean clone recorded; combined gate pending |
 
 ## 5. Rehearsal result
@@ -67,6 +67,7 @@ Rehearsed on `feat/india-scope-docs`, not on `master`:
 | `feat/features-harness` into `feat/india-scope-docs` | clean; 175 passed |
 | `origin/master` (PR #5, itself from this branch) into `feat/india-scope-docs` | clean; 183 passed |
 | Lane 2B final merge (`be185ac`) into `feat/india-scope-docs` | clean; 183 passed, 1 skipped |
+| Lane 2A integration (firewall, spec, baselines, D-R38) into `feat/features-harness` | clean; 190 passed, 1 skipped; `make lane2a` 8/8 gates |
 
 After every merge: `make check` **33 ok, 1 warning, 0 failures**; the frozen label hashes
 were unchanged; `dataset.parquet` and `folds.json` reproduced byte-identically in a fresh

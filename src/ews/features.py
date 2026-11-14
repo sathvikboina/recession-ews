@@ -141,8 +141,14 @@ def build_feature_table(
     start: str = DEFAULT_START,
     end: str = DEFAULT_END,
     spec: tuple[SeriesSpec, ...] = FEATURE_SPEC,
+    validate: bool = True,
 ) -> pd.DataFrame:
-    """Return one unscaled predictor row per quarter in ``start``..``end``."""
+    """Return one unscaled predictor row per quarter in ``start``..``end``.
+
+    ``validate=False`` is used only by the future-leakage firewall test, which
+    builds deliberately truncated tables whose short history would trip the
+    "looks like a raw level" heuristic.
+    """
     working = panel.copy()
     if "USA.FIN_LONG.M.STD" in working.columns and "USA.FIN_SHORT.M.STD" in working.columns:
         working["USA.FIN_SLOPE.M.DERIVED"] = (
@@ -156,7 +162,8 @@ def build_feature_table(
     table = table.reindex(window)
     table.index.name = "quarter"
 
-    validate_feature_table(table, start=start, end=end)
+    if validate:
+        validate_feature_table(table, start=start, end=end)
     return table
 
 

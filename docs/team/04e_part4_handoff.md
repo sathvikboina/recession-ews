@@ -3,8 +3,8 @@
 **Branch:** `feat/india-scope-docs`
 **Date:** 2026-11-14
 **Owner:** Sathvik Boina
-**Status:** India, docs and Lane 2B integration are complete. Lane 2A and Lane 3 official
-results remain pending and are recorded as such.
+**Status:** India, docs and Lane 2A/2B integration are complete. The Lane 3 official run
+and its results remain pending and are recorded as such.
 
 ## 1. What this branch contains
 
@@ -87,7 +87,7 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
 | Lane 2B clean-clone dry run | **Done 2026-11-14**: `docs/team/04b_clean_clone_review.md` | Sathvik |
 | Day 5 integration rehearsal | **Rehearsed on `feat/india-scope-docs`**; `master` merge owed after Lane 3 | Sathvik / all |
 | H3 Japan/Germany labels | **Delivered 2026-11-13**: `labels-v1-JPN` frozen; DEU coverage finding | Shravani |
-| H4 features/folds | **2B delivered**: table, frozen folds, harness, adapter. **2A missing**: spec, firewall tests, baselines | Shravani (2A) / Sathvik (2B) |
+| H4 features/folds | **Delivered**: table, frozen folds, harness, adapter, written spec, firewall suite, baselines and the JPN decision (D-R38). See `docs/LANE2A_RESULT.md`. | Shravani (2A) / Sathvik (2B) |
 | H5 model results / ensemble | Official result missing | Palchhin |
 | Day 7 combined clean clone | Blocked on Lane 3 results | Sathvik |
 | Packaging, mirror, zip, tag | Not created; approval required | Sathvik |

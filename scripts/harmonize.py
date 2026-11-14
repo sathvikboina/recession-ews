@@ -151,16 +151,9 @@ def manifest_raw(source_id: str) -> Path:
         path = latest_raw(source_id)
     expected = str(row.get("sha256", ""))
     if expected and path.exists():
-        raw_b = path.read_bytes()
-        actual = hashlib.sha256(raw_b).hexdigest()
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
         if actual != expected:
-            actual_lf = hashlib.sha256(raw_b.replace(b"\r\n", b"\n")).hexdigest()
-            if actual_lf != expected:
-                if path.parent.name == retrieved:
-                    raise RuntimeError(f"raw SHA-256 mismatch for {source_id}: {path}")
-                else:
-                    # Fallback to different raw vintage on disk; warn rather than abort
-                    pass
+            raise RuntimeError(f"raw SHA-256 mismatch for {source_id}: {path}")
     return path
 
 

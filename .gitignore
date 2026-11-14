@@ -42,10 +42,12 @@ outputs/**
 !outputs/results/USA_robustness.csv
 !outputs/results/USA_false_episodes.csv
 !outputs/results/USA_labelB.csv
+!outputs/results/baselines.csv
+!outputs/results/baselines.md
+!outputs/results/lane2a_verification.json
+!outputs/results/lane2a_pr_comment.md
 !outputs/results/archive/**
 !outputs/results/JPN_*
-!outputs/results/baselines.*
-!outputs/results/lane2a_*
 
 # OS
 .DS_Store

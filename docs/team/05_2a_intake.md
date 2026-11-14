@@ -3,7 +3,9 @@
 **Owner of this runbook:** Sathvik Boina
 **Applies to:** the hand-off from Shravani Math (Lane 2A)
 **Branch:** `feat/features-harness` (Shravani commits; Sathvik owns and merges)
-**Status:** prepared 2026-11-14; nothing from 2A has arrived yet.
+**Status:** executed 2026-11-14. The hand-off arrived as `origin/feat/features-harness@758ae99`;
+its useful parts were ported onto the frozen Lane 2B tree and the rest was rejected. Outcome:
+`docs/LANE2A_RESULT.md`. The checklist in §8 is green.
 
 This is the exact sequence to run when 2A lands. It assumes the 2A deliverables named in
 `docs/team/02a_shravani_feature_spec.md` §5:

@@ -1,8 +1,8 @@
 # One-Week Sprint — Lane Briefs
 
-Status: **active; Part 4 content complete 2026-11-13.** Lane 2 was reassigned on 2026-11-14
-after the original owner resigned; it is now split into 2A (specification and tests) and 2B
-(build and integration). Days 1–5 are individual work; Days 6–7 are shared combining,
+Status: **Lanes 1, 2A, 2B and 4 integrated; Lane 3 official run pending.** Lane 2 was
+reassigned on 2026-11-14 after the original owner resigned; it is now split into 2A
+(specification and tests) and 2B (build and integration). Days 1–5 are individual work; Days 6–7 are shared combining,
 cross-review and sign-off.
 
 These briefs are the short, self-contained version of `docs/TEAM_PLAN.md`. Read your own
@@ -33,7 +33,8 @@ what is frozen and what Palchhin must freeze on Day 1. PDF:
 pending), [04c_integration_rehearsal.md](04c_integration_rehearsal.md) (merge checklist;
 rehearsal pending), [04d_pitch.md](04d_pitch.md) (one-page pitch) and
 [04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps) and
-[05_2a_intake.md](05_2a_intake.md) (the exact sequence for the Lane 2A hand-off).
+[05_2a_intake.md](05_2a_intake.md) (the Lane 2A intake sequence, now executed) and
+[LANE2A_RESULT.md](../LANE2A_RESULT.md) (what was integrated and what was rejected).
 
 ## Schedule at a glance
 
