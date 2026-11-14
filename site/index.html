@@ -3,295 +3,176 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recession Early Warning — Overview</title>
-<style>
-:root {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --ink: #0f172a;
-  --muted: #475569;
-  --line: #e2e8f0;
-  --accent: #0284c7;
-  --accent-soft: #e0f2fe;
-  --accent-dark: #0369a1;
-  --success: #16a34a;
-  --success-soft: #dcfce7;
-  --warn: #dc2626;
-  --warn-soft: #fee2e2;
-  --amber: #d97706;
-  --amber-soft: #fef3c7;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
-a { color: var(--accent); text-decoration: none; font-weight: 500; }
-a:hover { text-decoration: underline; }
-.wrap { max-width: 1140px; margin: 0 auto; padding: 24px 20px 60px; }
-header.top {
-  border-bottom: 2px solid var(--line);
-  padding-bottom: 16px;
-  margin-bottom: 20px;
-}
-h1 { font-size: 26px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.02em; }
-.sub { color: var(--muted); font-size: 14px; margin: 0; }
-.nav-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-.nav-bar a {
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  background: #fff;
-  border: 1px solid var(--line);
-  color: var(--ink);
-}
-.nav-bar a:hover { border-color: var(--accent); background: var(--accent-soft); }
-.nav-bar a.active {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-  font-weight: 600;
-}
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-  margin: 20px 0;
-}
-.kpi {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px 14px;
-}
-.kpi .k {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-.kpi .v {
-  font-size: 20px;
-  font-weight: 700;
-  margin-top: 2px;
-  font-variant-numeric: tabular-nums;
-  word-break: break-all;
-}
-.kpi .n { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 18px;
-  margin-bottom: 20px;
-}
-.card h2 { font-size: 18px; margin: 0 0 8px; }
-.card p { margin: 0 0 12px; font-size: 14px; color: var(--muted); }
-.badge {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-}
-.badge.ok { background: var(--success-soft); color: var(--success); border-color: #bbf7d0; }
-.badge.warn { background: var(--warn-soft); color: var(--warn); border-color: #fecaca; }
-.badge.info { background: var(--accent-soft); color: var(--accent-dark); border-color: #bae6fd; }
-.badge.amber { background: var(--amber-soft); color: var(--amber); border-color: #fde68a; }
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.controls input, .controls select {
-  font: inherit;
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--ink);
-}
-.controls button, .btn {
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--ink);
-  cursor: pointer;
-}
-.controls button:hover, .btn:hover { border-color: var(--accent); background: var(--accent-soft); }
-.controls button.active, .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.table-wrap { overflow-x: auto; margin-top: 10px; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); }
-th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); background: #f8fafc; }
-tr:hover td { background: #f8fafc; }
-.hash-box {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 12px;
-  background: #f1f5f9;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  word-break: break-all;
-}
-svg text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; }
-</style>
+<title>Cross-Country Recession Early Warning — Project Overview</title>
+<meta name="description" content="An interactive guide to a label-first recession early-warning study: chronology, predictors, firewall, folds and baselines.">
+<link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-<div class="wrap">
-  <header class="top">
+<body data-page="overview">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><span class="mark">EW</span><span>Recession Early Warning</span></a>
+    <nav class="nav" aria-label="Project pages">
+      <a href="index.html" aria-current="page">Overview</a>
+      <a href="methodology.html">Method</a>
+      <a href="firewall.html">Firewall</a>
+      <a href="results.html">Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
     <div>
-      <h1>Recession Early-Warning System (EWS)</h1>
-      <p class="sub">Lane 2A Verification, Feature Specification & Honest Walk-Forward Baselines</p>
+      <p class="eyebrow">Label-first macro study · 1990Q1–2026Q3</p>
+      <h1>Can we see a recession coming without leaking the answer?</h1>
+      <p class="lede">This project separates two jobs. First it builds an <strong>ex-post recession chronology</strong> from eight official activity indicators. Then it asks whether a small set of lag-aware predictors can warn of the next peak <em>out of sample</em> — without ever touching the label.</p>
+      <div class="badges" style="margin-top:16px">
+        <span class="badge ok">Labels frozen</span>
+        <span class="badge ok">149 features</span>
+        <span class="badge ok">Folds frozen</span>
+        <span class="badge ok">Firewall tested</span>
+        <span class="badge warn">Official model run pending</span>
+      </div>
     </div>
-    <nav class="nav-bar"><a href="index.html" class="active">Overview</a><a href="labels.html" class="">Labels & Timeline</a><a href="features.html" class="">Feature Inventory</a><a href="folds.html" class="">Folds Explorer</a><a href="baselines.html" class="">Baseline Models</a><a href="countries.html" class="">Cross-Country Scope</a></nav>
-  </header>
+    <aside class="card warn">
+      <h4>Read this first</h4>
+      <p class="small" style="margin-bottom:10px"><strong>No forecasting claim is made yet.</strong> The label, the predictor table, the firewall and the walk-forward folds are complete. The official six-model comparison and the pre-registered ensemble belong to Lane 3 and are still missing.</p>
+      <p class="small muted" style="margin:0">The exploratory run that exists is not the official result: it fails the pre-registered ensemble test.</p>
+    </aside>
+  </section>
 
-  <div class="kpis">
-    <div class="kpi">
-      <div class="k">Study Window</div>
-      <div class="v">1990Q1–2026Q3</div>
-      <div class="n">147 calendar quarters</div>
+  <section>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Study window</div><div class="v">147 <small>quarters</small></div><div class="n">1990Q1–2026Q3</div></div>
+      <div class="kpi"><div class="k">Predictors</div><div class="v" data-count="features">149</div><div class="n">from 20 input series</div></div>
+      <div class="kpi"><div class="k">Outer folds</div><div class="v" data-count="folds">67</div><div class="n">per horizon · 1Q / 2Q / 4Q</div></div>
+      <div class="kpi"><div class="k">NBER episodes</div><div class="v">4 / 4</div><div class="n">matched in the window</div></div>
     </div>
-    <div class="kpi">
-      <div class="k">Frozen Label Hash</div>
-      <div class="v"><span class="hash-box" id="label-sha">2379fd53e4c9...</span></div>
-      <div class="n">Blob SHA-256 verified</div>
-    </div>
-    <div class="kpi">
-      <div class="k">Verification Gates</div>
-      <div class="v"><span class="badge ok">9 / 9 PASS</span></div>
-      <div class="n">Zero regressions</div>
-    </div>
-    <div class="kpi">
-      <div class="k">Shipped Predictors</div>
-      <div class="v">149 features</div>
-      <div class="n">scripts/05_features.py</div>
-    </div>
-    <div class="kpi">
-      <div class="k">Folds (D-R37)</div>
-      <div class="v">67 Folds</div>
-      <div class="n">80Q train, step 1, 2Q primary</div>
-    </div>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>Frozen Label Cryptographic Digest</h2>
-    <p>The Pipeline A USA recession chronology is cryptographically frozen and byte-verified under Rule C-01.</p>
-    <div class="hash-box" id="full-hash">2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa</div>
-  </div>
-
-  <div class="card">
-    <h2>Self-Verification Gates (scripts/08_verify_lane2a.py)</h2>
-    <p>All nine mandatory contractual gates executed and passed under GNU Make harness.</p>
-    <div class="controls">
-      <input type="text" id="gate-search" placeholder="Filter gates...">
-      <button id="toggle-filter" class="btn active">Show All</button>
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Two questions, one firewall</h2>
+        <p>The chronology is a measurement problem. The warning model is a prediction problem. Mixing them is the failure mode this project is built to prevent.</p>
+      </div>
     </div>
-    <div class="table-wrap">
-      <table id="gates-table">
-        <thead>
-          <tr>
-            <th>Gate ID</th>
-            <th>Requirement</th>
-            <th>Status</th>
-            <th>Evidence Detail</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="gate-row">
-          <td><strong>G1</strong></td>
-          <td>G1 base commit contains 4556011</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">4556011</td>
-        </tr><tr class="gate-row">
-          <td><strong>G2</strong></td>
-          <td>G2 USA label blob hash == 2379fd53...19daa</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa</td>
-        </tr><tr class="gate-row">
-          <td><strong>G3</strong></td>
-          <td>G3 USA_panel shape and window recorded in spec</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G4</strong></td>
-          <td>G4 make features (147 rows, contiguous, unscaled, zero blacklisted)</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G5</strong></td>
-          <td>G5 make folds deterministic (identical bytes, D-R37 parameters verified)</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G6</strong></td>
-          <td>G6 tests/test_features.py passes; mutation fails on leaks</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G7</strong></td>
-          <td>G7 baselines reproduce (identical hashes, PR-AUC + recall)</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G8</strong></td>
-          <td>G8 D-R34 present and JPN metadata hash verified</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr><tr class="gate-row">
-          <td><strong>G9</strong></td>
-          <td>G9 git status shows zero changes to outputs/labels/**</td>
-          <td><span class="badge ok">PASS</span></td>
-          <td class="gate-desc">Verified</td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="grid2b">
+      <div class="card accent">
+        <h3>1 · What happened?</h3>
+        <p class="small muted">A dynamic factor model summarises eight coincident activity indicators. Bry–Boschan dating finds peaks and troughs; a diffusion gate keeps only broad contractions. The result is a quarterly recession flag <span class="mono">R</span> and an episode list.</p>
+        <p class="small"><strong>Output:</strong> <span class="mono">labels-v3</span> for the USA, <span class="mono">labels-v1-JPN</span> for Japan.</p>
+        <p class="small"><strong>Validation:</strong> 4/4 NBER episodes in the USA window; 5/5 post-1994 ESRI episodes in Japan.</p>
+      </div>
+      <div class="card gold">
+        <h3>2 · What comes next?</h3>
+        <p class="small muted">A separate table turns only predictor series into lag-aware features. Availability lags are applied before transforms, scaling happens inside folds, and the label is never a column. The frozen folds score each quarter once, in time order.</p>
+        <p class="small"><strong>Output:</strong> 147 × 149 unscaled predictor table and 67 outer folds per horizon.</p>
+        <p class="small"><strong>Status:</strong> baselines are in; the official model result is pending.</p>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<script type="application/json" id="page-data">{"label_hash":"2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa","n_features":149,"quarters":["1990Q1","1990Q2","1990Q3","1990Q4","1991Q1","1991Q2","1991Q3","1991Q4","1992Q1","1992Q2","1992Q3","1992Q4","1993Q1","1993Q2","1993Q3","1993Q4","1994Q1","1994Q2","1994Q3","1994Q4","1995Q1","1995Q2","1995Q3","1995Q4","1996Q1","1996Q2","1996Q3","1996Q4","1997Q1","1997Q2","1997Q3","1997Q4","1998Q1","1998Q2","1998Q3","1998Q4","1999Q1","1999Q2","1999Q3","1999Q4","2000Q1","2000Q2","2000Q3","2000Q4","2001Q1","2001Q2","2001Q3","2001Q4","2002Q1","2002Q2","2002Q3","2002Q4","2003Q1","2003Q2","2003Q3","2003Q4","2004Q1","2004Q2","2004Q3","2004Q4","2005Q1","2005Q2","2005Q3","2005Q4","2006Q1","2006Q2","2006Q3","2006Q4","2007Q1","2007Q2","2007Q3","2007Q4","2008Q1","2008Q2","2008Q3","2008Q4","2009Q1","2009Q2","2009Q3","2009Q4","2010Q1","2010Q2","2010Q3","2010Q4","2011Q1","2011Q2","2011Q3","2011Q4","2012Q1","2012Q2","2012Q3","2012Q4","2013Q1","2013Q2","2013Q3","2013Q4","2014Q1","2014Q2","2014Q3","2014Q4","2015Q1","2015Q2","2015Q3","2015Q4","2016Q1","2016Q2","2016Q3","2016Q4","2017Q1","2017Q2","2017Q3","2017Q4","2018Q1","2018Q2","2018Q3","2018Q4","2019Q1","2019Q2","2019Q3","2019Q4","2020Q1","2020Q2","2020Q3","2020Q4","2021Q1","2021Q2","2021Q3","2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"gates":{"G1 base commit contains 4556011":{"status":"PASS","passed":true,"details":{"base_commit":"4556011","is_ancestor":true}},"G2 USA label blob hash == 2379fd53...19daa":{"status":"PASS","passed":true,"details":{"expected":"2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa","actual":"2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa"}},"G3 USA_panel shape and window recorded in spec":{"status":"PASS","passed":true,"details":{"n_rows":267,"n_cols":27,"start":"1960Q1","end":"2026Q3","spec_verified":true}},"G4 make features (147 rows, contiguous, unscaled, zero blacklisted)":{"status":"PASS","passed":true,"details":{"rows":147,"predictors":149}},"G5 make folds deterministic (identical bytes, D-R37 parameters verified)":{"status":"PASS","passed":true,"details":{"sha256":"cc4814be7e020d466d53e905961c46f5a2ccbe3a0b9197fd7b9e62eb0feb8719","horizons":["1","2","4"],"n_folds_2q":67,"approved":true,"decision":"D-R37"}},"G6 tests/test_features.py passes; mutation fails on leaks":{"status":"PASS","passed":true,"details":{"pytest_output":"......                                                                   [100%]","returncode":0}},"G7 baselines reproduce (identical hashes, PR-AUC + recall)":{"status":"PASS","passed":true,"details":{"csv_sha256":"e227e2543334dd6c11b43db9e6433fadb4eeccaacd8a7e64833647d07377af86","md_sha256":"9cfe616c6fde0b78676750d55b8d94a3dad12afa5a2878f7ccc667f1212b00ce","results":[{"horizon":"1Q","model":"majority","pr_auc":0.015385,"episode_recall":1.0,"episode_recall_05":0.0},{"horizon":"1Q","model":"term_spread","pr_auc":0.111111,"episode_recall":1.0,"episode_recall_05":0.0},{"horizon":"1Q","model":"plain_logistic","pr_auc":0.047619,"episode_recall":0.0,"episode_recall_05":0.0},{"horizon":"2Q","model":"majority","pr_auc":0.023562,"episode_recall":1.0,"episode_recall_05":0.0},{"horizon":"2Q","model":"term_spread","pr_auc":0.155556,"episode_recall":1.0,"episode_recall_05":0.0},{"horizon":"2Q","model":"plain_logistic","pr_auc":0.107955,"episode_recall":0.0,"episode_recall_05":0.0},{"horizon":"4Q","model":"majority","pr_auc":0.040995,"episode_recall":1.0,"episode_recall_05":0.0},{"horizon":"4Q","model":"term_spread","pr_auc":0.176804,"episode_recall":1.0,"episode_recall_05":1.0},{"horizon":"4Q","model":"plain_logistic","pr_auc":0.197276,"episode_recall":0.0,"episode_recall_05":0.0}]}},"G8 D-R34 present and JPN metadata hash verified":{"status":"PASS","passed":true,"details":{"dr34_present":true,"actual_json_hash":"3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a","doc_hash_match":true}},"G9 git status shows zero changes to outputs/labels/**":{"status":"PASS","passed":true,"details":{"clean":true,"status_output":""}}},"episodes":[{"episode_id":1,"peak":"1990Q2","trough":"1991Q1","duration":3,"depth_sd":1.447904,"diffusion":0.809524},{"episode_id":2,"peak":"2001Q1","trough":"2001Q4","duration":3,"depth_sd":0.666114,"diffusion":0.708333},{"episode_id":3,"peak":"2007Q4","trough":"2009Q2","duration":6,"depth_sd":6.220129,"diffusion":0.875},{"episode_id":4,"peak":"2019Q4","trough":"2020Q2","duration":2,"depth_sd":10.968622,"diffusion":0.9375}],"features":[{"name":"beai_copy_ACT_GDP_REAL__qoq_growth","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__yoy_growth","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__base_lag_1","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__base_lag_2","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__base_lag_4","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__rolling_mean_4q","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__rolling_volatility_4q","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_GDP_REAL__trend_4q","source":"beai_copy_ACT_GDP_REAL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__qoq_growth","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__yoy_growth","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__base_lag_1","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__base_lag_2","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__base_lag_4","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__rolling_mean_4q","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__rolling_volatility_4q","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_IP__trend_4q","source":"beai_copy_ACT_IP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__qoq_growth","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__yoy_growth","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__base_lag_1","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__base_lag_2","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__base_lag_4","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__rolling_mean_4q","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__rolling_volatility_4q","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_EMP__trend_4q","source":"beai_copy_ACT_EMP","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__qoq_growth","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__yoy_growth","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__base_lag_1","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__base_lag_2","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__base_lag_4","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__rolling_mean_4q","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__rolling_volatility_4q","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_HOURS__trend_4q","source":"beai_copy_ACT_HOURS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__qoq_growth","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__yoy_growth","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__base_lag_1","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__base_lag_2","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__base_lag_4","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__rolling_mean_4q","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__rolling_volatility_4q","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RINC__trend_4q","source":"beai_copy_ACT_RINC","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__qoq_growth","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__yoy_growth","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__base_lag_1","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__base_lag_2","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__base_lag_4","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__rolling_mean_4q","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__rolling_volatility_4q","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_CONS__trend_4q","source":"beai_copy_ACT_CONS","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__qoq_growth","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__yoy_growth","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__base_lag_1","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__base_lag_2","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__base_lag_4","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__rolling_mean_4q","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__rolling_volatility_4q","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_RETAIL__trend_4q","source":"beai_copy_ACT_RETAIL","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__qoq_growth","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__yoy_growth","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__base_lag_1","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__base_lag_2","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__base_lag_4","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__rolling_mean_4q","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__rolling_volatility_4q","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"beai_copy_ACT_INV__trend_4q","source":"beai_copy_ACT_INV","group":"BEAI Copy","lag":"1 Quarter (NA)","transform":"Growth","blacklisted":false},{"name":"FIN_CREDIT_GDP__level","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__change_4q","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__change_8q","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__base_lag_1","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__base_lag_2","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__base_lag_4","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__rolling_mean_4q","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_CREDIT_GDP__rolling_volatility_4q","source":"FIN_CREDIT_GDP","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__qoq_log_change","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__yoy_log_change","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__base_lag_1","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__base_lag_2","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__base_lag_4","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__rolling_mean_4q","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_EQUITY__rolling_volatility_4q","source":"FIN_EQUITY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__qoq_log_change","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__yoy_log_change","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__base_lag_1","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__base_lag_2","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__base_lag_4","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__rolling_mean_4q","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_CS__rolling_volatility_4q","source":"FIN_HOUSEPRICE_CS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__qoq_log_change","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__yoy_log_change","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__base_lag_1","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__base_lag_2","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__base_lag_4","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__rolling_mean_4q","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_HOUSEPRICE_BIS__rolling_volatility_4q","source":"FIN_HOUSEPRICE_BIS","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__level","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__change_4q","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__base_lag_1","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__base_lag_2","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__base_lag_4","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__rolling_mean_4q","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_LONG__rolling_volatility_4q","source":"FIN_LONG","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__level","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__change_4q","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__base_lag_1","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__base_lag_2","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__base_lag_4","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__rolling_mean_4q","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_POLICY__rolling_volatility_4q","source":"FIN_POLICY","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__level","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__change_4q","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__base_lag_1","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__base_lag_2","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__base_lag_4","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__rolling_mean_4q","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"FIN_SHORT__rolling_volatility_4q","source":"FIN_SHORT","group":"Financial","lag":"0 Days (Market)","transform":"Level","blacklisted":false},{"name":"LAB_UNEMP__level","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__change_4q","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__base_lag_1","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__base_lag_2","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__base_lag_4","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__rolling_mean_4q","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"LAB_UNEMP__rolling_volatility_4q","source":"LAB_UNEMP","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__qoq_log_change","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__yoy_log_change","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__base_lag_1","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__base_lag_2","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__base_lag_4","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__rolling_mean_4q","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"PRC_CPI__rolling_volatility_4q","source":"PRC_CPI","group":"Labor & Prices","lag":"6 Weeks (Monthly)","transform":"Rate / Inflation","blacklisted":false},{"name":"SEN_BCI__level","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__change_4q","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__base_lag_1","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__base_lag_2","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__base_lag_4","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__rolling_mean_4q","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_BCI__rolling_volatility_4q","source":"SEN_BCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__level","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__change_4q","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__base_lag_1","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__base_lag_2","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__base_lag_4","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__rolling_mean_4q","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"SEN_CCI__rolling_volatility_4q","source":"SEN_CCI","group":"Survey","lag":"4 Weeks (Survey)","transform":"Index Level","blacklisted":false},{"name":"FIN_SLOPE__level","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__change_4q","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__base_lag_1","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__base_lag_2","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__base_lag_4","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__rolling_mean_4q","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"FIN_SLOPE__rolling_volatility_4q","source":"FIN_SLOPE","group":"Derived Spread","lag":"0 Days (Market)","transform":"Spread (10Y-3M)","blacklisted":false},{"name":"factor","source":"Pipeline A","group":"Blacklist Demo","lag":"Ex-post","transform":"Coincident Factor","blacklisted":true},{"name":"level","source":"Pipeline A","group":"Blacklist Demo","lag":"Ex-post","transform":"Integrated Index","blacklisted":true},{"name":"R","source":"Pipeline A","group":"Blacklist Demo","lag":"Ex-post","transform":"Target Label","blacklisted":true},{"name":"USA.NBER.Q","source":"NBER","group":"Blacklist Demo","lag":"Ex-post","transform":"Chronology Benchmark","blacklisted":true}],"folds":{"1":[{"train_start":"1990Q1","train_end":"2009Q3","test_start":"2010Q1","test_end":"2010Q1","purge_quarters":1,"train_quarters":79},{"train_start":"1990Q1","train_end":"2009Q4","test_start":"2010Q2","test_end":"2010Q2","purge_quarters":1,"train_quarters":80},{"train_start":"1990Q1","train_end":"2010Q1","test_start":"2010Q3","test_end":"2010Q3","purge_quarters":1,"train_quarters":81},{"train_start":"1990Q1","train_end":"2010Q2","test_start":"2010Q4","test_end":"2010Q4","purge_quarters":1,"train_quarters":82},{"train_start":"1990Q1","train_end":"2010Q3","test_start":"2011Q1","test_end":"2011Q1","purge_quarters":1,"train_quarters":83},{"train_start":"1990Q1","train_end":"2010Q4","test_start":"2011Q2","test_end":"2011Q2","purge_quarters":1,"train_quarters":84},{"train_start":"1990Q1","train_end":"2011Q1","test_start":"2011Q3","test_end":"2011Q3","purge_quarters":1,"train_quarters":85},{"train_start":"1990Q1","train_end":"2011Q2","test_start":"2011Q4","test_end":"2011Q4","purge_quarters":1,"train_quarters":86},{"train_start":"1990Q1","train_end":"2011Q3","test_start":"2012Q1","test_end":"2012Q1","purge_quarters":1,"train_quarters":87},{"train_start":"1990Q1","train_end":"2011Q4","test_start":"2012Q2","test_end":"2012Q2","purge_quarters":1,"train_quarters":88},{"train_start":"1990Q1","train_end":"2012Q1","test_start":"2012Q3","test_end":"2012Q3","purge_quarters":1,"train_quarters":89},{"train_start":"1990Q1","train_end":"2012Q2","test_start":"2012Q4","test_end":"2012Q4","purge_quarters":1,"train_quarters":90},{"train_start":"1990Q1","train_end":"2012Q3","test_start":"2013Q1","test_end":"2013Q1","purge_quarters":1,"train_quarters":91},{"train_start":"1990Q1","train_end":"2012Q4","test_start":"2013Q2","test_end":"2013Q2","purge_quarters":1,"train_quarters":92},{"train_start":"1990Q1","train_end":"2013Q1","test_start":"2013Q3","test_end":"2013Q3","purge_quarters":1,"train_quarters":93},{"train_start":"1990Q1","train_end":"2013Q2","test_start":"2013Q4","test_end":"2013Q4","purge_quarters":1,"train_quarters":94},{"train_start":"1990Q1","train_end":"2013Q3","test_start":"2014Q1","test_end":"2014Q1","purge_quarters":1,"train_quarters":95},{"train_start":"1990Q1","train_end":"2013Q4","test_start":"2014Q2","test_end":"2014Q2","purge_quarters":1,"train_quarters":96},{"train_start":"1990Q1","train_end":"2014Q1","test_start":"2014Q3","test_end":"2014Q3","purge_quarters":1,"train_quarters":97},{"train_start":"1990Q1","train_end":"2014Q2","test_start":"2014Q4","test_end":"2014Q4","purge_quarters":1,"train_quarters":98},{"train_start":"1990Q1","train_end":"2014Q3","test_start":"2015Q1","test_end":"2015Q1","purge_quarters":1,"train_quarters":99},{"train_start":"1990Q1","train_end":"2014Q4","test_start":"2015Q2","test_end":"2015Q2","purge_quarters":1,"train_quarters":100},{"train_start":"1990Q1","train_end":"2015Q1","test_start":"2015Q3","test_end":"2015Q3","purge_quarters":1,"train_quarters":101},{"train_start":"1990Q1","train_end":"2015Q2","test_start":"2015Q4","test_end":"2015Q4","purge_quarters":1,"train_quarters":102},{"train_start":"1990Q1","train_end":"2015Q3","test_start":"2016Q1","test_end":"2016Q1","purge_quarters":1,"train_quarters":103},{"train_start":"1990Q1","train_end":"2015Q4","test_start":"2016Q2","test_end":"2016Q2","purge_quarters":1,"train_quarters":104},{"train_start":"1990Q1","train_end":"2016Q1","test_start":"2016Q3","test_end":"2016Q3","purge_quarters":1,"train_quarters":105},{"train_start":"1990Q1","train_end":"2016Q2","test_start":"2016Q4","test_end":"2016Q4","purge_quarters":1,"train_quarters":106},{"train_start":"1990Q1","train_end":"2016Q3","test_start":"2017Q1","test_end":"2017Q1","purge_quarters":1,"train_quarters":107},{"train_start":"1990Q1","train_end":"2016Q4","test_start":"2017Q2","test_end":"2017Q2","purge_quarters":1,"train_quarters":108},{"train_start":"1990Q1","train_end":"2017Q1","test_start":"2017Q3","test_end":"2017Q3","purge_quarters":1,"train_quarters":109},{"train_start":"1990Q1","train_end":"2017Q2","test_start":"2017Q4","test_end":"2017Q4","purge_quarters":1,"train_quarters":110},{"train_start":"1990Q1","train_end":"2017Q3","test_start":"2018Q1","test_end":"2018Q1","purge_quarters":1,"train_quarters":111},{"train_start":"1990Q1","train_end":"2017Q4","test_start":"2018Q2","test_end":"2018Q2","purge_quarters":1,"train_quarters":112},{"train_start":"1990Q1","train_end":"2018Q1","test_start":"2018Q3","test_end":"2018Q3","purge_quarters":1,"train_quarters":113},{"train_start":"1990Q1","train_end":"2018Q2","test_start":"2018Q4","test_end":"2018Q4","purge_quarters":1,"train_quarters":114},{"train_start":"1990Q1","train_end":"2018Q3","test_start":"2019Q1","test_end":"2019Q1","purge_quarters":1,"train_quarters":115},{"train_start":"1990Q1","train_end":"2018Q4","test_start":"2019Q2","test_end":"2019Q2","purge_quarters":1,"train_quarters":116},{"train_start":"1990Q1","train_end":"2019Q1","test_start":"2019Q3","test_end":"2019Q3","purge_quarters":1,"train_quarters":117},{"train_start":"1990Q1","train_end":"2019Q2","test_start":"2019Q4","test_end":"2019Q4","purge_quarters":1,"train_quarters":118},{"train_start":"1990Q1","train_end":"2019Q3","test_start":"2020Q1","test_end":"2020Q1","purge_quarters":1,"train_quarters":119},{"train_start":"1990Q1","train_end":"2019Q4","test_start":"2020Q2","test_end":"2020Q2","purge_quarters":1,"train_quarters":120},{"train_start":"1990Q1","train_end":"2020Q1","test_start":"2020Q3","test_end":"2020Q3","purge_quarters":1,"train_quarters":121},{"train_start":"1990Q1","train_end":"2020Q2","test_start":"2020Q4","test_end":"2020Q4","purge_quarters":1,"train_quarters":122},{"train_start":"1990Q1","train_end":"2020Q3","test_start":"2021Q1","test_end":"2021Q1","purge_quarters":1,"train_quarters":123},{"train_start":"1990Q1","train_end":"2020Q4","test_start":"2021Q2","test_end":"2021Q2","purge_quarters":1,"train_quarters":124},{"train_start":"1990Q1","train_end":"2021Q1","test_start":"2021Q3","test_end":"2021Q3","purge_quarters":1,"train_quarters":125},{"train_start":"1990Q1","train_end":"2021Q2","test_start":"2021Q4","test_end":"2021Q4","purge_quarters":1,"train_quarters":126},{"train_start":"1990Q1","train_end":"2021Q3","test_start":"2022Q1","test_end":"2022Q1","purge_quarters":1,"train_quarters":127},{"train_start":"1990Q1","train_end":"2021Q4","test_start":"2022Q2","test_end":"2022Q2","purge_quarters":1,"train_quarters":128},{"train_start":"1990Q1","train_end":"2022Q1","test_start":"2022Q3","test_end":"2022Q3","purge_quarters":1,"train_quarters":129},{"train_start":"1990Q1","train_end":"2022Q2","test_start":"2022Q4","test_end":"2022Q4","purge_quarters":1,"train_quarters":130},{"train_start":"1990Q1","train_end":"2022Q3","test_start":"2023Q1","test_end":"2023Q1","purge_quarters":1,"train_quarters":131},{"train_start":"1990Q1","train_end":"2022Q4","test_start":"2023Q2","test_end":"2023Q2","purge_quarters":1,"train_quarters":132},{"train_start":"1990Q1","train_end":"2023Q1","test_start":"2023Q3","test_end":"2023Q3","purge_quarters":1,"train_quarters":133},{"train_start":"1990Q1","train_end":"2023Q2","test_start":"2023Q4","test_end":"2023Q4","purge_quarters":1,"train_quarters":134},{"train_start":"1990Q1","train_end":"2023Q3","test_start":"2024Q1","test_end":"2024Q1","purge_quarters":1,"train_quarters":135},{"train_start":"1990Q1","train_end":"2023Q4","test_start":"2024Q2","test_end":"2024Q2","purge_quarters":1,"train_quarters":136},{"train_start":"1990Q1","train_end":"2024Q1","test_start":"2024Q3","test_end":"2024Q3","purge_quarters":1,"train_quarters":137},{"train_start":"1990Q1","train_end":"2024Q2","test_start":"2024Q4","test_end":"2024Q4","purge_quarters":1,"train_quarters":138},{"train_start":"1990Q1","train_end":"2024Q3","test_start":"2025Q1","test_end":"2025Q1","purge_quarters":1,"train_quarters":139},{"train_start":"1990Q1","train_end":"2024Q4","test_start":"2025Q2","test_end":"2025Q2","purge_quarters":1,"train_quarters":140},{"train_start":"1990Q1","train_end":"2025Q1","test_start":"2025Q3","test_end":"2025Q3","purge_quarters":1,"train_quarters":141},{"train_start":"1990Q1","train_end":"2025Q2","test_start":"2025Q4","test_end":"2025Q4","purge_quarters":1,"train_quarters":142},{"train_start":"1990Q1","train_end":"2025Q3","test_start":"2026Q1","test_end":"2026Q1","purge_quarters":1,"train_quarters":143},{"train_start":"1990Q1","train_end":"2025Q4","test_start":"2026Q2","test_end":"2026Q2","purge_quarters":1,"train_quarters":144},{"train_start":"1990Q1","train_end":"2026Q1","test_start":"2026Q3","test_end":"2026Q3","purge_quarters":1,"train_quarters":145}],"2":[{"train_start":"1990Q1","train_end":"2009Q2","test_start":"2010Q1","test_end":"2010Q1","purge_quarters":2,"train_quarters":78},{"train_start":"1990Q1","train_end":"2009Q3","test_start":"2010Q2","test_end":"2010Q2","purge_quarters":2,"train_quarters":79},{"train_start":"1990Q1","train_end":"2009Q4","test_start":"2010Q3","test_end":"2010Q3","purge_quarters":2,"train_quarters":80},{"train_start":"1990Q1","train_end":"2010Q1","test_start":"2010Q4","test_end":"2010Q4","purge_quarters":2,"train_quarters":81},{"train_start":"1990Q1","train_end":"2010Q2","test_start":"2011Q1","test_end":"2011Q1","purge_quarters":2,"train_quarters":82},{"train_start":"1990Q1","train_end":"2010Q3","test_start":"2011Q2","test_end":"2011Q2","purge_quarters":2,"train_quarters":83},{"train_start":"1990Q1","train_end":"2010Q4","test_start":"2011Q3","test_end":"2011Q3","purge_quarters":2,"train_quarters":84},{"train_start":"1990Q1","train_end":"2011Q1","test_start":"2011Q4","test_end":"2011Q4","purge_quarters":2,"train_quarters":85},{"train_start":"1990Q1","train_end":"2011Q2","test_start":"2012Q1","test_end":"2012Q1","purge_quarters":2,"train_quarters":86},{"train_start":"1990Q1","train_end":"2011Q3","test_start":"2012Q2","test_end":"2012Q2","purge_quarters":2,"train_quarters":87},{"train_start":"1990Q1","train_end":"2011Q4","test_start":"2012Q3","test_end":"2012Q3","purge_quarters":2,"train_quarters":88},{"train_start":"1990Q1","train_end":"2012Q1","test_start":"2012Q4","test_end":"2012Q4","purge_quarters":2,"train_quarters":89},{"train_start":"1990Q1","train_end":"2012Q2","test_start":"2013Q1","test_end":"2013Q1","purge_quarters":2,"train_quarters":90},{"train_start":"1990Q1","train_end":"2012Q3","test_start":"2013Q2","test_end":"2013Q2","purge_quarters":2,"train_quarters":91},{"train_start":"1990Q1","train_end":"2012Q4","test_start":"2013Q3","test_end":"2013Q3","purge_quarters":2,"train_quarters":92},{"train_start":"1990Q1","train_end":"2013Q1","test_start":"2013Q4","test_end":"2013Q4","purge_quarters":2,"train_quarters":93},{"train_start":"1990Q1","train_end":"2013Q2","test_start":"2014Q1","test_end":"2014Q1","purge_quarters":2,"train_quarters":94},{"train_start":"1990Q1","train_end":"2013Q3","test_start":"2014Q2","test_end":"2014Q2","purge_quarters":2,"train_quarters":95},{"train_start":"1990Q1","train_end":"2013Q4","test_start":"2014Q3","test_end":"2014Q3","purge_quarters":2,"train_quarters":96},{"train_start":"1990Q1","train_end":"2014Q1","test_start":"2014Q4","test_end":"2014Q4","purge_quarters":2,"train_quarters":97},{"train_start":"1990Q1","train_end":"2014Q2","test_start":"2015Q1","test_end":"2015Q1","purge_quarters":2,"train_quarters":98},{"train_start":"1990Q1","train_end":"2014Q3","test_start":"2015Q2","test_end":"2015Q2","purge_quarters":2,"train_quarters":99},{"train_start":"1990Q1","train_end":"2014Q4","test_start":"2015Q3","test_end":"2015Q3","purge_quarters":2,"train_quarters":100},{"train_start":"1990Q1","train_end":"2015Q1","test_start":"2015Q4","test_end":"2015Q4","purge_quarters":2,"train_quarters":101},{"train_start":"1990Q1","train_end":"2015Q2","test_start":"2016Q1","test_end":"2016Q1","purge_quarters":2,"train_quarters":102},{"train_start":"1990Q1","train_end":"2015Q3","test_start":"2016Q2","test_end":"2016Q2","purge_quarters":2,"train_quarters":103},{"train_start":"1990Q1","train_end":"2015Q4","test_start":"2016Q3","test_end":"2016Q3","purge_quarters":2,"train_quarters":104},{"train_start":"1990Q1","train_end":"2016Q1","test_start":"2016Q4","test_end":"2016Q4","purge_quarters":2,"train_quarters":105},{"train_start":"1990Q1","train_end":"2016Q2","test_start":"2017Q1","test_end":"2017Q1","purge_quarters":2,"train_quarters":106},{"train_start":"1990Q1","train_end":"2016Q3","test_start":"2017Q2","test_end":"2017Q2","purge_quarters":2,"train_quarters":107},{"train_start":"1990Q1","train_end":"2016Q4","test_start":"2017Q3","test_end":"2017Q3","purge_quarters":2,"train_quarters":108},{"train_start":"1990Q1","train_end":"2017Q1","test_start":"2017Q4","test_end":"2017Q4","purge_quarters":2,"train_quarters":109},{"train_start":"1990Q1","train_end":"2017Q2","test_start":"2018Q1","test_end":"2018Q1","purge_quarters":2,"train_quarters":110},{"train_start":"1990Q1","train_end":"2017Q3","test_start":"2018Q2","test_end":"2018Q2","purge_quarters":2,"train_quarters":111},{"train_start":"1990Q1","train_end":"2017Q4","test_start":"2018Q3","test_end":"2018Q3","purge_quarters":2,"train_quarters":112},{"train_start":"1990Q1","train_end":"2018Q1","test_start":"2018Q4","test_end":"2018Q4","purge_quarters":2,"train_quarters":113},{"train_start":"1990Q1","train_end":"2018Q2","test_start":"2019Q1","test_end":"2019Q1","purge_quarters":2,"train_quarters":114},{"train_start":"1990Q1","train_end":"2018Q3","test_start":"2019Q2","test_end":"2019Q2","purge_quarters":2,"train_quarters":115},{"train_start":"1990Q1","train_end":"2018Q4","test_start":"2019Q3","test_end":"2019Q3","purge_quarters":2,"train_quarters":116},{"train_start":"1990Q1","train_end":"2019Q1","test_start":"2019Q4","test_end":"2019Q4","purge_quarters":2,"train_quarters":117},{"train_start":"1990Q1","train_end":"2019Q2","test_start":"2020Q1","test_end":"2020Q1","purge_quarters":2,"train_quarters":118},{"train_start":"1990Q1","train_end":"2019Q3","test_start":"2020Q2","test_end":"2020Q2","purge_quarters":2,"train_quarters":119},{"train_start":"1990Q1","train_end":"2019Q4","test_start":"2020Q3","test_end":"2020Q3","purge_quarters":2,"train_quarters":120},{"train_start":"1990Q1","train_end":"2020Q1","test_start":"2020Q4","test_end":"2020Q4","purge_quarters":2,"train_quarters":121},{"train_start":"1990Q1","train_end":"2020Q2","test_start":"2021Q1","test_end":"2021Q1","purge_quarters":2,"train_quarters":122},{"train_start":"1990Q1","train_end":"2020Q3","test_start":"2021Q2","test_end":"2021Q2","purge_quarters":2,"train_quarters":123},{"train_start":"1990Q1","train_end":"2020Q4","test_start":"2021Q3","test_end":"2021Q3","purge_quarters":2,"train_quarters":124},{"train_start":"1990Q1","train_end":"2021Q1","test_start":"2021Q4","test_end":"2021Q4","purge_quarters":2,"train_quarters":125},{"train_start":"1990Q1","train_end":"2021Q2","test_start":"2022Q1","test_end":"2022Q1","purge_quarters":2,"train_quarters":126},{"train_start":"1990Q1","train_end":"2021Q3","test_start":"2022Q2","test_end":"2022Q2","purge_quarters":2,"train_quarters":127},{"train_start":"1990Q1","train_end":"2021Q4","test_start":"2022Q3","test_end":"2022Q3","purge_quarters":2,"train_quarters":128},{"train_start":"1990Q1","train_end":"2022Q1","test_start":"2022Q4","test_end":"2022Q4","purge_quarters":2,"train_quarters":129},{"train_start":"1990Q1","train_end":"2022Q2","test_start":"2023Q1","test_end":"2023Q1","purge_quarters":2,"train_quarters":130},{"train_start":"1990Q1","train_end":"2022Q3","test_start":"2023Q2","test_end":"2023Q2","purge_quarters":2,"train_quarters":131},{"train_start":"1990Q1","train_end":"2022Q4","test_start":"2023Q3","test_end":"2023Q3","purge_quarters":2,"train_quarters":132},{"train_start":"1990Q1","train_end":"2023Q1","test_start":"2023Q4","test_end":"2023Q4","purge_quarters":2,"train_quarters":133},{"train_start":"1990Q1","train_end":"2023Q2","test_start":"2024Q1","test_end":"2024Q1","purge_quarters":2,"train_quarters":134},{"train_start":"1990Q1","train_end":"2023Q3","test_start":"2024Q2","test_end":"2024Q2","purge_quarters":2,"train_quarters":135},{"train_start":"1990Q1","train_end":"2023Q4","test_start":"2024Q3","test_end":"2024Q3","purge_quarters":2,"train_quarters":136},{"train_start":"1990Q1","train_end":"2024Q1","test_start":"2024Q4","test_end":"2024Q4","purge_quarters":2,"train_quarters":137},{"train_start":"1990Q1","train_end":"2024Q2","test_start":"2025Q1","test_end":"2025Q1","purge_quarters":2,"train_quarters":138},{"train_start":"1990Q1","train_end":"2024Q3","test_start":"2025Q2","test_end":"2025Q2","purge_quarters":2,"train_quarters":139},{"train_start":"1990Q1","train_end":"2024Q4","test_start":"2025Q3","test_end":"2025Q3","purge_quarters":2,"train_quarters":140},{"train_start":"1990Q1","train_end":"2025Q1","test_start":"2025Q4","test_end":"2025Q4","purge_quarters":2,"train_quarters":141},{"train_start":"1990Q1","train_end":"2025Q2","test_start":"2026Q1","test_end":"2026Q1","purge_quarters":2,"train_quarters":142},{"train_start":"1990Q1","train_end":"2025Q3","test_start":"2026Q2","test_end":"2026Q2","purge_quarters":2,"train_quarters":143},{"train_start":"1990Q1","train_end":"2025Q4","test_start":"2026Q3","test_end":"2026Q3","purge_quarters":2,"train_quarters":144}],"4":[{"train_start":"1990Q1","train_end":"2008Q4","test_start":"2010Q1","test_end":"2010Q1","purge_quarters":4,"train_quarters":76},{"train_start":"1990Q1","train_end":"2009Q1","test_start":"2010Q2","test_end":"2010Q2","purge_quarters":4,"train_quarters":77},{"train_start":"1990Q1","train_end":"2009Q2","test_start":"2010Q3","test_end":"2010Q3","purge_quarters":4,"train_quarters":78},{"train_start":"1990Q1","train_end":"2009Q3","test_start":"2010Q4","test_end":"2010Q4","purge_quarters":4,"train_quarters":79},{"train_start":"1990Q1","train_end":"2009Q4","test_start":"2011Q1","test_end":"2011Q1","purge_quarters":4,"train_quarters":80},{"train_start":"1990Q1","train_end":"2010Q1","test_start":"2011Q2","test_end":"2011Q2","purge_quarters":4,"train_quarters":81},{"train_start":"1990Q1","train_end":"2010Q2","test_start":"2011Q3","test_end":"2011Q3","purge_quarters":4,"train_quarters":82},{"train_start":"1990Q1","train_end":"2010Q3","test_start":"2011Q4","test_end":"2011Q4","purge_quarters":4,"train_quarters":83},{"train_start":"1990Q1","train_end":"2010Q4","test_start":"2012Q1","test_end":"2012Q1","purge_quarters":4,"train_quarters":84},{"train_start":"1990Q1","train_end":"2011Q1","test_start":"2012Q2","test_end":"2012Q2","purge_quarters":4,"train_quarters":85},{"train_start":"1990Q1","train_end":"2011Q2","test_start":"2012Q3","test_end":"2012Q3","purge_quarters":4,"train_quarters":86},{"train_start":"1990Q1","train_end":"2011Q3","test_start":"2012Q4","test_end":"2012Q4","purge_quarters":4,"train_quarters":87},{"train_start":"1990Q1","train_end":"2011Q4","test_start":"2013Q1","test_end":"2013Q1","purge_quarters":4,"train_quarters":88},{"train_start":"1990Q1","train_end":"2012Q1","test_start":"2013Q2","test_end":"2013Q2","purge_quarters":4,"train_quarters":89},{"train_start":"1990Q1","train_end":"2012Q2","test_start":"2013Q3","test_end":"2013Q3","purge_quarters":4,"train_quarters":90},{"train_start":"1990Q1","train_end":"2012Q3","test_start":"2013Q4","test_end":"2013Q4","purge_quarters":4,"train_quarters":91},{"train_start":"1990Q1","train_end":"2012Q4","test_start":"2014Q1","test_end":"2014Q1","purge_quarters":4,"train_quarters":92},{"train_start":"1990Q1","train_end":"2013Q1","test_start":"2014Q2","test_end":"2014Q2","purge_quarters":4,"train_quarters":93},{"train_start":"1990Q1","train_end":"2013Q2","test_start":"2014Q3","test_end":"2014Q3","purge_quarters":4,"train_quarters":94},{"train_start":"1990Q1","train_end":"2013Q3","test_start":"2014Q4","test_end":"2014Q4","purge_quarters":4,"train_quarters":95},{"train_start":"1990Q1","train_end":"2013Q4","test_start":"2015Q1","test_end":"2015Q1","purge_quarters":4,"train_quarters":96},{"train_start":"1990Q1","train_end":"2014Q1","test_start":"2015Q2","test_end":"2015Q2","purge_quarters":4,"train_quarters":97},{"train_start":"1990Q1","train_end":"2014Q2","test_start":"2015Q3","test_end":"2015Q3","purge_quarters":4,"train_quarters":98},{"train_start":"1990Q1","train_end":"2014Q3","test_start":"2015Q4","test_end":"2015Q4","purge_quarters":4,"train_quarters":99},{"train_start":"1990Q1","train_end":"2014Q4","test_start":"2016Q1","test_end":"2016Q1","purge_quarters":4,"train_quarters":100},{"train_start":"1990Q1","train_end":"2015Q1","test_start":"2016Q2","test_end":"2016Q2","purge_quarters":4,"train_quarters":101},{"train_start":"1990Q1","train_end":"2015Q2","test_start":"2016Q3","test_end":"2016Q3","purge_quarters":4,"train_quarters":102},{"train_start":"1990Q1","train_end":"2015Q3","test_start":"2016Q4","test_end":"2016Q4","purge_quarters":4,"train_quarters":103},{"train_start":"1990Q1","train_end":"2015Q4","test_start":"2017Q1","test_end":"2017Q1","purge_quarters":4,"train_quarters":104},{"train_start":"1990Q1","train_end":"2016Q1","test_start":"2017Q2","test_end":"2017Q2","purge_quarters":4,"train_quarters":105},{"train_start":"1990Q1","train_end":"2016Q2","test_start":"2017Q3","test_end":"2017Q3","purge_quarters":4,"train_quarters":106},{"train_start":"1990Q1","train_end":"2016Q3","test_start":"2017Q4","test_end":"2017Q4","purge_quarters":4,"train_quarters":107},{"train_start":"1990Q1","train_end":"2016Q4","test_start":"2018Q1","test_end":"2018Q1","purge_quarters":4,"train_quarters":108},{"train_start":"1990Q1","train_end":"2017Q1","test_start":"2018Q2","test_end":"2018Q2","purge_quarters":4,"train_quarters":109},{"train_start":"1990Q1","train_end":"2017Q2","test_start":"2018Q3","test_end":"2018Q3","purge_quarters":4,"train_quarters":110},{"train_start":"1990Q1","train_end":"2017Q3","test_start":"2018Q4","test_end":"2018Q4","purge_quarters":4,"train_quarters":111},{"train_start":"1990Q1","train_end":"2017Q4","test_start":"2019Q1","test_end":"2019Q1","purge_quarters":4,"train_quarters":112},{"train_start":"1990Q1","train_end":"2018Q1","test_start":"2019Q2","test_end":"2019Q2","purge_quarters":4,"train_quarters":113},{"train_start":"1990Q1","train_end":"2018Q2","test_start":"2019Q3","test_end":"2019Q3","purge_quarters":4,"train_quarters":114},{"train_start":"1990Q1","train_end":"2018Q3","test_start":"2019Q4","test_end":"2019Q4","purge_quarters":4,"train_quarters":115},{"train_start":"1990Q1","train_end":"2018Q4","test_start":"2020Q1","test_end":"2020Q1","purge_quarters":4,"train_quarters":116},{"train_start":"1990Q1","train_end":"2019Q1","test_start":"2020Q2","test_end":"2020Q2","purge_quarters":4,"train_quarters":117},{"train_start":"1990Q1","train_end":"2019Q2","test_start":"2020Q3","test_end":"2020Q3","purge_quarters":4,"train_quarters":118},{"train_start":"1990Q1","train_end":"2019Q3","test_start":"2020Q4","test_end":"2020Q4","purge_quarters":4,"train_quarters":119},{"train_start":"1990Q1","train_end":"2019Q4","test_start":"2021Q1","test_end":"2021Q1","purge_quarters":4,"train_quarters":120},{"train_start":"1990Q1","train_end":"2020Q1","test_start":"2021Q2","test_end":"2021Q2","purge_quarters":4,"train_quarters":121},{"train_start":"1990Q1","train_end":"2020Q2","test_start":"2021Q3","test_end":"2021Q3","purge_quarters":4,"train_quarters":122},{"train_start":"1990Q1","train_end":"2020Q3","test_start":"2021Q4","test_end":"2021Q4","purge_quarters":4,"train_quarters":123},{"train_start":"1990Q1","train_end":"2020Q4","test_start":"2022Q1","test_end":"2022Q1","purge_quarters":4,"train_quarters":124},{"train_start":"1990Q1","train_end":"2021Q1","test_start":"2022Q2","test_end":"2022Q2","purge_quarters":4,"train_quarters":125},{"train_start":"1990Q1","train_end":"2021Q2","test_start":"2022Q3","test_end":"2022Q3","purge_quarters":4,"train_quarters":126},{"train_start":"1990Q1","train_end":"2021Q3","test_start":"2022Q4","test_end":"2022Q4","purge_quarters":4,"train_quarters":127},{"train_start":"1990Q1","train_end":"2021Q4","test_start":"2023Q1","test_end":"2023Q1","purge_quarters":4,"train_quarters":128},{"train_start":"1990Q1","train_end":"2022Q1","test_start":"2023Q2","test_end":"2023Q2","purge_quarters":4,"train_quarters":129},{"train_start":"1990Q1","train_end":"2022Q2","test_start":"2023Q3","test_end":"2023Q3","purge_quarters":4,"train_quarters":130},{"train_start":"1990Q1","train_end":"2022Q3","test_start":"2023Q4","test_end":"2023Q4","purge_quarters":4,"train_quarters":131},{"train_start":"1990Q1","train_end":"2022Q4","test_start":"2024Q1","test_end":"2024Q1","purge_quarters":4,"train_quarters":132},{"train_start":"1990Q1","train_end":"2023Q1","test_start":"2024Q2","test_end":"2024Q2","purge_quarters":4,"train_quarters":133},{"train_start":"1990Q1","train_end":"2023Q2","test_start":"2024Q3","test_end":"2024Q3","purge_quarters":4,"train_quarters":134},{"train_start":"1990Q1","train_end":"2023Q3","test_start":"2024Q4","test_end":"2024Q4","purge_quarters":4,"train_quarters":135},{"train_start":"1990Q1","train_end":"2023Q4","test_start":"2025Q1","test_end":"2025Q1","purge_quarters":4,"train_quarters":136},{"train_start":"1990Q1","train_end":"2024Q1","test_start":"2025Q2","test_end":"2025Q2","purge_quarters":4,"train_quarters":137},{"train_start":"1990Q1","train_end":"2024Q2","test_start":"2025Q3","test_end":"2025Q3","purge_quarters":4,"train_quarters":138},{"train_start":"1990Q1","train_end":"2024Q3","test_start":"2025Q4","test_end":"2025Q4","purge_quarters":4,"train_quarters":139},{"train_start":"1990Q1","train_end":"2024Q4","test_start":"2026Q1","test_end":"2026Q1","purge_quarters":4,"train_quarters":140},{"train_start":"1990Q1","train_end":"2025Q1","test_start":"2026Q2","test_end":"2026Q2","purge_quarters":4,"train_quarters":141},{"train_start":"1990Q1","train_end":"2025Q2","test_start":"2026Q3","test_end":"2026Q3","purge_quarters":4,"train_quarters":142}]},"baselines":[{"horizon":"1Q","model":"majority","is_primary":false,"pr_auc":0.015385,"roc_auc":0.015385,"episode_recall":1.0,"episode_recall_05":0.0,"accuracy_prev":0.015152,"brier":0.015329,"n_test_obs":66},{"horizon":"1Q","model":"term_spread","is_primary":false,"pr_auc":0.111111,"roc_auc":0.876923,"episode_recall":1.0,"episode_recall_05":0.0,"accuracy_prev":0.560606,"brier":0.024585,"n_test_obs":66},{"horizon":"1Q","model":"plain_logistic","is_primary":false,"pr_auc":0.047619,"roc_auc":0.692308,"episode_recall":0.0,"episode_recall_05":0.0,"accuracy_prev":0.878788,"brier":0.032835,"n_test_obs":66},{"horizon":"2Q","model":"majority","is_primary":true,"pr_auc":0.023562,"roc_auc":0.015873,"episode_recall":1.0,"episode_recall_05":0.0,"accuracy_prev":0.030769,"brier":0.030906,"n_test_obs":65},{"horizon":"2Q","model":"term_spread","is_primary":true,"pr_auc":0.155556,"roc_auc":0.873016,"episode_recall":1.0,"episode_recall_05":0.0,"accuracy_prev":0.630769,"brier":0.063932,"n_test_obs":65},{"horizon":"2Q","model":"plain_logistic","is_primary":true,"pr_auc":0.107955,"roc_auc":0.809524,"episode_recall":0.0,"episode_recall_05":0.0,"accuracy_prev":0.876923,"brier":0.055275,"n_test_obs":65},{"horizon":"4Q","model":"majority","is_primary":false,"pr_auc":0.040995,"roc_auc":0.016949,"episode_recall":1.0,"episode_recall_05":0.0,"accuracy_prev":0.063492,"brier":0.062921,"n_test_obs":63},{"horizon":"4Q","model":"term_spread","is_primary":false,"pr_auc":0.176804,"roc_auc":0.809322,"episode_recall":1.0,"episode_recall_05":1.0,"accuracy_prev":0.68254,"brier":0.132021,"n_test_obs":63},{"horizon":"4Q","model":"plain_logistic","is_primary":false,"pr_auc":0.197276,"roc_auc":0.838983,"episode_recall":0.0,"episode_recall_05":0.0,"accuracy_prev":0.84127,"brier":0.093146,"n_test_obs":63}],"coverage_usa":[{"series_key":"USA.ACT_GDP_REAL.Q.NA","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_IP.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_EMP.Q.NA","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.ACT_HOURS.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_RINC.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_CONS.Q.NA","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_RETAIL.M.STD","quarters":138,"window":147,"coverage_pct":0.9388},{"series_key":"USA.ACT_INV_EQ.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_INV_STRUCT.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_INV_IPP.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_INV_DEFL.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_EMP.M.ESTAB","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_EMP.M.LFS","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.ACT_RINC.M.US","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.FIN_CREDIT_GDP.Q.STD","quarters":144,"window":147,"coverage_pct":0.9796},{"series_key":"USA.FIN_EQUITY.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.FIN_HOUSEPRICE.M.US_CS","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.FIN_HOUSEPRICE.Q.OECD_BIS","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.FIN_LONG.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.FIN_POLICY.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.FIN_SHORT.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.LAB_UNEMP.M.STD","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.PRC_CPI.M.STD","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"USA.SEN_BCI.M.STD","quarters":136,"window":147,"coverage_pct":0.9252},{"series_key":"USA.SEN_CCI.M.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"USA.ACT_INV.Q.STD","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_GDP_REAL","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_IP","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_EMP","quarters":146,"window":147,"coverage_pct":0.9932},{"series_key":"LABEL:ACT_HOURS","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_RINC","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_CONS","quarters":147,"window":147,"coverage_pct":1.0},{"series_key":"LABEL:ACT_RETAIL","quarters":138,"window":147,"coverage_pct":0.9388},{"series_key":"LABEL:ACT_INV","quarters":147,"window":147,"coverage_pct":1.0}],"coverage_jpn":[{"series_key":"JPN.ACT_GDP_REAL.Q.NA","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"JPN.ACT_CONS.Q.NA","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"JPN.ACT_INV.Q.STD","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"JPN.ACT_RINC.Q.STD","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"JPN.ACT_IP.M.STD","quarters":137,"window":144,"coverage_pct":0.9514},{"series_key":"JPN.ACT_EMP.M.LFS","quarters":144,"window":144,"coverage_pct":1.0},{"series_key":"JPN.ACT_EMP.Q.NA","quarters":144,"window":144,"coverage_pct":1.0},{"series_key":"LABEL:ACT_GDP_REAL","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"LABEL:ACT_IP","quarters":137,"window":144,"coverage_pct":0.9514},{"series_key":"LABEL:ACT_EMP","quarters":144,"window":144,"coverage_pct":1.0},{"series_key":"LABEL:ACT_RINC","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"LABEL:ACT_CONS","quarters":128,"window":144,"coverage_pct":0.8889},{"series_key":"LABEL:ACT_INV","quarters":128,"window":144,"coverage_pct":0.8889}],"coverage_deu":[{"series_key":"DEU.ACT_GDP_REAL.Q.NA","quarters":140,"window":144,"coverage_pct":0.9722},{"series_key":"DEU.ACT_IP.M.STD","quarters":137,"window":144,"coverage_pct":0.9514},{"series_key":"DEU.ACT_EMP.Q.NA","quarters":144,"window":144,"coverage_pct":1.0},{"series_key":"DEU.ACT_CONS.Q.NA","quarters":135,"window":144,"coverage_pct":0.9375},{"series_key":"DEU.ACT_RETAIL.M.STD","quarters":137,"window":144,"coverage_pct":0.9514},{"series_key":"LABEL:ACT_GDP_REAL","quarters":140,"window":144,"coverage_pct":0.9722},{"series_key":"LABEL:ACT_IP","quarters":137,"window":144,"coverage_pct":0.9514},{"series_key":"LABEL:ACT_EMP","quarters":144,"window":144,"coverage_pct":1.0},{"series_key":"LABEL:ACT_CONS","quarters":135,"window":144,"coverage_pct":0.9375},{"series_key":"LABEL:ACT_RETAIL","quarters":137,"window":144,"coverage_pct":0.9514}]}</script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const searchInput = document.getElementById("gate-search");
-  const toggleBtn = document.getElementById("toggle-filter");
-  const rows = document.querySelectorAll(".gate-row");
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>The chronology</h2>
+        <p>The teal line is the cumulated activity factor. Shaded bands are labelled recessions. Red and blue dots mark labelled peaks and troughs.</p>
+      </div>
+      <span class="badge ok">labels-v3 · frozen</span>
+    </div>
+    <div class="card">
+      <div id="label-chart" class="chart" data-label="USA activity level with labelled recessions"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:#0b6e75"></i>activity level</span>
+        <span><i class="sw box" style="background:rgba(166,61,47,.18)"></i>labelled recession</span>
+        <span><i class="sw box" style="background:#a63d2f;border-radius:50%"></i>peak</span>
+        <span><i class="sw box" style="background:#2b6cb0;border-radius:50%"></i>trough</span>
+      </div>
+    </div>
+  </section>
 
-  function filterRows() {
-    const query = searchInput.value.toLowerCase();
-    rows.forEach(r => {
-      const text = r.textContent.toLowerCase();
-      r.style.display = text.includes(query) ? "" : "none";
-    });
-  }
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Where the project stands</h2>
+        <p>Five stages. Three are frozen, one is in progress, and one is the missing official model run.</p>
+      </div>
+    </div>
+    <div class="pipeline">
+      <div class="stage done"><span class="tag">Done</span><div class="num">1</div><h3>Data & labels</h3><p>Harmonised quarterly panels; DFM + BBQ + diffusion; USA and Japan labels frozen.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">2</div><h3>Features</h3><p>149 unscaled predictors. Eight BEAI series appear only as separate <span class="mono">beai_copy_*</span> columns.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">3</div><h3>Firewall</h3><p>Independent tests for schema, blacklist, scaling, future leakage and mutation.</p></div>
+      <div class="stage done"><span class="tag">Done</span><div class="num">4</div><h3>Folds</h3><p>Expanding, 80 outer / 40 inner quarters, horizon purge, first score 2010Q1.</p></div>
+      <div class="stage pending"><span class="tag">Pending</span><div class="num">5</div><h3>Official models</h3><p>Six singles, then C-13 applied once. No official headline, episode table or ensemble verdict yet.</p></div>
+    </div>
+  </section>
 
-  searchInput.addEventListener("input", filterRows);
-  toggleBtn.addEventListener("click", function() {
-    searchInput.value = "";
-    filterRows();
-  });
-});
-</script>
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <h3>What is established</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>The USA chronology matches all four NBER recessions with one false quarter.</li>
+          <li>Japan matches all five post-1994 ESRI episodes at episode level.</li>
+          <li>The predictor table is unscaled, lag-aware and independently firewalled.</li>
+          <li>Every fold is time-ordered with a purge equal to the horizon.</li>
+          <li>Simple baselines run on the frozen folds with no test-set tuning.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What is not established</h3>
+        <ul class="small" style="margin:0;padding-left:18px;color:#34435a">
+          <li>Whether any model forecasts a recession out of sample.</li>
+          <li>Whether the pre-registered top-3 ensemble beats the best single model.</li>
+          <li>Any real-time claim: the data are revised history with simulated publication lags.</li>
+          <li>Any cross-country model result: only the USA has both labels and predictors aligned.</li>
+          <li>Germany: below the 6-of-8 gate, delivered as a coverage finding.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2>Explore the project</h2>
+        <p>Three deeper pages, built from the frozen artefacts.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <a class="card flat" href="methodology.html" style="text-decoration:none;color:inherit">
+        <h4>Method</h4>
+        <h3>From indicators to a fair test</h3>
+        <p class="small muted" style="margin:0">The label estimator, the availability ladder, the 149-column table and the frozen fold protocol.</p>
+      </a>
+      <a class="card flat" href="firewall.html" style="text-decoration:none;color:inherit">
+        <h4>Firewall</h4>
+        <h3>Try to leak the answer</h3>
+        <p class="small muted" style="margin:0">Explore any predictor and poison the table. The tests are designed to fail on a leak.</p>
+      </a>
+      <a class="card flat" href="results.html" style="text-decoration:none;color:inherit">
+        <h4>Results</h4>
+        <h3>Labels, baselines and the gap</h3>
+        <p class="small muted" style="margin:0">Validated chronologies, honest baselines, and the official model result that is still pending.</p>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="banner info">
+      <div>
+        <strong>Submission note</strong>
+        <p>The provided instructions ask for an IEEE conference report of 4–6 pages, due 13 November 2026, with a training-loss curve. The report draft now mirrors those sections, but the loss curve and the official results cannot be produced honestly until the Lane 3 run exists.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Source: frozen <span class="mono">labels-v3</span>, <span class="mono">dataset.parquet</span> and <span class="mono">folds.json</span>.</span>
+    <span>Generated <span data-generated>—</span> · offline, no external calls</span>
+  </footer>
+</main>
+<script src="assets/app.js"></script>
 </body>
 </html>
