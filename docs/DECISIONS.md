@@ -103,3 +103,31 @@ API does not provide.
 `labels-v2` under `outputs/labels/archive/labels-v2/`. The active chronology is
 `labels-v3` (2026Q3 window extension); see `docs/DECISION_NOTE_Q02_Q04_Q05.md`
 for the comparison, selected options and joint re-validation.
+
+## Lane 2 reassignment and Lane 3 overlap (2026-11-14)
+
+- **D-R34 — Lane 2 ownership.** After the original owner resigned, Lane 2 is split.
+  Shravani Math owns 2A (feature specification, firewall tests, feature dictionary,
+  baselines) and Sathvik Boina owns 2B (feature table, folds, harness, Makefile,
+  clean clone). Sathvik is the named branch owner of `feat/features-harness` and merges
+  it; Shravani contributes the spec and the tests. The split keeps the builder and the
+  independent test author separate.
+- **D-R35 — Reuse Lane 3 scaffolding.** Palchhin's `feat/models-ensemble` (merged as PR #3)
+  already provides the primitives Lane 2 needs: `ews.models.features.build_available_panel`
+  (applies C-05 availability lags to a harmonised quarterly panel), 
+  `ews.models.feature_transforms.transform_quarterly_series`, 
+  `ews.models.publication_lags`, and `ews.models.folds` (expanding outer folds, expanding
+  inner folds, horizon purge). Lane 2 must **compose** these, not reimplement them.
+  `src/ews/features.py` is the canonical Pipeline B table assembler and may import from
+  `ews.models`; it must not modify those files. The draft fold generator is promoted to
+  `outputs/folds/folds.json` by `scripts/06_folds.py`. `ews.models.predictor_panel` builds a
+  second panel directly from raw FRED files; Lane 2 does **not** use it, so there is one
+  harmonisation path (`USA_panel.csv`) and one table.
+- **D-R36 — Firewall test filename.** `tests/test_features.py` already exists and tests
+  `ews.models.features`. Shravani's Lane 2 firewall suite is therefore
+  `tests/test_feature_firewall.py`; the existing file is not edited.
+
+**Still open (needs a recorded decision before folds are frozen):** the initial training
+window. `ews.models.folds` requires an explicit `initial_train_quarters` and its module
+docstring flags the 20-year (80-quarter) default as unapproved. Lane 2 may emit a
+**draft** fold file, but `folds.json` cannot be frozen until that value is agreed.

@@ -118,7 +118,7 @@ Lane 1 deliverables under `docs/BUILD_CONTRACT.md` Rules C-01–C-12 and the Lan
 | `outputs/labels/JPN/JPN_labels.csv` | `b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5` | **FROZEN** |
 | `outputs/labels/JPN/JPN_episodes.csv` | `ec84ea45db65da606af7504f4fd7d066c846b9f55d729233eebae401ba82c849` | **FROZEN** |
 | `outputs/labels/JPN/JPN_turning_points.csv` | `0465c16f88d352eec3803b1b067e7d6ddefe04807782e98a8ce64f3d6e6ea709` | **FROZEN** |
-| `outputs/labels/JPN/labels-v1-JPN.json` | `877b2b152b5f1d27760e2f1974f0c3f2ae12ece5803ddab914ae842d75c5c1bd` | **FROZEN (Provenance verified)** |
+| `outputs/labels/JPN/labels-v1-JPN.json` | `3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a` | **FROZEN (Provenance verified)** |
 
 ### Germany Artefacts
 - **Status:** **REVOKED (Finding Delivered)**.

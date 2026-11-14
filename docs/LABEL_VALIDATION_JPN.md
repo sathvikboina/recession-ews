@@ -140,10 +140,10 @@ Robustness tests evaluated under the frozen rules (no tuning per country):
 | `outputs/labels/JPN/JPN_labels.csv` | `b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5` | Frozen quarterly label time series (`1990Q1–2025Q4`) |
 | `outputs/labels/JPN/JPN_episodes.csv` | `ec84ea45db65da606af7504f4fd7d066c846b9f55d729233eebae401ba82c849` | Full episode list with BBQ metrics and diffusion gates |
 | `outputs/labels/JPN/JPN_turning_points.csv` | `0465c16f88d352eec3803b1b067e7d6ddefe04807782e98a8ce64f3d6e6ea709` | BBQ dated peaks and troughs on level factor $F_t$ |
-| `outputs/labels/JPN/labels-v1-JPN.json` | `5c5d518dbc53866c01728904a7a6b3f92de763ac06a4b8b8b7231c06d8786f98` | Freeze metadata, parameters, loadings, input/output digests |
+| `outputs/labels/JPN/labels-v1-JPN.json` | `3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a` | Freeze metadata, parameters, loadings, input/output digests |
 
 Baseline comparison file:
-- `outputs/labels/USA_labels.csv`: `452BA036B5D0420A0B49C493738D1E46B4DBA482EF4E830DF1CF1734664577B0` (unchanged).
+- `outputs/labels/USA_labels.csv`: `2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa` (labels-v3, unchanged).
 
 ---
 

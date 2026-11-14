@@ -34,7 +34,8 @@ that date folder; it does not supply any active row and is superseded by the
 table: `data/series_resolution.csv`. Hashes: `data/manifest.csv`.
 
 The FRED registry has **30 entries = 27 downloads + 3 derived series**. The
-manifest has 27 rows: 26 `VERIFIED` and 1 `LOW_COVERAGE` (`PCEC96`). The four
+manifest has 40 rows: 38 `VERIFIED`, 1 `LOW_COVERAGE` (`USA.ACT_CONS.M.US`,
+`PCEC96`) and 1 `PENDING_VERIFICATION` (`DEU.ACT_INV.Q.STD`). The four
 Q-02 asset components and the NBER chronology are supporting downloads; they are
 not separate scope rows.
 

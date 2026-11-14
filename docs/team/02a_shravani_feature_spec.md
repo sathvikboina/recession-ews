@@ -33,7 +33,8 @@ Verified on `feat/india-scope-docs` at `4556011`, clean and synced with origin.
 | Feature table | **does not exist** |
 | Fold file | **does not exist** |
 | Harness | **does not exist** |
-| Test suite | 53 passed, 1 skipped |
+| Test suite | 160 passed, 1 skipped (after merging `origin/master`) |
+| Lane 3 scaffolding | Merged: `ews.models.predictor_panel`, `feature_transforms`, `folds` exist |
 | `make check` | 33 ok, 3 warnings (optional model packages), 0 failures |
 | India | 1/8 downloaded (`ACT_IP` only); Label-B-only under O-2 |
 | Lane 3 | blocked: no official run, `config/models.yaml` unapproved |
@@ -94,8 +95,10 @@ without asking you a question.
 
 ### Block B — Sunday (4–5 h): the tests
 
-Write `tests/test_features.py` against Sathvik's builder. The file is yours; do not accept
-edits that weaken it.
+Write `tests/test_feature_firewall.py` against Sathvik's builder. **Do not use
+`tests/test_features.py`** — that file already exists and tests Palchhin's
+`ews.models.features`; editing it would collide with Lane 3 (D-R36). The new file is
+yours; do not accept edits that weaken it.
 
 | Test | What it must prove |
 |---|---|
@@ -121,7 +124,7 @@ nothing; a test that fails on a known-bad table proves the firewall.
 ## 5. Deliverables
 
 1. `docs/FEATURES.md` — spec §1–4, dictionary §5.
-2. `tests/test_features.py` — all six tests, including the mutation test.
+2. `tests/test_feature_firewall.py` — all six tests, including the mutation test.
 3. `scripts/07_baselines.py` — three baselines on the frozen folds.
 4. A short baseline results note (`outputs/results/baselines.md` or equivalent, or a section
    in `docs/FEATURES.md`) with PR-AUC, recall and the seed.
@@ -225,6 +228,8 @@ slips. Send the spec in whatever state it reaches by Saturday night.
 | Harmoniser | `scripts/harmonize.py` |
 | Your Lane 1 outputs | `docs/LABEL_VALIDATION_JPN.md`, `docs/HANDOFF_JPN_DEU.md` |
 | Original Lane 2 brief | `docs/team/02_arshiya_features_harness.md` |
+| Existing Lane 3 feature tests | `tests/test_features.py` (do not edit; use `tests/test_feature_firewall.py`) |
+| Lane 3 feature modules | `src/ews/models/features.py`, `feature_transforms.py`, `publication_lags.py` |
 | Sathvik's build brief | `docs/team/02b_sathvik_features_folds.md` |
 
 **Bottom line:** a small, clean, tested table with honest folds beats a large table with

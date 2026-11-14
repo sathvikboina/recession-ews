@@ -15,7 +15,7 @@ Team: Sathvik Boina, Shravani Math, Arshiya, Palchhin.
 |---|---|
 | Phase 1 — literature matrix | done (`literature_matrix.xlsx`, v4) |
 | Phase 2 — data dictionary | done (`recession_ews_data_dictionary.xlsx`, 16 sheets) |
-| Phase 3 — scoped verification | USA 25/25 resolved; JPN 21/21 resolved; DEU 21/21 mapped (Q-02 blocks the investment row) |
+| Phase 3 — scoped verification | USA 25/25 resolved; JPN 18/21 resolved (3 pending); DEU 18/21 resolved (3 pending; Q-02 blocks the investment row) |
 | Phase 4 — collect + harmonise | USA and JPN done; DEU collected, delivered as a coverage finding |
 | Phase 5 — BEAI label | **USA `labels-v3` and JPN `labels-v1-JPN` frozen** (`labels-v2`/`labels-v1` archived); DEU below the 6/8 gate |
 | Phase 6–8 — features / harness / models | not started officially; exploratory USA-first run only (`docs/EXPLORATORY_MODEL_RUN.md`) |

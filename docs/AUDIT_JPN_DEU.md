@@ -513,3 +513,19 @@ The German label fundamentally breaches Rule Q-02 by substituting total GFCF for
 - **Rule Broken:** Rule C-03, C-12.
 - **Defect:** `manifest.csv` reports raw level window coverage (JPN IP = 137, EMP = 144, GDP = 128), while `coverage_JPN.csv` reports post-sample-truncation growth counts (120, 127, 127). Validation docs cite the truncated numbers as general coverage without explaining the 17-quarter truncation from differencing and sample start.
 - **Required Fix:** Reconcile coverage tables by displaying both metrics clearly: Raw Series Window Coverage (Levels) vs. Estimation Sample Coverage (Growth).
+
+---
+
+## A11. Hash Reconciliation Note (2026-11-14)
+
+The A8/A9 hashes above were computed on a **CRLF checkout** and are retained as the original
+audit record. They are not the digests of the current LF working tree. Two rows differ:
+
+| Artefact | Audit value (CRLF checkout) | Current LF value (this repo) |
+|---|---|---|
+| `outputs/labels/JPN/labels-v1-JPN.json` | `5c5d51…8786f98` | `3b74d3e6…b99ed9a` |
+| `outputs/labels/USA_labels.csv` | `452ba036…4577b0` | `2379fd53…ed19daa` |
+
+The label **content** is unchanged; only line endings differ. Current-state documents
+(`docs/STATE.md`, `docs/LABEL_VALIDATION_JPN.md`, `docs/HANDOFF_JPN_DEU.md`) now carry the LF
+digests. Do not treat the CRLF values as corruption.

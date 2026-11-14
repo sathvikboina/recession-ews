@@ -32,9 +32,10 @@ Verified on `feat/india-scope-docs` at `4556011`, clean and synced with origin.
 | USA panel | 267 quarters × 27 columns, 1960Q1–2026Q3 |
 | USA label | `labels-v3`, 147 quarters, hash `2379fd53…19daa` |
 | Feature table / folds / harness | **do not exist** |
-| Test suite | 53 passed, 1 skipped |
-| `make check` | 33 ok, 3 warnings, 0 failures |
-| Optional model deps | `scikit-learn`, `xgboost` **not installed** |
+| Test suite | 160 passed, 1 skipped (after merging `origin/master`) |
+| `make check` | 33 ok, 1 warning (`shap` not installed; unused), 0 failures |
+| Optional model deps | `scikit-learn` 1.9.1 and `xgboost` 3.4.1 installed |
+| Lane 3 scaffolding | Merged: `predictor_panel`, `feature_transforms`, `folds` (outer + inner, purge) |
 | Manifest | 40 rows (USA 27, JPN 7, DEU 6); 38 verified, 1 low coverage, 1 pending |
 | India | 1/8 (`ACT_IP` only); Label-B-only under O-2 |
 | Lane 3 | blocked: no official run, `config/models.yaml` unapproved |
@@ -43,9 +44,9 @@ Verified on `feat/india-scope-docs` at `4556011`, clean and synced with origin.
 
 1. `data/raw` and `data/clean` are git-ignored. A fresh clone needs `make fetch` and
    `make harmonize` before anything works. Your dry-run clone must prove this, not assume it.
-2. `outputs/**` is git-ignored **except** a whitelist. `outputs/folds/folds.json` will not be
-   committed unless you add a `!outputs/folds/**` rule, or you hand off its SHA-256 instead.
-   Decide explicitly and write down which you chose.
+2. `outputs/**` is git-ignored **except** a whitelist. `!outputs/folds/**` has now been
+   added, so `outputs/folds/folds.json` can be committed. Confirm that decision at commit
+   time; if you prefer hash-only, say so in the hand-off.
 
 ## 3. The whole remaining work, and which part is yours
 
@@ -94,12 +95,14 @@ not start Lane 2 on a broken base.
 
 ### Block A — Saturday afternoon (2–3 h): scaffolding
 
-- Create `src/ews/features.py` with a single, testable entry point (e.g.
-  `build_feature_table(panel, spec) -> DataFrame`).
+- Create `src/ews/features.py` as a **composer**, not a parallel pipeline (D-R35). It
+  imports `ews.models.features.build_available_panel`,
+  `ews.models.feature_transforms` and `ews.models.publication_lags`, and exposes one entry
+  point (`build_feature_table(...) -> DataFrame`) over `data/clean/USA_panel.csv`. Do not
+  modify `ews.models.*`, and do not use the raw-FRED `predictor_panel` path.
 - Create `scripts/05_features.py` as a thin CLI wrapper and add `make features`.
 - Build a **column inventory** from the panel and compare it with Shravani's spec as it
   lands. Report mismatches at once; do not guess a transform.
-- Decide and document the `outputs/folds` gitignore question (commit vs hash-only).
 - Do not write the table yet. The spec is the gate.
 
 ### Block B — Sunday (4–5 h): table and folds
@@ -116,11 +119,13 @@ not start Lane 2 on a broken base.
 
 **Folds and harness**
 
-- `src/ews/harness.py` + `scripts/06_folds.py` + `make folds`.
+- `scripts/06_folds.py` + `make folds`. Reuse `ews.models.folds.generate_outer_folds`
+  and `generate_inner_folds` (D-R35); do not write a second fold generator.
 - Expanding window, time-ordered inner folds, horizons 1Q / 2Q / 4Q with 2Q primary.
 - No test row may ever appear in training. Deterministic from a recorded seed.
 - Write `outputs/folds/folds.json` with explicit keys, horizons, train/test boundaries and
-  inner-fold definitions.
+  inner-fold definitions. The file is **draft** until `initial_train_quarters` is agreed
+  (see §11).
 - Freeze a **draft** fold file by Sunday night and hand it to Palchhin. That is the critical
   path for the whole sprint.
 
@@ -136,10 +141,10 @@ not start Lane 2 on a broken base.
 
 ## 6. Deliverables
 
-1. `src/ews/features.py`, `scripts/05_features.py`, `make features`.
+1. `src/ews/features.py` (composer), `scripts/05_features.py`, `make features`.
 2. `data/clean/dataset.parquet` — generated, 147 rows, unscaled.
-3. `src/ews/harness.py`, `scripts/06_folds.py`, `make folds`.
-4. `outputs/folds/folds.json` — committed or hash-recorded, per your documented decision.
+3. `scripts/06_folds.py`, `make folds` (reuses `ews.models.folds`).
+4. `outputs/folds/folds.json` — committable via the new `!outputs/folds/**` rule.
 5. Reproducibility evidence (command, seed, hash, second run).
 6. Dry-run clean-clone note of current main.
 7. PR on `feat/features-harness`.
@@ -207,7 +212,7 @@ must be rebuilt. Record that, do not hide it.
 | Decision | Why it matters | Default |
 |---|---|---|
 | Lane 2 branch ownership | One owner, two contributors | You own `feat/features-harness`; Shravani commits tests/spec |
-| `folds.json` committed or hash-only | `outputs/**` is git-ignored | Whitelist `outputs/folds/**` and commit; document it |
+| **`initial_train_quarters`** | `ews.models.folds` flags 20 years (80 quarters) as unapproved; folds cannot freeze without it | Emit draft folds only; escalate for a recorded decision |
 | JPN 144 vs 147 quarters | Cross-country features depend on it | Shravani's call; USA-first unaffected |
 | `455edc3` still needed? | Avoid reverting Lane 1/India | Re-check after the master merge |
 
@@ -242,6 +247,10 @@ the failure case.
 | Merge rehearsal | `docs/team/04c_integration_rehearsal.md` |
 | Pitch | `docs/team/04d_pitch.md` |
 | Original Lane 2 brief | `docs/team/02_arshiya_features_harness.md` |
+| Lane 3 fold generator | `src/ews/models/folds.py` (reuse; do not fork) |
+| Lane 3 panel primitives | `src/ews/models/features.py` (`build_available_panel`), `feature_transforms.py` |
+| Lane 3 raw-FRED panel (do not use) | `src/ews/models/predictor_panel.py` |
+| Existing feature tests | `tests/test_features.py` (Lane 3; do not edit) |
 | Shravani's spec brief | `docs/team/02a_shravani_feature_spec.md` |
 
 **Bottom line:** you are the bridge between the labels and the models, and then the person

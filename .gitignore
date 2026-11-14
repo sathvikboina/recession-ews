@@ -24,6 +24,7 @@ data/clean/*
 outputs/**
 !outputs/**/
 !outputs/**/.gitkeep
+!outputs/folds/**
 !outputs/labels/USA_labels.csv
 !outputs/labels/USA_episodes.csv
 !outputs/labels/USA_turning_points.csv
