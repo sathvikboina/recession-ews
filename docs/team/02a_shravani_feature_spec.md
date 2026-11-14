@@ -33,7 +33,7 @@ Verified on `feat/india-scope-docs` at `4556011`, clean and synced with origin.
 | Feature table | **does not exist** |
 | Fold file | **does not exist** |
 | Harness | **does not exist** |
-| Test suite | 160 passed, 1 skipped (after merging `origin/master`) |
+| Test suite | 183 collected: 182 passed, 1 skipped |
 | Lane 3 scaffolding | Merged: `ews.models.predictor_panel`, `feature_transforms`, `folds` exist |
 | `make check` | 33 ok, 3 warnings (optional model packages), 0 failures |
 | India | 1/8 downloaded (`ACT_IP` only); Label-B-only under O-2 |

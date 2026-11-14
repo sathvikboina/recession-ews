@@ -32,7 +32,7 @@ Verified on `feat/india-scope-docs` at `4556011`, clean and synced with origin.
 | USA panel | 267 quarters × 27 columns, 1960Q1–2026Q3 |
 | USA label | `labels-v3`, 147 quarters, hash `2379fd53…19daa` |
 | Feature table / folds / harness | **do not exist** |
-| Test suite | 160 passed, 1 skipped (after merging `origin/master`) |
+| Test suite | 183 collected: 182 passed, 1 skipped |
 | `make check` | 33 ok, 1 warning (`shap` not installed; unused), 0 failures |
 | Optional model deps | `scikit-learn` 1.9.1 and `xgboost` 3.4.1 installed |
 | Lane 3 scaffolding | Merged: `predictor_panel`, `feature_transforms`, `folds` (outer + inner, purge) |
@@ -124,15 +124,15 @@ not start Lane 2 on a broken base.
 - Expanding window, time-ordered inner folds, horizons 1Q / 2Q / 4Q with 2Q primary.
 - No test row may ever appear in training. Deterministic from a recorded seed.
 - Write `outputs/folds/folds.json` with explicit keys, horizons, train/test boundaries and
-  inner-fold definitions. The file is **draft** until `initial_train_quarters` is agreed
-  (see §11).
-- Freeze a **draft** fold file by Sunday night and hand it to Palchhin. That is the critical
-  path for the whole sprint.
+  inner-fold definitions. D-R37 freezes 80 outer / 40 inner quarters, so `make folds`
+  writes the frozen file with `approved: true`.
+- Hand the **frozen** fold file to Palchhin by Sunday night. That is the critical path for
+  the whole sprint.
 
 ### Block C — Monday (3 h): freeze and prove
 
 - Re-run the build from scratch; record the table row count, column list and SHA-256.
-- Run Shravani's `tests/test_features.py`; fix the builder, never the test.
+- Run Shravani's `tests/test_feature_firewall.py`; fix the builder, never the test.
 - Reproducibility run: one USA country × horizon from a recorded seed, twice, identical output.
 - **Dry-run clean clone of current main**: clone into `/tmp`, run `make fetch` and
   `make harmonize`, then `make check test`. Record the exact commands, the skip count and
@@ -190,7 +190,7 @@ must be rebuilt. Record that, do not hide it.
 - DO build to Shravani's spec. If a column is ambiguous, ask before coding it.
 - DO keep the table unscaled and the test block untouched.
 - DO test the firewall with a deliberately leaking table before you trust the table.
-- DO hand the draft folds over Sunday night even if the table still has cosmetic gaps.
+- DO hand the frozen folds over Sunday night even if the table still has cosmetic gaps.
 - DO record every hash, seed and command in the hand-off.
 - DO run checks after every merge and write the result down.
 - DO keep the pitch plain: what the label proves, what the model does not prove.
@@ -212,7 +212,7 @@ must be rebuilt. Record that, do not hide it.
 | Decision | Why it matters | Default |
 |---|---|---|
 | Lane 2 branch ownership | One owner, two contributors | You own `feat/features-harness`; Shravani commits tests/spec |
-| **`initial_train_quarters`** | `ews.models.folds` flags 20 years (80 quarters) as unapproved; folds cannot freeze without it | Emit draft folds only; escalate for a recorded decision |
+| **`initial_train_quarters`** | **Closed**: D-R37 freezes 80 outer / 40 inner quarters, first scored quarter 2010Q1 | Frozen in `outputs/folds/folds.json` |
 | JPN 144 vs 147 quarters | Cross-country features depend on it | Shravani's call; USA-first unaffected |
 | `455edc3` still needed? | Avoid reverting Lane 1/India | Re-check after the master merge |
 

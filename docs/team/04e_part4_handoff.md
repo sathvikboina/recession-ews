@@ -1,10 +1,10 @@
 # Part 4 Hand-off and PR Notes
 
 **Branch:** `feat/india-scope-docs`
-**Date:** 2026-11-13
+**Date:** 2026-11-14
 **Owner:** Sathvik Boina
-**Status:** content complete for the India, docs and integration lane; team-dependent
-items are recorded as pending.
+**Status:** India, docs and Lane 2B integration are complete. Lane 2A and Lane 3 official
+results remain pending and are recorded as such.
 
 ## 1. What this branch contains
 
@@ -21,8 +21,9 @@ items are recorded as pending.
 | `tests/test_review_invariants.py` | Q-06 assertion now checks the downloaded-data finding |
 | `README.md`, `docs/TEAM_PLAN.md`, `docs/team/01_…`, `docs/team/README.md` | Consistency updates |
 | `docs/team/04a_docs_audit.md` | Day 3 docs audit |
-| `docs/team/04b_clean_clone_review.md` | Day 4 checklist; Arshiya's evidence recorded as pending |
-| `docs/team/04c_integration_rehearsal.md` | Day 5/6 merge checklist; rehearsal recorded as not run |
+| `docs/team/04b_clean_clone_review.md` | Lane 2B clean-clone evidence and packaging checklist |
+| `docs/team/04c_integration_rehearsal.md` | Merge rehearsal on the integration branch |
+| `src/ews/features.py`, `scripts/05_features.py`, `src/ews/harness.py`, `scripts/06_folds.py` | Feature table and frozen folds (Lane 2B) |
 | `docs/team/04d_pitch.md` | One-page plain-English pitch |
 | `docs/EXPLORATORY_MODEL_RUN.md` | Exploratory USA-first model run; explicitly not the pre-registered result |
 | `experiments/usa_first_models.py` | Self-contained numpy/scipy walk-forward run behind that note |
@@ -35,11 +36,17 @@ the supporting model specification.
 
 ```bash
 .venv/bin/python -m pytest
-# 54 collected: 53 passed, 1 skipped (after the Lane 1 merge)
+# 183 collected: 182 passed, 1 skipped
+
+make features
+# 147 rows, 149 features, sha256 368b6005...4304f4
+
+make folds
+# 67 outer folds per horizon; frozen under D-R37, sha256 afd51bc5...afc261
 
 make check
-# 33 ok, 3 warnings, 0 failures
-# warnings: optional model packages sklearn, xgboost, shap not installed
+# 33 ok, 1 warning, 0 failures
+# warning: shap not installed (unused)
 
 git diff --check
 # clean
@@ -77,12 +84,12 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
 
 | Item | State | Owner |
 |---|---|---|
-| Arshiya's Day 4 clean-clone dry run | **Not received** | Arshiya |
-| Day 5 integration rehearsal | **Partially run**: Lane 1 merged into `master`; feature/model lanes still absent | Sathvik / all |
+| Lane 2B clean-clone dry run | **Done 2026-11-14**: `docs/team/04b_clean_clone_review.md` | Sathvik |
+| Day 5 integration rehearsal | **Rehearsed on `feat/india-scope-docs`**; `master` merge owed after Lane 3 | Sathvik / all |
 | H3 Japan/Germany labels | **Delivered 2026-11-13**: `labels-v1-JPN` frozen; DEU coverage finding | Shravani |
-| H4 features/folds | Missing | Arshiya |
+| H4 features/folds | **2B delivered**: table, frozen folds, harness, adapter. **2A missing**: spec, firewall tests, baselines | Shravani (2A) / Sathvik (2B) |
 | H5 model results / ensemble | Official result missing | Palchhin |
-| Day 7 combined clean clone | Blocked on merges | Arshiya |
+| Day 7 combined clean clone | Blocked on Lane 3 results | Sathvik |
 | Packaging, mirror, zip, tag | Not created; approval required | Sathvik |
 | Out-of-sample model result | Official result does not exist; exploratory run only (`docs/EXPLORATORY_MODEL_RUN.md`) | Palchhin (official) |
 
@@ -98,6 +105,9 @@ O-2 stays Label-B-only. No proxy, carry-forward or relaxation was used.
   hand-built features, hand-built folds and numpy/scipy reference models. It fails C-13
   (Δ −0.0017, 95% CI includes zero) and is **not** the official result; do not merge its
   numbers into the results docs as pre-registered evidence.
-- Do not present the local 54-test result as a clean-clone result. The Day 4 and Day 7
-  clean-clone gates remain open. Lane 1 arrived later on 2026-11-13 and is now merged into
-  `master`; its label hashes and docs are part of the combined tree.
+- The Lane 2B clean clone is recorded in `04b`. It proves the table and folds reproduce
+  byte-identically. It does **not** prove the Day 7 combined gate: Lane 3 has no official
+  run, so no model hash exists to reproduce.
+- `tests/test_country_plumbing.py` skips its raw-hash check even when `data/raw` exists,
+  because the label metadata has no `raw_hashes` mapping. Recorded as finding F1 in `04b`;
+  it is a Lane 1 fix, not silently accepted.

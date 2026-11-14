@@ -1,33 +1,34 @@
 # Part 4 — Integration Rehearsal and Merge Checklist
 
-**Date:** 2026-11-13
+**Date:** 2026-11-14
 **Facilitator:** Sathvik Boina
-**State:** checklist prepared; **not rehearsed** because the three lane branches do not
-exist yet.
+**State:** the Lane 2B merge has been rehearsed on `feat/india-scope-docs`. The final
+Day 6 merge on `master` is still owed because Lane 3 has no results yet.
 
 ## 1. Current branch state
 
 ```
-master         0cf6573  Align the one-week plan and add four lane briefs
-origin/master  0cf6573
+origin/master                  6a80819  Merge PR #5 (feat/india-scope-docs)
+origin/feat/models-finalization c9c93a4  PR #4 source
+origin/feat/jpn-deu-labels     366ea0f  merged into master via PR #2/#5 ancestry
+origin/feat/features-harness   be185ac  Lane 2B: table, frozen folds, portability fix
+origin/feat/india-scope-docs   82d1137  integration tip (this rehearsal)
 ```
 
-No `feat/*` lane branch exists on the remote. The only Part 4 branch is
-`feat/india-scope-docs`, created from `master` for this lane's documents. H3 (Japan/
-Germany labels), H4 (features/folds) and H5 (model results) cannot be rehearsed until
-those owners publish their branches.
+`feat/models-ensemble` (PR #3) and `feat/models-finalization` (PR #4) are already in
+`master`. Lane 3 still has no official run, so no model branch is waiting to merge.
 
 ## 2. Fixed merge order
 
 Each owner merges their own branch. Sathvik coordinates and records the result; Sathvik
-does not patch another lane's code on `main`.
+does not patch another lane's code.
 
 | Step | Owner | Branch | What must be true before merge | Checks after merge |
 |---|---|---|---|---|
-| 1 | Shravani | `feat/jpn-deu-labels` (expected name) | JPN label frozen or a documented gate failure; Germany 6/8 decision; hashes recorded; label docs updated | `make check`; `make test`; `git diff --check`; label hashes |
-| 2 | Arshiya | `feat/features-harness` (expected name) | `dataset.parquet`, `folds.json`, feature dictionary; leakage tests; C-01/C-05/C-06/C-07 | same, plus row-count and fold-boundary checks |
-| 3 | Palchhin | `feat/models-ensemble` (expected name) | six singles, baselines, REWI, one C-13 application; `headline.md`, `episodes.md`; metadata in every result | same, plus frozen-fold and threshold checks |
-| 4 | Sathvik | `feat/india-scope-docs` | India audit, CSV, doc sync, pitch, this checklist | same, plus doc/hash agreement |
+| 1 | Shravani | `feat/jpn-deu-labels` | JPN label frozen or a documented gate failure; Germany 6/8 decision; hashes recorded | `make check`; `make test`; label hashes |
+| 2 | Shravani (2A) + Sathvik (2B) | `feat/features-harness` | `dataset.parquet`, frozen `folds.json`, harness; firewall tests from 2A | same, plus row-count and fold-boundary checks |
+| 3 | Palchhin | `feat/models-*` | six singles, baselines, REWI, one C-13 application; `headline.md`, `episodes.md`; metadata in every result | same, plus frozen-fold and threshold checks |
+| 4 | Sathvik | `feat/india-scope-docs` | India audit, doc sync, pitch, this checklist | same, plus doc/hash agreement |
 
 If a merge is red, stop. The owner fixes their branch; the next merge waits.
 
@@ -48,19 +49,32 @@ Record the output verbatim in the Day 6 integration note. Do not summarise a red
 
 ## 4. Hand-off acceptance
 
-| Hand-off | Owner | Acceptance | Status |
+| Hand-off | Owner | Acceptance | Status 2026-11-14 |
 |---|---|---|---|
-| H3 | Shravani | Japan label + chronology note + Germany 6/8 decision; hashes | Pending — no branch |
-| H4 | Arshiya | `dataset.parquet` + final `folds.json` + leakage tests | Pending — no branch |
-| H5 | Palchhin | USA headline, episode, ablation and ensemble tables; C-13 once | Pending — no branch |
-| H6 | All | one branch per lane, green checks, short hand-off note | Pending |
-| H7 | Sathvik + Arshiya | combined clean-clone evidence, hash table, draft go/no-go | Pending |
+| H3 | Shravani | Japan label + chronology note + Germany 6/8 decision; hashes | Label frozen; Germany coverage decision written |
+| H4 | Shravani (2A) + Sathvik (2B) | `dataset.parquet` + frozen `folds.json` + harness; firewall tests from 2A | **2B done**: table, frozen folds, adapter, clean-clone evidence. **2A outstanding**: `docs/FEATURES.md`, `tests/test_feature_firewall.py`, baselines, JPN 144/147 decision |
+| H5 | Palchhin | USA headline, episode, ablation and ensemble tables; C-13 once | **Pending** — no frozen tuning config, no official run |
+| H6 | All | one branch per lane, green checks, short hand-off note | Partial — lanes 1, 2B and 4 green; Lane 3 pending |
+| H7 | Sathvik | combined clean-clone evidence, hash table, draft go/no-go | Partial — Lane 2B clean clone recorded; combined gate pending |
 
 ## 5. Rehearsal result
 
-**Not run.** There were no lane branches to merge on 2026-11-13. The checklist above is
-the rehearsal script; the Day 6 execution is still owed. This note must not be presented as
-proof that the merge order works.
+Rehearsed on `feat/india-scope-docs`, not on `master`:
+
+| Merge | Result |
+|---|---|
+| `origin/master` (PR #4) into `feat/features-harness` | clean; 175 passed |
+| `feat/features-harness` into `feat/india-scope-docs` | clean; 175 passed |
+| `origin/master` (PR #5, itself from this branch) into `feat/india-scope-docs` | clean; 183 passed |
+| Lane 2B final merge (`be185ac`) into `feat/india-scope-docs` | clean; 183 passed, 1 skipped |
+
+After every merge: `make check` **33 ok, 1 warning, 0 failures**; the frozen label hashes
+were unchanged; `dataset.parquet` and `folds.json` reproduced byte-identically in a fresh
+clone (`docs/team/04b_clean_clone_review.md`).
+
+The merge order above has therefore been proven for steps 1, 2 and 4 on the integration
+branch. Step 3 has no branch to merge, so the **Day 6 combined merge on `master` is still
+owed**.
 
 ## 6. Day 7 go/no-go inputs
 
