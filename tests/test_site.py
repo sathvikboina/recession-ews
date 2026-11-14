@@ -115,5 +115,6 @@ def test_determinism():
 
     for name in EXPECTED_PAGES:
         assert hashes1[name] == hashes2[name], f"Non-deterministic for {name}"
-        disk_hash = hashlib.sha256((SITE_DIR / name).read_bytes()).hexdigest()
+        disk_bytes = (SITE_DIR / name).read_bytes().replace(b"\r\n", b"\n")
+        disk_hash = hashlib.sha256(disk_bytes).hexdigest()
         assert disk_hash == hashes1[name], f"Disk out of sync for {name}: {disk_hash} != {hashes1[name]}"
