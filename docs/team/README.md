@@ -32,7 +32,8 @@ what is frozen and what Palchhin must freeze on Day 1. PDF:
 [04b_clean_clone_review.md](04b_clean_clone_review.md) (Day 4 checklist; Sathvik's evidence
 pending), [04c_integration_rehearsal.md](04c_integration_rehearsal.md) (merge checklist;
 rehearsal pending), [04d_pitch.md](04d_pitch.md) (one-page pitch) and
-[04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps).
+[04e_part4_handoff.md](04e_part4_handoff.md) (commands, hashes, gaps) and
+[05_2a_intake.md](05_2a_intake.md) (the exact sequence for the Lane 2A hand-off).
 
 ## Schedule at a glance
 

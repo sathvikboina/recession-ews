@@ -257,5 +257,7 @@ version; the Markdown file is the detailed reference.
 ## Session hand-off rule
 
 Start a session by reading **this file + `docs/BUILD_CONTRACT.md` + `docs/LABEL_VALIDATION.md`**.
+For the Lane 2A hand-off, follow `docs/team/05_2a_intake.md`. The consolidated draft report is
+`docs/FINAL_REPORT.md` (stable sections filled; model results pending).
 Do not re-read `spec.py`, `build.py` or `series_catalogue.csv`; they are large and already
 summarised here. When a rule changes, update the contract, bump the hash, and note it above.
