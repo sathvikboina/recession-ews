@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean features folds baselines verify lane2a
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean features folds baselines verify lane2a site
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -23,6 +23,7 @@ help:
 	@echo "make folds      export frozen walk-forward folds (outputs/folds/folds.json)"
 	@echo "make baselines  run baseline models on frozen folds (outputs/results)"
 	@echo "make verify     run Lane 2A self-verification harness"
+	@echo "make site       build offline static multi-page interactive site (site/*.html)"
 	@echo "make lane2a     run full Lane 2A pipeline and gates"
 
 env:
@@ -78,6 +79,9 @@ baselines:
 
 verify:
 	"$(PY)" scripts/08_verify_lane2a.py
+
+site:
+	"$(PY)" scripts/09_build_site.py
 
 lane2a: features folds baselines test verify
 

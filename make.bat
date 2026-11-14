@@ -24,6 +24,10 @@ if "%1"=="verify" (
     %PY% scripts\08_verify_lane2a.py %2 %3 %4 %5
     exit /b %errorlevel%
 )
+if "%1"=="site" (
+    %PY% scripts\09_build_site.py %2 %3 %4 %5
+    exit /b %errorlevel%
+)
 if "%1"=="test" (
     %PY% -m pytest tests\test_features.py -p no:cacheprovider %2 %3 %4 %5
     exit /b %errorlevel%

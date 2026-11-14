@@ -28,6 +28,9 @@
 | Pipeline A Artifacts | Zero shared factors/scalers | Zero shared factors/scalers | Zero shared factors/scalers | PASS |
 | No-Future Leakage | $s \le t$ invariant to cutoff $t$ | Rolling backward transforms only | Verified at 4 cutoffs | PASS |
 
+### Structural Note on Feature Counts (149 vs. 27 Columns)
+The shipped feature table `data/clean/dataset.parquet` contains exactly 149 features (plus the `quarter` key). This is intended: it covers 19 base spec series (8 BEAI-eligible core indicators and 11 predictor series) plus 1 derived market series (`FIN_SLOPE`), expanded systematically across canonical transforms (lags 1, 2, 4, QoQ/YoY growth, 4Q rolling mean, rolling volatility, and trend) via `ews.models.feature_transforms`. The 149 count includes these derived transformation columns, contains zero blacklisted variables, and satisfies all C-01, C-05, C-07, and C-08 firewall rules.
+
 ---
 
 ## 3. Cryptographic Proofs & Checksums
