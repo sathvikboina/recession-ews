@@ -19,6 +19,8 @@ data/interim/*
 !data/interim/.gitkeep
 data/clean/*
 !data/clean/.gitkeep
+data/features/*
+!data/features/.gitkeep
 
 # Generated artefacts. The validated label is frozen and committed on purpose.
 outputs/**
@@ -43,6 +45,7 @@ outputs/**
 !outputs/results/baselines.csv
 !outputs/results/baselines.md
 !outputs/results/lane2a_verification.json
+!outputs/results/lane2a_pr_comment.md
 !outputs/results/archive/**
 !outputs/results/JPN_*
 

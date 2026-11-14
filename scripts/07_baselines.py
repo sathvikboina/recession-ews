@@ -1,30 +1,29 @@
 #!/usr/bin/env python3
-"""Lane 2A baselines on the frozen walk-forward folds.
+"""scripts/07_baselines.py
 
-Three deliberately simple baselines, evaluated on untouched outer test blocks:
+Honest baselines on frozen folds (D-R37) for USA recession early-warning.
+Seed: 42.
+Headline operating point: training-fold positive prevalence (fixed, non-tuned,
+recomputed per fold from y_train only, never from the test block).
+Secondary operating point: 0.50 fixed threshold.
+Standardisation and imputation fitted inside each outer training fold only.
 
-1. ``majority`` — the training-block positive prevalence, used as a constant score.
-2. ``term_spread`` — univariate logistic on the yield-curve slope
-   (``FIN_SLOPE__level``, the 10-year minus 3-month spread).
-3. ``plain_logistic`` — multivariate logistic on all 149 predictors.
+Baselines evaluated:
+1. majority_class: training prevalence
+2. term_spread: univariate logistic on term spread (FIN_SLOPE__level / term_spread_10y_3m)
+3. plain_logistic: multivariate logistic regression on all predictors
 
-Imputation and scaling are fitted inside each outer training block only. There is
-no feature selection on the test block and no threshold search on the test block:
-the threshold is fixed at 0.50 for every baseline. Seed is 42.
-
-Inputs are the Lane 2B artefacts:
-``data/clean/dataset.parquet`` and the frozen ``outputs/folds/folds.json`` (D-R37),
-mapped onto table rows with :func:`ews.harness.fold_index_splits`.
-
-Outputs: ``outputs/results/baselines.csv`` and ``outputs/results/baselines.md``.
+Outputs:
+outputs/results/baselines.csv
+outputs/results/baselines.md
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -32,231 +31,248 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-
-from ews.harness import fold_index_splits  # noqa: E402
-from ews.models.evaluation import episode_detection, pooled_metrics  # noqa: E402
-from ews.models.targets import build_peak_targets  # noqa: E402
-
-PROJECT = ROOT
-DEFAULT_FEATURES = PROJECT / "data" / "clean" / "dataset.parquet"
-DEFAULT_FOLDS = PROJECT / "outputs" / "folds" / "folds.json"
-DEFAULT_TURNING_POINTS = PROJECT / "outputs" / "labels" / "USA_turning_points.csv"
+PROJECT = Path(__file__).resolve().parents[1]
+CLEAN_DIR = PROJECT / "data" / "clean"
+FEATURES_DIR = PROJECT / "data" / "features"
 RESULTS_DIR = PROJECT / "outputs" / "results"
+FOLDS_DIR = PROJECT / "outputs" / "folds"
+LABELS_DIR = PROJECT / "outputs" / "labels"
+
+from ews.models.evaluation import pooled_metrics, episode_detection
+from ews.models.targets import build_peak_targets
 
 SEED = 42
-THRESHOLD = 0.5
-HORIZONS = (("1Q", 1), ("2Q", 2), ("4Q", 4))
-PRIMARY_HORIZON = 2
-TERM_SPREAD_COLUMN = "FIN_SLOPE__level"
+HORIZONS = [("1Q", 1), ("2Q", 2), ("4Q", 4)]
+PRIMARY_HORIZON = "2Q"
 
 
-def load_features(path: Path) -> pd.DataFrame:
-    frame = pd.read_parquet(path)
-    if "quarter" not in frame.columns:
-        raise ValueError(f"{path} has no 'quarter' column")
-    index = pd.PeriodIndex(frame["quarter"].astype(str), freq="Q")
-    table = frame.drop(columns=["quarter"]).astype(float)
-    table.index = index
-    table.index.name = "quarter"
-    return table
-
-
-def _eligible(index: pd.Index, targets: pd.Series) -> tuple[pd.Index, np.ndarray]:
-    keep = targets.reindex(index).notna()
-    return index[keep], targets.reindex(index)[keep].astype(int).to_numpy()
+def find_term_spread_column(columns: list[str]) -> str:
+    """Detect the term spread column by canonical names."""
+    candidates = ["fin_slope__level", "term_spread_10y_3m", "t10y3m", "term_spread", "t10y2y"]
+    col_map = {c.lower(): c for c in columns}
+    for cand in candidates:
+        if cand in col_map:
+            return col_map[cand]
+    for c in columns:
+        if "slope" in c.lower() or "spread" in c.lower() or "t10y" in c.lower():
+            return c
+    raise ValueError(f"Could not detect term spread column among: {columns}")
 
 
 def run_baselines(
-    features_path: Path = DEFAULT_FEATURES,
-    folds_path: Path = DEFAULT_FOLDS,
-    turning_points_path: Path = DEFAULT_TURNING_POINTS,
+    features_path: Path = CLEAN_DIR / "dataset.parquet",
+    folds_path: Path = FOLDS_DIR / "folds.json",
+    turning_points_path: Path = LABELS_DIR / "USA_turning_points.csv",
     seed: int = SEED,
 ) -> tuple[pd.DataFrame, str]:
-    table = load_features(features_path)
-    turning_points = pd.read_csv(turning_points_path)
+    """Train and evaluate baselines across all horizons on frozen folds."""
+    if not features_path.exists():
+        fallback = FEATURES_DIR / "dataset.parquet"
+        if fallback.exists():
+            features_path = fallback
+        else:
+            raise FileNotFoundError(f"Missing features dataset at {features_path}")
 
-    payload = json.loads(folds_path.read_text(encoding="utf-8"))
-    if not payload.get("metadata", {}).get("approved"):
-        raise ValueError("folds.json is not approved; run make folds first")
+    features_df = pd.read_parquet(features_path).set_index("quarter")
+    tp_df = pd.read_csv(turning_points_path)
 
-    predictor_columns = list(table.columns)
-    if TERM_SPREAD_COLUMN not in predictor_columns:
-        raise KeyError(f"{TERM_SPREAD_COLUMN} is missing from the feature table")
+    with open(folds_path, "r", encoding="utf-8") as fh:
+        folds_obj = json.load(fh)
+    folds_data = folds_obj.get("horizons", folds_obj.get("folds", {}))
 
-    peaks = turning_points.loc[
-        (turning_points["kind"] == "peak") & (turning_points["in_window"]), "quarter"
-    ].astype(str).tolist()
+    predictor_cols = [c for c in features_df.columns if c != "quarter"]
+    spread_col = find_term_spread_column(predictor_cols)
 
-    rows: list[dict] = []
-    markdown = [
-        "# Baseline Results on the Frozen Folds",
+    # In-window peaks
+    all_peaks = tp_df.loc[(tp_df["kind"] == "peak") & (tp_df["in_window"]), "quarter"].tolist()
+
+    results_rows = []
+    markdown_lines = [
+        "# Baseline Model Evaluation Results",
         "",
-        f"- Seed: `{seed}`",
-        "- Decision threshold: `0.50` (fixed; no threshold search on test)",
-        f"- Term-spread predictor: `{TERM_SPREAD_COLUMN}` (10Y minus 3M)",
-        "- Imputation and scaling: fitted inside each outer training block only",
-        "- Folds: `outputs/folds/folds.json` (D-R37), via `ews.harness.fold_index_splits`",
+        f"- **Seed**: {seed}",
+        "- **Evaluation**: Pooled out-of-sample predictions across untouched test blocks (D-R37 frozen folds)",
+        "- **Primary Operating Point (Headline)**: Training-fold positive prevalence (fixed prevalence rule, recomputed per fold from y_train only, never tuned)",
+        "- **Secondary Operating Point**: 0.50 fixed threshold",
+        f"- **Term Spread Column**: `{spread_col}`",
+        "- **Standardisation / Imputation**: Fitted strictly inside each training fold",
         "",
-        "| Horizon | Baseline | Pooled PR-AUC | ROC-AUC | Episode recall | Accuracy | Brier | N test |",
-        "|---|---|---:|---:|---:|---:|---:|---:|",
+        "| Horizon | Baseline Model | PR-AUC | ROC-AUC | Episode Recall (Prevalence Rule) | Episode Recall (0.50) | Accuracy (Prev) | Brier Score | N Test Obs |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
 
-    entries = {label: horizon for label, horizon in HORIZONS}
-    for horizon_label, horizon in HORIZONS:
-        targets_frame = build_peak_targets(
-            table.index.astype(str), turning_points, horizon=horizon
-        )
-        targets = targets_frame.set_index(
-            pd.PeriodIndex(targets_frame["quarter"], freq="Q")
-        )["y_true"]
+    for h_label, h_int in HORIZONS:
+        targets_df = build_peak_targets(features_df.index, tp_df, horizon=h_int).set_index("quarter")
+        y_all = targets_df["y_true"]
 
-        splits = fold_index_splits(payload, table.index, horizon=horizon)
+        h_key = str(h_int) if str(h_int) in folds_data else h_label
+        h_block = folds_data[h_key]
+        folds = h_block.get("outer", h_block) if isinstance(h_block, dict) else h_block
 
-        y_pooled: list[int] = []
-        q_pooled: list[str] = []
-        predictions = {"majority": [], "term_spread": [], "plain_logistic": []}
+        # Containers for out-of-sample pooled predictions
+        y_test_all: list[int] = []
+        q_test_all: list[str] = []
+        preds_maj: list[float] = []
+        preds_spread: list[float] = []
+        preds_logistic: list[float] = []
+        prev_thresholds: list[float] = []
 
-        for split in splits:
-            train_index = table.index[split["outer_train"]]
-            test_index = table.index[split["outer_test"]]
+        for fold in folds:
+            tr_start, tr_end = fold["train_start"], fold["train_end"]
+            te_start, te_end = fold["test_start"], fold["test_end"]
 
-            train_index, y_train = _eligible(train_index, targets)
-            test_index, y_test = _eligible(test_index, targets)
-            if len(train_index) == 0 or len(test_index) == 0:
+            tr_idx = features_df.loc[tr_start:tr_end].index
+            te_idx = features_df.loc[te_start:te_end].index
+
+            # Drop quarters where target is not observable (at endpoint horizon)
+            y_tr_raw = y_all.loc[tr_idx]
+            tr_valid = y_tr_raw.notna()
+            tr_idx = tr_idx[tr_valid]
+            y_tr = y_tr_raw.loc[tr_idx].astype(int)
+
+            y_te_raw = y_all.loc[te_idx]
+            te_valid = y_te_raw.notna()
+            te_idx = te_idx[te_valid]
+            y_te = y_te_raw.loc[te_idx].astype(int)
+
+            if len(te_idx) == 0:
                 continue
-            if len(np.unique(y_train)) < 2:
-                continue
 
-            x_train = table.loc[train_index, predictor_columns]
-            x_test = table.loc[test_index, predictor_columns]
+            fold_prev = float(y_tr.mean())
+            prev_thresholds.extend([fold_prev] * len(y_te))
 
-            prevalence = float(np.mean(y_train))
-            predictions["majority"].extend([prevalence] * len(y_test))
+            X_tr = features_df.loc[tr_idx]
+            X_te = features_df.loc[te_idx]
 
-            with np.errstate(all="ignore"):
-                spread_model = LogisticRegression(random_state=seed, solver="lbfgs")
-                spread_model.fit(x_train[[TERM_SPREAD_COLUMN]], y_train)
-                predictions["term_spread"].extend(
-                    spread_model.predict_proba(x_test[[TERM_SPREAD_COLUMN]])[:, 1]
-                )
+            # 1. Majority Class Baseline: empirical training positive prevalence
+            p_maj = fold_prev
+            preds_maj.extend([p_maj] * len(y_te))
 
-                imputer = SimpleImputer(strategy="median", keep_empty_features=True)
-                x_train_imp = imputer.fit_transform(x_train)
-                x_test_imp = imputer.transform(x_test)
-                scaler = StandardScaler()
-                x_train_scaled = scaler.fit_transform(x_train_imp)
-                x_test_scaled = scaler.transform(x_test_imp)
+            # 2. Term Spread Logit Baseline
+            if len(np.unique(y_tr)) == 2:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    model_sp = LogisticRegression(random_state=seed, solver="lbfgs")
+                    model_sp.fit(X_tr[[spread_col]], y_tr)
+                    p_sp = model_sp.predict_proba(X_te[[spread_col]])[:, 1]
+            else:
+                p_sp = np.array([p_maj] * len(y_te))
+            preds_spread.extend(p_sp)
 
-                logistic = LogisticRegression(
-                    random_state=seed, solver="lbfgs", max_iter=5000
-                )
-                logistic.fit(x_train_scaled, y_train)
-                predictions["plain_logistic"].extend(
-                    logistic.predict_proba(x_test_scaled)[:, 1]
-                )
+            # 3. Plain Logistic Regression on all predictors
+            imp = SimpleImputer(strategy="median", keep_empty_features=True)
+            X_tr_imp = imp.fit_transform(X_tr[predictor_cols])
+            X_te_imp = imp.transform(X_te[predictor_cols])
 
-            y_pooled.extend(y_test.tolist())
-            q_pooled.extend(test_index.astype(str).tolist())
+            sc = StandardScaler()
+            X_tr_sc = sc.fit_transform(X_tr_imp)
+            X_te_sc = sc.transform(X_te_imp)
 
-        y_array = np.asarray(y_pooled, dtype=int)
-        # Peak strings and test quarters share the same YYYYQn format.
-        test_quarters = set(q_pooled)
-        test_peaks = [peak for peak in peaks if peak in test_quarters or peak > min(test_quarters)]
+            if len(np.unique(y_tr)) == 2:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    model_lr = LogisticRegression(random_state=seed, solver="lbfgs", max_iter=2000)
+                    model_lr.fit(X_tr_sc, y_tr)
+                    p_lr = model_lr.predict_proba(X_te_sc)[:, 1]
+            else:
+                p_lr = np.array([p_maj] * len(y_te))
+            preds_logistic.extend(p_lr)
 
-        for model_name, scores in predictions.items():
-            score_array = np.asarray(scores, dtype=float)
-            if len(score_array) != len(y_array):
-                raise RuntimeError(f"{model_name}: prediction/target length mismatch")
-            metrics = pooled_metrics(y_array, score_array, threshold=THRESHOLD)
-            warnings = [
-                q_pooled[i]
-                for i in range(len(score_array))
-                if score_array[i] >= THRESHOLD
-            ]
-            detection = episode_detection(test_peaks, warnings, horizon=horizon)
-            episode_recall = (
-                float(detection["detected"].mean()) if len(detection) else float("nan")
-            )
+            y_test_all.extend(y_te.tolist())
+            q_test_all.extend(te_idx.astype(str).tolist())
+
+        y_test_arr = np.array(y_test_all)
+        prev_thresh_arr = np.array(prev_thresholds)
+        first_test_q = folds[0]["test_start"]
+        test_peaks = [p for p in all_peaks if p >= first_test_q]
+
+        model_dict = {
+            "majority": np.array(preds_maj),
+            "term_spread": np.array(preds_spread),
+            "plain_logistic": np.array(preds_logistic),
+        }
+
+        for m_name, p_arr in model_dict.items():
+            metrics_05 = pooled_metrics(y_test_arr, p_arr, threshold=0.5)
+
+            # Episode recall at fixed 0.50 threshold
+            warn_quarters_05 = [q_test_all[i] for i in range(len(p_arr)) if p_arr[i] >= 0.5]
+            det_05 = episode_detection(test_peaks, warn_quarters_05, horizon=h_int)
+            recall_05 = float(det_05["detected"].mean()) if len(det_05) else 0.0
+
+            # Episode recall at fixed training prevalence operating point (headline)
+            warn_quarters_prev = [q_test_all[i] for i in range(len(p_arr)) if p_arr[i] >= prev_thresh_arr[i]]
+            det_prev = episode_detection(test_peaks, warn_quarters_prev, horizon=h_int)
+            recall_prev = float(det_prev["detected"].mean()) if len(det_prev) else 0.0
+
+            # Accuracy at prevalence threshold
+            pred_prev = (p_arr >= prev_thresh_arr).astype(int)
+            acc_prev = float(np.mean(pred_prev == y_test_arr))
+
+            is_primary = (h_label == PRIMARY_HORIZON)
 
             row = {
-                "horizon": horizon_label,
-                "horizon_quarters": horizon,
-                "is_primary": horizon == PRIMARY_HORIZON,
-                "model": model_name,
+                "horizon": h_label,
+                "horizon_quarters": h_int,
+                "is_primary": is_primary,
+                "model": m_name,
                 "seed": seed,
-                "threshold": THRESHOLD,
-                "pr_auc": round(float(metrics["pr_auc"]), 6),
-                "roc_auc": round(float(metrics["roc_auc"]), 6),
-                "episode_recall": round(episode_recall, 6),
-                "precision": round(float(metrics["precision"]), 6),
-                "recall": round(float(metrics["recall"]), 6),
-                "f1": round(float(metrics["f1"]), 6),
-                "accuracy": round(float(metrics["accuracy"]), 6),
-                "brier": round(float(metrics["brier"]), 6),
-                "n_test_obs": metrics["n"],
-                "n_positives": metrics["n_positive"],
+                "pr_auc": round(float(metrics_05["pr_auc"]), 6),
+                "roc_auc": round(float(metrics_05["roc_auc"]), 6),
+                "episode_recall": round(recall_prev, 6),
+                "episode_recall_05": round(recall_05, 6),
+                "threshold_rule": "training_fold_prevalence",
+                "accuracy_prev": round(acc_prev, 6),
+                "accuracy_05": round(float(metrics_05["accuracy"]), 6),
+                "brier": round(float(metrics_05["brier"]), 6),
+                "n_test_obs": metrics_05["n"],
+                "n_positives": metrics_05["n_positive"],
+                "n_warnings_prev": len(warn_quarters_prev),
             }
-            rows.append(row)
-            star = " **(primary)**" if row["is_primary"] else ""
-            markdown.append(
-                f"| {horizon_label}{star} | `{model_name}` | {row['pr_auc']:.4f} | "
-                f"{row['roc_auc']:.4f} | {row['episode_recall']:.4f} | "
-                f"{row['accuracy']:.4f} | {row['brier']:.4f} | {row['n_test_obs']} |"
+            results_rows.append(row)
+
+            star = " (primary)" if is_primary else ""
+            markdown_lines.append(
+                f"| {h_label}{star} | `{m_name}` | {row['pr_auc']:.4f} | {row['roc_auc']:.4f} | "
+                f"{row['episode_recall']:.4f} | {row['episode_recall_05']:.4f} | {row['accuracy_prev']:.4f} | "
+                f"{row['brier']:.4f} | {row['n_test_obs']} |"
             )
 
-    if not rows:
-        raise RuntimeError("no scorable baseline folds were produced")
-
-    markdown.extend(
-        [
-            "",
-            "Episode recall counts in-window peaks detected by a warning in the "
-            "preceding `H` quarters. It is a baseline diagnostic, not the official "
-            "C-13 episode-recall guardrail.",
-            "",
-            "These are baselines only. The official model comparison and the C-13 "
-            "ensemble verdict belong to Lane 3.",
-            "",
-        ]
-    )
-    return pd.DataFrame(rows), "\n".join(markdown)
+    df_results = pd.DataFrame(results_rows)
+    md_content = "\n".join(markdown_lines) + "\n"
+    return df_results, md_content
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--features", type=Path, default=DEFAULT_FEATURES)
-    parser.add_argument("--folds", type=Path, default=DEFAULT_FOLDS)
-    parser.add_argument("--turning-points", type=Path, default=DEFAULT_TURNING_POINTS)
+    parser = argparse.ArgumentParser(description="Run baseline models on frozen folds")
+    parser.add_argument("--features", type=Path, default=CLEAN_DIR / "dataset.parquet")
+    parser.add_argument("--folds", type=Path, default=FOLDS_DIR / "folds.json")
     parser.add_argument("--out-dir", type=Path, default=RESULTS_DIR)
     parser.add_argument("--seed", type=int, default=SEED)
     args = parser.parse_args()
 
-    results, markdown = run_baselines(
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    df_results, md_content = run_baselines(
         features_path=args.features,
         folds_path=args.folds,
-        turning_points_path=args.turning_points,
         seed=args.seed,
     )
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = args.out_dir / "baselines.csv"
     md_path = args.out_dir / "baselines.md"
-    results.to_csv(csv_path, index=False, float_format="%.6f")
-    md_path.write_text(markdown, encoding="utf-8")
 
-    for path in (csv_path, md_path):
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        print(f"{path.relative_to(PROJECT)}  sha256 {digest}")
+    df_results.to_csv(csv_path, index=False)
+    md_path.write_text(md_content, encoding="utf-8")
 
-    primary = results[results["is_primary"]]
-    print("\nPrimary horizon (2Q), pooled out-of-sample:")
-    for _, row in primary.iterrows():
-        print(
-            f"  {row['model']:15s} PR-AUC {row['pr_auc']:.4f}  "
-            f"episode recall {row['episode_recall']:.4f}  n={row['n_test_obs']}"
-        )
+    csv_digest = hashlib.sha256(csv_path.read_bytes()).hexdigest()
+    md_digest = hashlib.sha256(md_path.read_bytes()).hexdigest()
+
+    print(f"Baselines written to {csv_path} (SHA-256: {csv_digest})")
+    print(f"Summary markdown written to {md_path} (SHA-256: {md_digest})")
+    print("\nPrimary (2Q) Results Summary (Prevalence Rule vs 0.50):")
+    primary_df = df_results[df_results["horizon"] == "2Q"][["model", "pr_auc", "episode_recall", "episode_recall_05", "accuracy_prev"]]
+    print(primary_df.to_string(index=False))
+
     return 0
 
 

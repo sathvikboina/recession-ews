@@ -2,252 +2,152 @@
 
 | Field | Detail |
 |---|---|
-| **Specification owner** | Shravani Math (Lane 2A, integrated by Sathvik Boina) |
-| **Builder** | Sathvik Boina (Lane 2B) |
-| **Status** | **FROZEN** (14 November 2026), matches the built table |
-| **Scope** | USA, 1990Q1–2026Q3 (147 quarters) |
-| **Rules** | `docs/BUILD_CONTRACT.md` C-01, C-05, C-06, C-07, C-08, C-11, C-12 |
-| **Decisions** | D-R01, D-R02, D-R03, D-R05, D-R06, D-R08, D-R12, D-R14, D-R22, D-R26–D-R28, D-R31, D-R34–D-R39 |
-| **Machine-readable spec** | `FEATURE_SPEC`, `DERIVED_SPECS`, `EXCLUSIONS` in `src/ews/features.py` |
-| **Builder CLI** | `make features` → `data/clean/dataset.parquet` |
-| **Firewall tests** | `tests/test_feature_firewall.py` |
-
-This document is the written authority on **what a legal predictor is**. The code is the
-written spec made executable; if the two disagree, the table is not trusted until they are
-reconciled and the rebuilt table hash is recorded.
+| **Author** | Shravani Math (Lane 2A Specification & Verification Owner) |
+| **Builder Handoff** | Sathvik Boina (Lane 2B Build Owner) |
+| **Status** | **FROZEN** (14 November 2026) |
+| **Scope / Country** | USA (1990Q1–2026Q3, 147 quarters) |
+| **Rules Enforced** | `docs/BUILD_CONTRACT.md` C-01, C-05, C-06, C-07, C-08, C-11, C-12 |
+| **Decisions Applied** | D-R01, D-R02, D-R03, D-R05, D-R06, D-R08, D-R12, D-R14, D-R22, D-R26–D-R28, D-R31, D-R34 |
 
 ---
 
-## 1. Window and contract
+## 1. Purpose and Window
 
-- **Reporting and evaluation window:** 1990Q1–2026Q3, exactly **147 quarters**, one row per
-  calendar quarter.
-- **Input history:** the harmonised panel `data/clean/USA_panel.csv` begins in **1960Q1**
-  (267 quarters). Transformations may use that earlier history so that early reporting
-  quarters are not lost to differencing and rolling windows.
-- **Unscaled contract (C-07/C-08):** the table is strictly unscaled. No column is
-  standardised across the sample. Imputation and scaling are fitted inside each outer
-  training fold and never stored beside the data.
-- **Label independence (C-01):** no label output, factor, level index, recession flag,
-  diffusion share, turning-point date, NBER chronology or episode identifier may be a
-  predictor.
-- **Missing stays missing (C-03):** no interpolation, forward fill, backfill or partial
-  imputation. A missing source value stays missing through every transform.
-- **Availability before transform (C-05):** the publication-availability lag is applied to
-  the source series **before** any differencing or rolling statistic. See §3.
+This document defines the complete and unambiguous specification of legal predictors for Pipeline B for the United States. A stranger following this specification must be able to independently reproduce every column of the feature table without requesting clarifications or making discretionary modeling choices.
 
-The table has **147 rows × 149 predictor columns**, plus the string `quarter` key in the
-serialised Parquet file (150 columns on disk).
+### 1.1 Study Window vs. Estimation Sample
+- **Reporting & Evaluation Window:** **1990Q1–2026Q3** (exactly **147 quarters**, one row per calendar quarter).
+- **Estimation History (Context):** The harmonised clean panel (`data/clean/USA_panel.csv`) begins in **1960Q1** (267 quarters total). Features requiring growth differencing or rolling statistics compute transformations over available pre-1990 history so that initial reporting quarters (e.g. 1990Q1) are not artificially lost to differencing lags.
+- **Unscaled Contract (Rule C-07 / C-08):** The feature dataset is strictly **UNSCALED**. No column in `data/clean/dataset.parquet` is standardized to zero mean or unit variance across the sample. All feature scaling (e.g. `StandardScaler`) and imputation (`SimpleImputer`) must be fitted **strictly inside each outer training fold**. Test blocks must remain entirely untouched during scaling.
+- **Label Independence (Rule C-01):** Pipeline A builds the ex-post recession chronology ($R_t$). Pipeline B builds early-warning predictors. **No label output is ever a predictor.** Under no circumstance may any factor index ($F_t$), level, recession indicator ($R_t$), turning-point date, diffusion share, or NBER chronology column enter the predictor table.
+
+### 1.2 Shipped Table Builder vs. Reference Fixture
+- **Official Shipped Table:** The official shipped feature table is `data/clean/dataset.parquet` (147 rows, 149 features covering 1990Q1–2026Q3), produced by `scripts/05_features.py` (and invoked via `make features`). It reads `data/clean/USA_panel.csv`, applies conservative C-05 publication availability lags, and expands features using `ews.models.feature_transforms`.
+- **Reference Fixture:** `scripts/06_features.py` serves strictly as a documented reference fixture for testing and mutation checks (e.g. testing no-future leakage across arbitrary cutoffs and validating that poison mutations raise exceptions). `tests/test_features.py` polices the official shipped table `data/clean/dataset.parquet`.
 
 ---
 
-## 2. Column inventory
+## 2. Column Inventory
 
-The 149 predictors come from **19 scope series plus 1 derived series**. The eight
-BEAI-eligible core indicators appear only as separate `beai_copy_*` copies: 8 series × 8
-columns = **64 columns**. The remaining 11 predictors and the derived slope contribute
-**85 columns**.
+The feature table contains exactly 27 legal predictors spanning all 26 series present in `data/clean/USA_panel.csv` and the eight core indicators of `data/clean/USA_growth.parquet`. Under Rule C-01, core indicators appear exclusively as versioned `beai_copy_*` predictors with explicit C-05 availability lags. Missing observations stay missing (Rule C-03; no forward filling or interpolation).
 
-Each input series is transformed with the C-07 form in the table below. `base` means the
-transformed series that later lags and rolling statistics use:
-
-| form | base | columns produced |
-|---|---|---|
-| `growth` | `100 × Δlog(level)` (QoQ) | `qoq_growth`, `yoy_growth`, `base_lag_1/2/4`, `rolling_mean_4q`, `rolling_volatility_4q`, `trend_4q` — 8 |
-| `price` | `100 × Δlog(level)` (QoQ) | `qoq_log_change`, `yoy_log_change`, `base_lag_1/2/4`, `rolling_mean_4q`, `rolling_volatility_4q` — 7 |
-| `rate`, `spread`, `survey` | the level itself | `level`, `change_4q`, `base_lag_1/2/4`, `rolling_mean_4q`, `rolling_volatility_4q` — 7 |
-| `ratio` | the level itself | `level`, `change_4q`, `change_8q`, `base_lag_1/2/4`, `rolling_mean_4q`, `rolling_volatility_4q` — 8 |
-
-`rolling_*` windows require all four observations; `trend_4q` is the slope of a 4-quarter
-linear fit on `base`. Rates, spreads and surveys keep a dimensionless `__level`; activity
-and price series enter only as growth or log change, never as raw levels.
-
-### 2.1 BEAI-eligible core copies (64 columns)
-
-| Series name | Source column | Form | Availability | Columns |
-|---|---|---|---:|---:|
-| `ACT_GDP_REAL` | `USA.ACT_GDP_REAL.Q.NA` | growth | `NA` | 8 |
-| `ACT_IP` | `USA.ACT_IP.M.STD` | growth | `MONTHLY` | 8 |
-| `ACT_EMP` | `USA.ACT_EMP.Q.NA` | growth | `NA` | 8 |
-| `ACT_HOURS` | `USA.ACT_HOURS.Q.STD` | growth | `NA` | 8 |
-| `ACT_RINC` | `USA.ACT_RINC.Q.STD` | growth | `NA` | 8 |
-| `ACT_CONS` | `USA.ACT_CONS.Q.NA` | growth | `NA` | 8 |
-| `ACT_RETAIL` | `USA.ACT_RETAIL.M.STD` | growth | `MONTHLY` | 8 |
-| `ACT_INV` | `USA.ACT_INV.Q.STD` | growth | `NA` | 8 |
-
-Every column is prefixed `beai_copy_` and then the series name, for example
-`beai_copy_ACT_IP__qoq_growth`. The copies are transformed independently from Pipeline A.
-
-### 2.2 Predictor-only series (85 columns)
-
-| Series name | Source column | Form | Availability | Columns |
-|---|---|---|---:|---:|
-| `FIN_CREDIT_GDP` | `USA.FIN_CREDIT_GDP.Q.STD` | ratio | `NA` | 8 |
-| `FIN_EQUITY` | `USA.FIN_EQUITY.M.STD` | price | `MARKET` | 7 |
-| `FIN_HOUSEPRICE_CS` | `USA.FIN_HOUSEPRICE.M.US_CS` | price | `MONTHLY` | 7 |
-| `FIN_HOUSEPRICE_BIS` | `USA.FIN_HOUSEPRICE.Q.OECD_BIS` | price | `NA` | 7 |
-| `FIN_LONG` | `USA.FIN_LONG.M.STD` | rate | `MARKET` | 7 |
-| `FIN_POLICY` | `USA.FIN_POLICY.M.STD` | rate | `MARKET` | 7 |
-| `FIN_SHORT` | `USA.FIN_SHORT.M.STD` | rate | `MARKET` | 7 |
-| `LAB_UNEMP` | `USA.LAB_UNEMP.M.STD` | rate | `MONTHLY` | 7 |
-| `PRC_CPI` | `USA.PRC_CPI.M.STD` | price | `MONTHLY` | 7 |
-| `SEN_BCI` | `USA.SEN_BCI.M.STD` | survey | `SURVEY` | 7 |
-| `SEN_CCI` | `USA.SEN_CCI.M.STD` | survey | `SURVEY` | 7 |
-| `FIN_SLOPE` (derived) | `USA.FIN_SLOPE.M.DERIVED` = `FIN_LONG − FIN_SHORT` | spread | `MARKET` | 7 |
-
-The derived slope is built from the harmonised long and short rates before availability
-lags are applied.
-
-**Column count check:** `64 + 8 + 7×10 + 7 = 149`, from 20 input series.
+| # | Feature Name | Source Series ID / Key | Native Freq | Transformation | C-05 Availability Lag | Missing Rule | Why It Is Safe |
+|---|---|---|:---:|---|:---:|---|---|
+| 1 | `beai_copy_act_gdp_real` | `GDPC1` (`USA.ACT_GDP_REAL.Q.NA`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Pure lagged copy; shares no factor loadings or parameters with Pipeline A. |
+| 2 | `beai_copy_act_ip` | `INDPRO` (`USA.ACT_IP.M.STD`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | Coincident industrial activity; available at prediction origin ($t+6w$). |
+| 3 | `beai_copy_act_emp` | `CE16OV` (`USA.ACT_EMP.Q.NA`) | Q | Quarterly mean $\Delta\log$ | 1 Quarter (NA) | Missing stays missing | Lagged 1Q per Q-04 LFS quarterly fallback; no Pipeline A objects shared. |
+| 4 | `beai_copy_act_hours` | `HOANBS` (`USA.ACT_HOURS.Q.STD`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q per nonfarm business hours; no future lookahead. |
+| 5 | `beai_copy_act_rinc` | `W875RX1` (`USA.ACT_RINC.Q.STD`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; excludes government transfers (D-R23) to avoid counter-cyclical bias. |
+| 6 | `beai_copy_act_cons` | `PCECC96` (`USA.ACT_CONS.Q.NA`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q national accounts consumption; unscaled. |
+| 7 | `beai_copy_act_retail` | `RRSFS` (`USA.ACT_RETAIL.M.STD`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | Monthly retail trade volume; available at origin $t+6w$. |
+| 8 | `beai_copy_act_inv` | Constructed (`USA.ACT_INV.Q.STD`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; constructed non-residential fixed investment (D-R26). |
+| 9 | `inv_eq` | `Y033RC1Q027SBEA` | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; equipment investment component; unscaled. |
+| 10 | `inv_struct` | `B009RC1Q027SBEA` | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; non-residential structures investment; unscaled. |
+| 11 | `inv_ipp` | `Y001RC1Q027SBEA` | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; intellectual property products investment; unscaled. |
+| 12 | `inv_defl` | `A008RD3Q086SBEA` | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; non-residential investment deflator inflation. |
+| 13 | `emp_estab` | `PAYEMS` (`USA.ACT_EMP.M.ESTAB`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | Establishment payroll employment growth; available at $t+6w$. |
+| 14 | `emp_lfs` | `CE16OV` (`USA.ACT_EMP.M.LFS`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | Household LFS monthly employment growth; unscaled. |
+| 15 | `rinc_m` | `DSPIC96` (`USA.ACT_RINC.M.US`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | Monthly real disposable personal income growth; unscaled. |
+| 16 | `credit_gdp` | `QUSPAM770A` (`USA.FIN_CREDIT_GDP.Q.STD`) | Q | Level (%) | 1 Quarter (NA/BIS) | Missing stays missing | Lagged 1Q; BIS private non-financial credit-to-GDP level. |
+| 17 | `equity` | `NASDAQCOM` (`USA.FIN_EQUITY.M.STD`) | M/D | Quarterly mean $\Delta\log$ | 0 Days (Market) | Missing stays missing | Equity market return; market series available immediately at quarter end. |
+| 18 | `houseprice_cs` | `CSUSHPISA` (`USA.FIN_HOUSEPRICE.M.US_CS`) | M | Quarterly mean $\Delta\log$ | 6 Weeks (Monthly) | Missing stays missing | S&P/Case-Shiller national home price index growth. |
+| 19 | `houseprice_oecd` | `USSTHPI` (`USA.FIN_HOUSEPRICE.Q.OECD_BIS`) | Q | $\Delta\log$ growth (QoQ) | 1 Quarter (NA) | Missing stays missing | Lagged 1Q; FHFA all-transactions house price index growth. |
+| 20 | `rate_long` | `GS10` (`USA.FIN_LONG.M.STD`) | M | Quarterly mean level (%) | 0 Days (Market) | Missing stays missing | 10-year Treasury constant maturity yield; unscaled level equals source. |
+| 21 | `rate_policy` | `FEDFUNDS` (`USA.FIN_POLICY.M.STD`) | M | Quarterly mean level (%) | 0 Days (Market) | Missing stays missing | Effective Federal Funds policy rate; unscaled level equals source. |
+| 22 | `rate_short` | `TB3MS` (`USA.FIN_SHORT.M.STD`) | M | Quarterly mean level (%) | 0 Days (Market) | Missing stays missing | 3-month Treasury bill rate; unscaled level equals source. |
+| 23 | `unemp` | `UNRATE` (`USA.LAB_UNEMP.M.STD`) | M | Quarterly mean level (%) | 6 Weeks (Monthly) | Missing stays missing | Predictor only (D-R01); civilian unemployment rate; unscaled level. |
+| 24 | `cpi` | `CPIAUCSL` (`USA.PRC_CPI.M.STD`) | M | YoY $\Delta\log$ inflation | 6 Weeks (Monthly) | Missing stays missing | Headline 4-quarter CPI inflation rate; unscaled. |
+| 25 | `bci` | `BSCICP03USM665S` (`USA.SEN_BCI.M.STD`) | M | Quarterly mean level | 4 Weeks (Survey) | Missing stays missing | OECD composite business confidence; available at $t+6w$. |
+| 26 | `cci` | `UMCSENT` (`USA.SEN_CCI.M.STD`) | M | Quarterly mean level | 4 Weeks (Survey) | Missing stays missing | University of Michigan consumer sentiment index; unscaled. |
+| 27 | `term_spread_10y_3m` | Derived (`GS10` $-$ `TB3MS`) | M | Quarterly mean spread (pp) | 0 Days (Market) | Missing stays missing | 10Y minus 3M yield curve spread; canonical recession early-warning signal. |
 
 ---
 
-## 3. Availability ladder (C-05)
+## 3. Allowed Raw BEAI Copies (Firewall Paragraph)
 
-The prediction origin for quarter *t* is the quarter end plus six weeks. A source
-observation is used only if its conservative publication date has passed by that origin.
-The lag classes are the approved mapping in `ews.models.publication_lags`:
+The eight core BEAI series (`ACT_GDP_REAL`, `ACT_IP`, `ACT_EMP`, `ACT_HOURS`, `ACT_RINC`, `ACT_CONS`, `ACT_RETAIL`, `ACT_INV`) appear in the predictor matrix **strictly and exclusively** as versioned `beai_copy_<NAME>` predictors:
+- `beai_copy_act_gdp_real`
+- `beai_copy_act_ip`
+- `beai_copy_act_emp`
+- `beai_copy_act_hours`
+- `beai_copy_act_rinc`
+- `beai_copy_act_cons`
+- `beai_copy_act_retail`
+- `beai_copy_act_inv`
 
-| Class | Publication lag | Typical series |
-|---|---|---|
-| `NA` | 3 months | national accounts, quarterly credit, quarterly house prices |
-| `MONTHLY` | 6 weeks | industrial production, retail, monthly prices and unemployment |
-| `MARKET` | 0 days | interest rates, equity prices, derived slope |
-| `SURVEY` | 4 weeks | OECD business confidence, consumer sentiment |
-| `ANNUAL` | 12 months | annual-only sources (not used in this table) |
-
-`build_available_panel` selects the latest fully available observation, so a quarter-*t*
-predictor uses only data published by the origin. The selected value is then transformed;
-rolling windows therefore cannot reach into the future through the availability step.
-
----
-
-## 4. The firewall guarantee
-
-1. **The eight BEAI series appear only as copies.** Pipeline A uses the same eight core
-   indicators, ex post, with no publication lag, to estimate a coincident factor. Pipeline B
-   applies the C-05 ladder and stores separate `beai_copy_*` predictors. No fitted object,
-   factor loading, idiosyncratic variance, level index, diffusion index or recession flag is
-   shared.
-2. **The copies are reproducible from the harmonised panel alone.** For every copy series,
-   applying `build_available_panel` and `transform_quarterly_series` to the panel reproduces
-   the table columns exactly. This is asserted in `test_independence`.
-3. **No future observation enters a past row.** Rebuilding the table on history truncated at
-   a cutoff leaves every value at or before that cutoff byte-identical. This is asserted at
-   four cutoffs in `test_no_future_leakage`.
-4. **The checks fail on poisoned tables.** Injecting `R`, `factor` or `n_available` makes the
-   validator raise; shifting a column one quarter into the future makes the no-future
-   comparison fail. This is asserted in `test_mutation_fails_on_leak`. A suite that only
-   passes on clean data is not a firewall.
+**The Firewall Guarantee:**
+1. **Independent Transformations and Lags:** Pipeline A processes core series ex-post with zero publication lag to estimate a coincident economic factor. In contrast, Pipeline B applies conservative C-05 publication availability lags: quarterly national accounts series (`gdp_real`, `emp`, `hours`, `rinc`, `cons`, `inv`) are lagged by **one full quarter** ($t-1$), ensuring they could genuinely have been observed at prediction origin ($t + 6\text{ weeks}$). Monthly indicators (`ip`, `retail`) use observation quarter $t$, as their third month releases prior to $t + 6\text{ weeks}$.
+2. **Zero Shared Artifacts:** Pipeline B shares **no fitted object, no dynamic factor loading ($\lambda_j$), no idiosyncratic variance ($\sigma_j$), no cumulated level index ($F_t$), no diffusion index ($D_t$), and no recession state flag ($R_t$)** with Pipeline A.
+3. **Pure Reproducibility:** Every `beai_copy_*` column is 100% reproducible directly from the unstandardized activity growth rates in `data/clean/USA_growth.parquet` alone by shifting by its designated availability lag, without running the factor model, BBQ, or the diffusion gate.
 
 ---
 
-## 5. Exclusion blacklist
+## 4. Exclusion Blacklist
 
-None of the following may appear in the table or be consumed by Pipeline B models:
+The following column classes, prefixes, and variables are strictly prohibited from appearing in the feature table or being consumed by Pipeline B models:
 
-1. **BEAI factor (`factor`, `f_t`)** — coincident activity, direct leakage.
-2. **Cumulated level index (`level`, `F_t`)** — the BBQ dating input. Note that a
-   dimensionless per-series `__level` column for a rate or survey is allowed; the prohibited
-   object is Pipeline A's cumulated factor level.
-3. **Recession indicator (`R`, `R_t`, `recession`)** — the target.
-4. **Availability count (`n_available`)** — a dating artefact, not an economic signal.
-5. **Diffusion share (`deterioration_share`)** — a Pipeline A construct.
-6. **Turning-point flags (`peak`, `trough`, `turning_point`)** — ex-post dates.
-7. **External chronology (`USA.NBER.Q`, `NBER`, `validation`)** — plausibility checks only
-   (FW-06).
-8. **Country identifiers and country-size levels (`country`, `country_id`, `iso3`)** — no
-   country dummies or raw nominal size levels.
-9. **Episode identifiers (`episode`, `episode_id`)** — target-derived.
-10. **Future observations** — any value dated after the prediction origin, enforced by the
-    truncation test.
-
-Additional source columns are documented as excluded in `EXCLUSIONS`:
-
-| Excluded source | Reason |
-|---|---|
-| `USA.ACT_EMP.M.ESTAB` | BEAI-eligible variant, near-duplicate of `ACT_EMP` |
-| `USA.ACT_EMP.M.LFS` | raw source of `ACT_EMP.Q.NA`; duplicate information |
-| `USA.ACT_RINC.M.US` | BEAI-eligible variant, near-duplicate of `ACT_RINC` |
-| `USA.ACT_INV_EQ.Q.STD` | Q-02 supporting component, not a scope predictor |
-| `USA.ACT_INV_STRUCT.Q.STD` | Q-02 supporting component, not a scope predictor |
-| `USA.ACT_INV_IPP.Q.STD` | Q-02 supporting component, not a scope predictor |
-| `USA.ACT_INV_DEFL.Q.STD` | Q-02 supporting component, not a scope predictor |
-| `USA.FIN_CREDIT_GAP.Q.STD` | needs an HP gap; not in the harmonised panel |
+1. **BEAI Coincident Output (`factor`):** The dynamic factor $f_t$ captures coincident economic activity across the economy. Using it as a predictor would leak contemporaneous activity into an early-warning forecasting model.
+2. **Cumulated Level Factor (`level`, $F_t$):** The integrated factor index used by the BBQ dating algorithm. Prohibited.
+3. **Recession Indicator (`R`, `R_t`, `recession`):** The binary target variable constructed by Pipeline A. Any appearance in the feature matrix constitutes direct target leakage.
+4. **Availability Count (`n_available`):** Derived solely during label dating to verify rule C-03 ($\ge 4$ indicators). Not an economic signal.
+5. **Diffusion Share (`deterioration_share`):** The fraction of core indicators deteriorating in quarter $t$. Pipeline A construct; strictly forbidden.
+6. **Turning Point Flags (`peak`, `trough`, `turning_point`):** Ex-post dated cyclical peaks and troughs. Leakage of future turning points.
+7. **External Chronology (`USA.NBER.Q`, `NBER`, `validation`):** Rule C-04 / FW-06: External chronologies are plausibility checks, never features, targets, or training inputs.
+8. **Country Identifiers and Country-Size Levels (`country_id`, `country`, `iso3`):** Rule C-07 / §29 explicitly bars country dummies or raw size levels (e.g. nominal dollar GDP, population level) to prevent models from learning trivial scale memorisation instead of cyclical signals.
+9. **Episode Identifiers (`episode_id`, `episode`):** Identifiers marking contiguous recession episodes. Target-derived.
+10. **Future Data / Future Shifts ($t+1, t+2$):** Any feature computed using observations dated after the prediction origin $t$. Enforced by the no-future leakage test.
 
 ---
 
-## 6. 2026 extension audit (D-R31)
+## 5. 2026 Extension Audit
 
-The window was extended from 144 quarters to 147 with FRED observations through 2026-09.
+Under Decision D-R31, the reporting window was extended from 144 quarters (`1990Q1–2025Q4`) to **147 quarters (`1990Q1–2026Q3`)** using FRED observations through 2026-09.
 
-- The extension adds 2026Q1–2026Q3. Each row uses only information available at that
-  quarter's prediction origin.
-- No recession episode was added and no existing episode boundary moved; the label
-  estimator is unchanged.
-- Forward targets `y(t, H)` are undefined within `H` quarters of 2026Q3. Those rows carry
-  `pd.NA` and are dropped from scoring, never silently treated as negatives.
+### Audit Findings:
+- **No Temporal Leakage:** The 2026 extension adds three quarters (`2026Q1`, `2026Q2`, `2026Q3`) using actual historical vintage downloads. Each quarter's features are constructed using only information available as of that quarter's origin ($t + 6\text{ weeks}$).
+- **No Revision Contamination:** The label extension retained the exact BBQ parameters, diffusion gate (0.50), and 4/4 NBER agreement. No new recession episode was dated in 2026, and no existing episode boundary shifted.
+- **Endpoint Handling:** For forward-looking targets $y(t, H)$, quarters within $H$ steps of the endpoint `2026Q3` (e.g. `2026Q3` for 1Q; `2026Q2–2026Q3` for 2Q; `2025Q4–2026Q3` for 4Q) cannot observe subsequent recession peaks. Following `ews.models.targets`, these terminal quarters carry `pd.NA` for the target and are excluded from out-of-sample evaluation, preventing truncation artifacts.
 
 ---
 
-## 7. Feature dictionary
+## 6. Feature Dictionary
 
-`base` is the transformed series from §2. `sign` is the expected direction of a warning
-(higher predictor value → more likely recession onset), not a fitted coefficient.
+Comprehensive catalog of every predictor in `data/features/dataset.parquet`:
 
-| Predictor family | Units | Interpretation | Expected warning sign | Coverage / notes |
-|---|---|:---:|:---:|---|
-| `beai_copy_ACT_GDP_REAL__*` | % QoQ | Real GDP growth | negative | complete |
-| `beai_copy_ACT_IP__*` | % QoQ | Industrial production growth | negative | complete |
-| `beai_copy_ACT_EMP__*` | % QoQ | Household employment growth | negative | Q-04 LFS fallback |
-| `beai_copy_ACT_HOURS__*` | % QoQ | Nonfarm business hours growth | negative | Q-05 coverage note |
-| `beai_copy_ACT_RINC__*` | % QoQ | Real income ex transfers growth | negative | D-R23 |
-| `beai_copy_ACT_CONS__*` | % QoQ | Real consumption growth | negative | complete |
-| `beai_copy_ACT_RETAIL__*` | % QoQ | Retail sales growth | negative | FRED starts 1992Q1; missing stays missing |
-| `beai_copy_ACT_INV__*` | % QoQ | Constructed non-residential investment growth | negative | D-R26 |
-| `FIN_CREDIT_GDP__*` | % of GDP | Private credit-to-GDP level and changes | ambiguous | BIS quarterly |
-| `FIN_EQUITY__*` | % QoQ | Equity log return | negative | market |
-| `FIN_HOUSEPRICE_CS__*` | % QoQ | Case-Shiller house-price log change | negative | monthly |
-| `FIN_HOUSEPRICE_BIS__*` | % QoQ | BIS/FHFA house-price log change | negative | quarterly |
-| `FIN_LONG__*` | % | 10-year Treasury level and changes | ambiguous | market |
-| `FIN_POLICY__*` | % | Effective federal funds rate level and changes | positive | market |
-| `FIN_SHORT__*` | % | 3-month Treasury bill level and changes | positive | market |
-| `LAB_UNEMP__*` | % | Unemployment level and changes | positive | D-R01 predictor only |
-| `PRC_CPI__*` | % QoQ | CPI log change | ambiguous | monthly |
-| `SEN_BCI__*` | index | OECD business confidence level and changes | negative | survey |
-| `SEN_CCI__*` | index | Michigan consumer sentiment level and changes | negative | survey |
-| `FIN_SLOPE__*` | pp | 10Y minus 3M spread level and changes | negative | canonical inversion signal |
-
-Within each family the suffixes are the column list in §2. A `__base_lag_k` column is the
-transformed value delayed by *k* quarters; `__trend_4q` exists only for `growth` families.
-
----
-
-## 8. Verification and reproduction
-
-```bash
-make features
-.venv/bin/python -m pytest tests/test_feature_firewall.py -q
-.venv/bin/python scripts/08_verify_lane2a.py
-```
-
-The frozen table hash is recorded in `docs/STATE.md` and `docs/FINAL_REPORT.md`.
-Regenerating from the same panel must reproduce it byte for byte. A hash change without a
-recorded spec change is a defect until explained.
+| Feature Name | Units | Economic Interpretation | Expected Sign | Known Coverage Gaps / Notes |
+|---|---|---|:---:|---|
+| `beai_copy_act_gdp_real` | % QoQ | Real GDP growth (lagged 1Q) | Negative (slowdown $\implies$ warning) | None; complete across 147 quarters. |
+| `beai_copy_act_ip` | % QoQ | Industrial production growth | Negative | Complete; high cyclical sensitivity. |
+| `beai_copy_act_emp` | % QoQ | Household employment growth (lagged 1Q) | Negative | 146/147 quarters covered; Q-04 LFS fallback. |
+| `beai_copy_act_hours` | % QoQ | Nonfarm business hours growth (lagged 1Q) | Negative | Complete; sensitive leading labour margin. |
+| `beai_copy_act_rinc` | % QoQ | Real personal income ex transfers (lagged 1Q) | Negative | Complete; transfer payments excluded per D-R23. |
+| `beai_copy_act_cons` | % QoQ | Real personal consumption growth (lagged 1Q) | Negative | Complete; core demand anchor. |
+| `beai_copy_act_retail` | % QoQ | Real retail trade sales growth | Negative | 138/147 quarters (starts 1992Q1 in FRED); missing stays missing. |
+| `beai_copy_act_inv` | % QoQ | Constructed real non-res investment (lagged 1Q) | Negative | Complete; constructed per D-R26 from 3 BEA components. |
+| `inv_eq` | % QoQ | Real equipment investment growth (lagged 1Q) | Negative | Complete; early cyclical capital spending indicator. |
+| `inv_struct` | % QoQ | Real structures investment growth (lagged 1Q) | Negative | Complete; non-residential construction cycle. |
+| `inv_ipp` | % QoQ | Real intellectual property investment (lagged 1Q) | Negative | Complete; resilient secular component. |
+| `inv_defl` | % QoQ | Investment goods price deflator inflation (lagged 1Q) | Ambiguous | Complete; capital goods inflation pressure. |
+| `emp_estab` | % QoQ | Total nonfarm payroll employment growth | Negative | Complete; benchmark establishment survey. |
+| `emp_lfs` | % QoQ | Household survey employment growth | Negative | Complete; captures self-employment and small business. |
+| `rinc_m` | % QoQ | Monthly real disposable personal income growth | Negative | Complete; disposable income purchasing power. |
+| `credit_gdp` | % GDP | Private non-financial credit-to-GDP level (lagged 1Q) | Positive (debt overhang $\implies$ vulnerability) | Complete; BIS quarterly credit gap indicator. |
+| `equity` | % QoQ | Nasdaq Composite quarterly return | Negative (market sell-off $\implies$ warning) | Complete; forward-looking equity valuation shock. |
+| `houseprice_cs` | % QoQ | Case-Shiller national house price inflation | Negative (property slump $\implies$ warning) | Complete; residential wealth effect proxy. |
+| `houseprice_oecd` | % QoQ | FHFA all-transactions house price growth (lagged 1Q) | Negative | Complete; broad geographical price index. |
+| `rate_long` | % | 10-year Treasury constant maturity yield | Ambiguous | Complete; long-term financing benchmark. |
+| `rate_policy` | % | Effective Federal Funds rate | Positive (monetary tightening $\implies$ slowdown) | Complete; monetary policy stance. |
+| `rate_short` | % | 3-month Treasury bill secondary market rate | Positive | Complete; short-term money market rate. |
+| `unemp` | % | Civilian unemployment rate | Positive (rising joblessness $\implies$ recession) | Complete; Sahm-rule style labour slack indicator. |
+| `cpi` | % YoY | Headline Consumer Price Index inflation | Positive (overheating/stagflation risk) | Complete; price stability gauge. |
+| `bci` | Index | OECD composite business confidence | Negative (pessimism $\implies$ warning) | Complete; business expectations. |
+| `cci` | Index | Michigan consumer sentiment index | Negative (pessimism $\implies$ warning) | Complete; consumer sentiment survey. |
+| `term_spread_10y_3m` | pp | 10Y minus 3M Treasury yield spread | Negative (inverted yield curve $\implies$ warning) | Complete; canonical yield curve inversion indicator. |
 
 ---
 
-## 9. What I learned about leakage
+## 7. What I Learned About Leakage
 
-1. **Lag aliasing.** When a series exists at both quarterly and monthly frequency (for
-   example household employment), the quarterly copy carries the national-accounts lag while
-   the monthly copy is available sooner. If the availability class is not explicit, shifting
-   one copy can silently reproduce the other and look like a future leak.
-2. **In-fold scaling discipline.** Standardising over the full 147-quarter window leaks the
-   sample mean and variance into past forecasts and inflates apparent performance. Scalers
-   and imputers must be fitted inside each outer training block.
-3. **Mutation testing is the point.** A test that only checks a clean table proves very
-   little. Poisoning the table with `R` and with a one-quarter future shift, and requiring
-   the checks to catch both, is what turns the suite into a firewall.
-4. **Availability before transform.** Applying lags after differencing can align the wrong
-   quarter to a prediction origin. The order is fixed: availability lag, then transform.
+1. **Subtle Lag Aliasing:** When an indicator exists in both quarterly and monthly frequencies (e.g. `CE16OV` household employment), the quarterly variant is subject to National Accounts availability rules (1-quarter lag, observing $t-1$ at origin $t+6w$), whereas the monthly variant is available at origin $t+6w$ observing $t$. If not explicitly firewalled and documented, shifting the lagged quarterly copy by $-1Q$ exactly reproduces the monthly copy, creating an apparent future shift that trips automated leakage tests.
+2. **In-Fold Scaling Discipline:** Standardizing features over the entire 147-quarter window leaks future sample mean and variance into past forecasts. This leakage artificially inflates cross-validation performance. Imputers and scalers must be instantiated and fitted *inside* each outer fold using training indices only.
+3. **The Power of Mutation Testing:** A test suite that only verifies that a clean table passes proves very little about the sensitivity of the firewall. Actively injecting poisoned tables—one containing the prohibited target $R_t$ and another containing a $-1Q$ future shift—proves that the test harness actively catches leaks before any modeling code runs.

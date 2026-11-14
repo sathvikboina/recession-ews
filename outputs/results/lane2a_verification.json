@@ -1,88 +1,152 @@
 {
   "all_passed": true,
-  "gates": {
-    "G1 frozen label hashes": {
+  "gate_results": {
+    "G1 base commit contains 4556011": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "usa": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa",
-        "jpn": "b20a9f23dec8516f12cf2047dfd87f2575a307ed0839c811d30b95f29cd6b6f5",
-        "jpn_metadata": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a"
+        "base_commit": "4556011",
+        "is_ancestor": true
       }
     },
-    "G2 feature table (147 x 149, valid)": {
+    "G2 USA label blob hash == 2379fd53...19daa": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "expected": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa",
+        "actual": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa"
+      }
+    },
+    "G3 USA_panel shape and window recorded in spec": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "n_rows": 267,
+        "n_cols": 27,
+        "start": "1960Q1",
+        "end": "2026Q3",
+        "spec_verified": true
+      }
+    },
+    "G4 make features (147 rows, contiguous, unscaled, zero blacklisted)": {
       "status": "PASS",
       "passed": true,
       "details": {
         "rows": 147,
-        "features": 149,
-        "sha256": "368b60056872b9883ab8767fa148249d5f5c13ea85ca68abfc4e9437ee4304f4"
+        "predictors": 149
       }
     },
-    "G3 harmonised panel window": {
+    "G5 make folds deterministic (identical bytes, D-R37 parameters verified)": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "rows": 267,
-        "series": 26
-      }
-    },
-    "G4 frozen folds (D-R37)": {
-      "status": "PASS",
-      "passed": true,
-      "details": {
+        "sha256": "cc4814be7e020d466d53e905961c46f5a2ccbe3a0b9197fd7b9e62eb0feb8719",
+        "horizons": [
+          "1",
+          "2",
+          "4"
+        ],
+        "n_folds_2q": 67,
         "approved": true,
-        "sha256": "afd51bc5f885f74a84f2e5f29bd6732de78454945cb189f2fee1d8c426afc261",
-        "outer_2q": 67
+        "decision": "D-R37"
       }
     },
-    "G5 firewall suite": {
+    "G6 tests/test_features.py passes; mutation fails on leaks": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "pytest": ".......                                                                  [100%]"
+        "pytest_output": "......                                                                   [100%]",
+        "returncode": 0
       }
     },
-    "G6 baselines reproducible": {
+    "G7 baselines reproduce (identical hashes, PR-AUC + recall)": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "csv_sha256": "66d5c47eb7da66e2a14a77d26c2dd63cce0badebd7dd2d69678a778cc0c560ec",
-        "md_sha256": "77c617fce0b8242a8ff590cb93bbf6d4fea2e584dc09e70bbbb8f088e153968c",
-        "stable": true,
-        "primary": [
+        "csv_sha256": "e227e2543334dd6c11b43db9e6433fadb4eeccaacd8a7e64833647d07377af86",
+        "md_sha256": "9cfe616c6fde0b78676750d55b8d94a3dad12afa5a2878f7ccc667f1212b00ce",
+        "results": [
           {
+            "horizon": "1Q",
+            "model": "majority",
+            "pr_auc": 0.015385,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
+          },
+          {
+            "horizon": "1Q",
+            "model": "term_spread",
+            "pr_auc": 0.111111,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
+          },
+          {
+            "horizon": "1Q",
+            "model": "plain_logistic",
+            "pr_auc": 0.047619,
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
+          },
+          {
+            "horizon": "2Q",
             "model": "majority",
             "pr_auc": 0.023562,
-            "episode_recall": 0.0
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
+            "horizon": "2Q",
             "model": "term_spread",
             "pr_auc": 0.155556,
-            "episode_recall": 0.0
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
           },
           {
+            "horizon": "2Q",
             "model": "plain_logistic",
             "pr_auc": 0.107955,
-            "episode_recall": 0.0
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "majority",
+            "pr_auc": 0.040995,
+            "episode_recall": 1.0,
+            "episode_recall_05": 0.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "term_spread",
+            "pr_auc": 0.176804,
+            "episode_recall": 1.0,
+            "episode_recall_05": 1.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "plain_logistic",
+            "pr_auc": 0.197276,
+            "episode_recall": 0.0,
+            "episode_recall_05": 0.0
           }
         ]
       }
     },
-    "G7 JPN 144/147 closeout (D-R38)": {
+    "G8 D-R34 present and JPN metadata hash verified": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "recorded": true,
-        "documented": true,
-        "metadata_sha256": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a"
+        "dr34_present": true,
+        "actual_json_hash": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a",
+        "doc_hash_match": true
       }
     },
-    "G8 labels untouched": {
+    "G9 git status shows zero changes to outputs/labels/**": {
       "status": "PASS",
       "passed": true,
       "details": {
-        "status": ""
+        "clean": true,
+        "status_output": ""
       }
     }
   }

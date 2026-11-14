@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard features folds baselines lane2a bootstrap clean
+.PHONY: help env config scope fetch harmonize labels validate pipeline check test team-plan worklog reports dashboard bootstrap clean features folds baselines verify lane2a
 
 help:
 	@echo "make env        create .venv and install the package (editable)"
@@ -19,10 +19,11 @@ help:
 	@echo "make worklog    rebuild EWS_Work_Log.xlsx (detailed work log)"
 	@echo "make reports    rebuild both generated workbooks"
 	@echo "make dashboard  build the static USA dashboard (dashboard/index.html)"
-	@echo "make folds      export draft walk-forward folds (outputs/folds/folds.json)"
 	@echo "make features   build the USA predictor table (data/clean/dataset.parquet)"
-	@echo "make baselines  Lane 2A baselines on the frozen folds (outputs/results)"
-	@echo "make lane2a      verify the Lane 2A firewall, folds and baselines"
+	@echo "make folds      export frozen walk-forward folds (outputs/folds/folds.json)"
+	@echo "make baselines  run baseline models on frozen folds (outputs/results)"
+	@echo "make verify     run Lane 2A self-verification harness"
+	@echo "make lane2a     run full Lane 2A pipeline and gates"
 
 env:
 	python3 -m venv $(VENV)
@@ -66,17 +67,19 @@ reports: team-plan worklog
 dashboard:
 	"$(PY)" scripts/05_dashboard.py
 
-folds:
-	"$(PY)" scripts/06_folds.py --approved
-
 features:
 	"$(PY)" scripts/05_features.py
+
+folds:
+	"$(PY)" scripts/06_folds.py --approved
 
 baselines:
 	"$(PY)" scripts/07_baselines.py
 
-lane2a:
+verify:
 	"$(PY)" scripts/08_verify_lane2a.py
+
+lane2a: features folds baselines test verify
 
 bootstrap: config scope check test
 
