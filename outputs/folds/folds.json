@@ -11,9 +11,10 @@
     "inner": "list parallel to outer; each item is a list of [train_end, test_start, test_end] triples. train_start is the parent outer train_start; purge equals the horizon."
   },
   "metadata": {
-    "draft": true,
-    "approved": false,
-    "reason": "initial training window is not yet approved (docs/DECISIONS.md, Lane 2 open decision)",
+    "draft": false,
+    "approved": true,
+    "reason": "frozen under D-R37 on 2026-11-14 (expanding, 80 outer / 40 inner quarters, step 1, horizons 1/2/4, 2 primary)",
+    "decision": "D-R37",
     "generated_from": "outputs/labels/USA_labels.csv",
     "labels_file": "/home/sathvik/Documents/Machine Learning Proj/outputs/labels/USA_labels.csv",
     "labels_sha256": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa",
