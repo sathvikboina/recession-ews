@@ -11,7 +11,7 @@
 |---|---|
 | Document status | Draft for internal review |
 | Date | 2026-11-14 |
-| Integration tip | `feat/features-harness@57faa46` (Lane 2A integrated) |
+| Lane 2A integration merge | `feat/features-harness@57faa46` |
 | Authors | Sathvik Boina, Shravani Math, Palchhin |
 | Lane 2A status | integrated: `docs/FEATURES.md`, `tests/test_feature_firewall.py`, baselines, D-R38 |
 | Frozen label versions | USA `labels-v3`; JPN `labels-v1-JPN`; DEU no label (coverage finding) |
