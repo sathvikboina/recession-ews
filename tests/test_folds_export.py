@@ -182,3 +182,17 @@ def test_approved_flag_freezes_metadata(tmp_path):
     assert metadata["draft"] is False
     assert metadata["decision"] == "D-R37"
     assert "D-R37" in metadata["reason"]
+
+
+def test_labels_file_override_keeps_export_portable(tmp_path):
+    labels = make_labels(tmp_path)
+    payload = build_payload(
+        start="1990Q1",
+        last_scored="2012Q3",
+        initial_train=40,
+        inner_initial_train=16,
+        labels_path=labels,
+        labels_file="outputs/labels/USA_labels.csv",
+    )
+    assert payload["metadata"]["labels_file"] == "outputs/labels/USA_labels.csv"
+    assert payload["metadata"]["generated_from"] == "outputs/labels/USA_labels.csv"

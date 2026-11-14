@@ -49,6 +49,10 @@ def main() -> None:
     first, last = load_labels(args.labels)
     start = args.start or first
     last_scored = args.last_scored or last
+    try:
+        labels_file = args.labels.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        labels_file = str(args.labels)
 
     payload = build_payload(
         start=start,
@@ -56,6 +60,7 @@ def main() -> None:
         initial_train=args.initial_train,
         inner_initial_train=args.inner_initial_train,
         labels_path=args.labels,
+        labels_file=labels_file,
         horizons=HORIZONS,
         approved=args.approved,
     )
