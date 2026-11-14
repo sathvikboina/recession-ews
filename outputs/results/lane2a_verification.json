@@ -1,0 +1,142 @@
+{
+  "all_passed": true,
+  "gate_results": {
+    "G1 base commit contains 4556011": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "base_commit": "4556011",
+        "is_ancestor": true
+      }
+    },
+    "G2 USA label blob hash == 2379fd53...19daa": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "expected": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa",
+        "actual": "2379fd53e4c9023538cafcd5668a4835bcdd7b45cfae9e3cbc3d4f306ed19daa"
+      }
+    },
+    "G3 USA_panel shape and window recorded in spec": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "n_rows": 267,
+        "n_cols": 27,
+        "start": "1960Q1",
+        "end": "2026Q3",
+        "spec_verified": true
+      }
+    },
+    "G4 make features (147 rows, contiguous, unscaled, zero blacklisted)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "rows": 147,
+        "predictors": 27
+      }
+    },
+    "G5 make folds deterministic (identical bytes, no test row in train)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "sha256": "b59ea4c2bbcc5da3fde3a45ed4b04bc3278ffe3d2a67577489fd40b9eb3ad8a9",
+        "horizons": [
+          "1Q",
+          "2Q",
+          "4Q"
+        ],
+        "n_folds_2q": 22
+      }
+    },
+    "G6 tests/test_features.py passes; mutation fails on leaks": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "pytest_output": "......                                                                   [100%]",
+        "returncode": 0
+      }
+    },
+    "G7 baselines reproduce (identical hashes, PR-AUC + recall)": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "csv_sha256": "e1e4319b3cdedb0b9c1e7f007ac5e519a90fb087229e68243b807f51d171ad1a",
+        "md_sha256": "0adc771c604a29176e1c1bd2f2617cbb7ff7d2e3258499072bd54abe66ba685b",
+        "results": [
+          {
+            "horizon": "1Q",
+            "model": "majority",
+            "pr_auc": 0.019961,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "1Q",
+            "model": "term_spread",
+            "pr_auc": 0.087121,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "1Q",
+            "model": "plain_logistic",
+            "pr_auc": 0.044466,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "2Q",
+            "model": "majority",
+            "pr_auc": 0.035875,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "2Q",
+            "model": "term_spread",
+            "pr_auc": 0.153518,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "2Q",
+            "model": "plain_logistic",
+            "pr_auc": 0.087897,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "majority",
+            "pr_auc": 0.066545,
+            "episode_recall": 0.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "term_spread",
+            "pr_auc": 0.252896,
+            "episode_recall": 1.0
+          },
+          {
+            "horizon": "4Q",
+            "model": "plain_logistic",
+            "pr_auc": 0.203956,
+            "episode_recall": 0.0
+          }
+        ]
+      }
+    },
+    "G8 D-R34 present and JPN metadata hash verified": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "dr34_present": true,
+        "actual_json_hash": "3b74d3e63f4b6f19e15c372637c2f776e029903f710eba93c8a6cb395b99ed9a",
+        "doc_hash_match": true
+      }
+    },
+    "G9 git status shows zero changes to outputs/labels/**": {
+      "status": "PASS",
+      "passed": true,
+      "details": {
+        "clean": true,
+        "status_output": ""
+      }
+    }
+  }
+}
